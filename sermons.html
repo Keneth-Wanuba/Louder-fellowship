@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sermons | Louder Fellowship & Rehoboth Ministries</title>
+    <link rel="stylesheet" href="/src/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="overflow-x-hidden">
+    <!-- Navigation -->
+    <nav class="bg-royal-blue text-white sticky top-0 z-50 shadow-xl border-b border-royal-gold/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20">
+                <div class="flex items-center">
+                    <a href="/" class="flex flex-col">
+                        <span class="text-2xl font-serif font-bold tracking-tighter text-royal-gold leading-none">LOUDER</span>
+                        <span class="text-[10px] uppercase tracking-[0.2em] text-white/80">Fellowship</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/" class="hover:text-royal-gold transition-colors">Home</a>
+                    <a href="/about.html" class="hover:text-royal-gold transition-colors">Our Story</a>
+                    <a href="/programs.html" class="hover:text-royal-gold transition-colors">Programs</a>
+                    <a href="/sermons.html" class="text-royal-gold font-medium">Sermons</a>
+                    <a href="/give.html" class="hover:text-royal-gold transition-colors">Giving</a>
+                    <a href="/contact.html" class="bg-royal-gold text-royal-blue px-5 py-2 rounded-full font-bold hover:bg-white transition-all">Contact</a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" class="text-white">
+                        <i data-lucide="menu"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-royal-blue border-t border-royal-gold/20 pb-6 px-4">
+            <div class="flex flex-col space-y-4 pt-4">
+                <a href="/">Home</a>
+                <a href="/about.html">Our Story</a>
+                <a href="/programs.html">Programs</a>
+                <a href="/sermons.html" class="text-royal-gold">Sermons</a>
+                <a href="/give.html">Giving</a>
+                <a href="/contact.html">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="bg-royal-blue py-20 text-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <img src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&q=80&w=2000" alt="Background" class="w-full h-full object-cover" referrerPolicy="no-referrer">
+        </div>
+        <div class="relative z-10">
+            <h1 class="text-4xl md:text-6xl font-serif font-bold text-white mb-4">Video Sermons</h1>
+            <p class="text-royal-gold uppercase tracking-[0.3em] font-bold">Prophetic Word from our YouTube Channel</p>
+        </div>
+    </header>
+
+    <!-- Sermons Grid -->
+    <section class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-12">
+                <!-- Featured Video -->
+                <div class="col-span-1 md:col-span-2">
+                    <div class="bg-slate-900 rounded-3xl overflow-hidden shadow-2xl aspect-video relative group">
+                        <!-- Placeholder for YouTube Embed -->
+                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Featured Sermon" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                    </div>
+                    <div class="mt-8">
+                        <span class="text-royal-gold font-bold uppercase tracking-widest text-sm">Featured Sermon</span>
+                        <h2 class="text-3xl font-serif font-bold text-royal-blue mt-2">The Power of the Prophetic Voice</h2>
+                        <p class="text-slate-600 mt-4 leading-relaxed">
+                            Join Prophet Ezekiel Kayondo as he explores the revelation of God's loud voice in our generation. This sermon was recorded during our Sunday Prophetic Service.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- More Videos -->
+                <div class="bg-slate-50 rounded-2xl p-4 shadow-sm border border-slate-200">
+                    <div class="aspect-video rounded-xl overflow-hidden mb-4">
+                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Sermon 2" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <h3 class="font-bold text-royal-blue">Winning Souls in the Digital Age</h3>
+                    <p class="text-sm text-slate-500 mt-2">Zoom Fellowship Highlights</p>
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-4 shadow-sm border border-slate-200">
+                    <div class="aspect-video rounded-xl overflow-hidden mb-4">
+                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Sermon 3" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <h3 class="font-bold text-royal-blue">Equipping the Saints for Impact</h3>
+                    <p class="text-sm text-slate-500 mt-2">Nourish School of Ministry Session</p>
+                </div>
+            </div>
+
+            <div class="mt-20 text-center">
+                <a href="#" class="inline-flex items-center gap-3 bg-red-600 text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-red-700 transition-all shadow-lg">
+                    <i data-lucide="youtube"></i>
+                    Subscribe to our YouTube Channel
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-royal-blue text-white pt-20 pb-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white/40 text-sm">
+            <p>&copy; 2026 Louder Fellowship & Rehoboth Discipleship Global Ministries. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        const menuBtn = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

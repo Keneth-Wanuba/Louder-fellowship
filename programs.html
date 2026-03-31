@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programs | Louder Fellowship & Rehoboth Ministries</title>
+    <link rel="stylesheet" href="/src/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="overflow-x-hidden bg-slate-50">
+    <!-- Navigation -->
+    <nav class="bg-royal-blue text-white sticky top-0 z-50 shadow-xl border-b border-royal-gold/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20">
+                <div class="flex items-center">
+                    <a href="/" class="flex flex-col">
+                        <span class="text-2xl font-serif font-bold tracking-tighter text-royal-gold leading-none">LOUDER</span>
+                        <span class="text-[10px] uppercase tracking-[0.2em] text-white/80">Fellowship</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/" class="hover:text-royal-gold transition-colors">Home</a>
+                    <a href="/about.html" class="hover:text-royal-gold transition-colors">Our Story</a>
+                    <a href="/programs.html" class="text-royal-gold font-medium">Programs</a>
+                    <a href="/sermons.html" class="hover:text-royal-gold transition-colors">Sermons</a>
+                    <a href="/give.html" class="hover:text-royal-gold transition-colors">Giving</a>
+                    <a href="/contact.html" class="bg-royal-gold text-royal-blue px-5 py-2 rounded-full font-bold hover:bg-white transition-all">Contact</a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" class="text-white">
+                        <i data-lucide="menu"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-royal-blue border-t border-royal-gold/20 pb-6 px-4">
+            <div class="flex flex-col space-y-4 pt-4">
+                <a href="/">Home</a>
+                <a href="/about.html">Our Story</a>
+                <a href="/programs.html" class="text-royal-gold">Programs</a>
+                <a href="/sermons.html">Sermons</a>
+                <a href="/give.html">Giving</a>
+                <a href="/contact.html">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="bg-royal-blue py-20 text-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <img src="https://images.unsplash.com/photo-1515162305285-0293e4767cc2?auto=format&fit=crop&q=80&w=2000" alt="Background" class="w-full h-full object-cover" referrerPolicy="no-referrer">
+        </div>
+        <div class="relative z-10">
+            <h1 class="text-4xl md:text-6xl font-serif font-bold text-white mb-4">Weekly Programs</h1>
+            <p class="text-royal-gold uppercase tracking-[0.3em] font-bold">Join us in worship and fellowship</p>
+        </div>
+    </header>
+
+    <!-- Schedule Section -->
+    <section class="py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Sunday -->
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-200">
+                    <div class="bg-royal-blue p-6 text-white">
+                        <h3 class="text-2xl font-serif font-bold text-royal-gold">Sunday</h3>
+                        <p class="text-white/60 text-sm">The Lord's Day</p>
+                    </div>
+                    <div class="p-6 space-y-6">
+                        <div class="flex gap-4">
+                            <div class="text-royal-gold font-bold whitespace-nowrap">7am - 9am</div>
+                            <div>
+                                <h4 class="font-bold text-royal-blue">Nourish</h4>
+                                <p class="text-sm text-slate-500">School of Ministry - Deepening your walk with God.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="text-royal-gold font-bold whitespace-nowrap">9am - 12pm</div>
+                            <div>
+                                <h4 class="font-bold text-royal-blue">Prophetic Service</h4>
+                                <p class="text-sm text-slate-500">Main Sunday service with Prophet Ezekiel Kayondo.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monday -->
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-200">
+                    <div class="bg-royal-blue p-6 text-white">
+                        <h3 class="text-2xl font-serif font-bold text-royal-gold">Monday</h3>
+                        <p class="text-white/60 text-sm">Online Connection</p>
+                    </div>
+                    <div class="p-6 space-y-6">
+                        <div class="flex gap-4">
+                            <div class="text-royal-gold font-bold whitespace-nowrap">8pm - 10pm</div>
+                            <div>
+                                <h4 class="font-bold text-royal-blue">Zoom Fellowship</h4>
+                                <p class="text-sm text-slate-500">Connecting our global family through prayer and word.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tuesday -->
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-200">
+                    <div class="bg-royal-blue p-6 text-white">
+                        <h3 class="text-2xl font-serif font-bold text-royal-gold">Tuesday</h3>
+                        <p class="text-white/60 text-sm">Personal Prophetic Ministry</p>
+                    </div>
+                    <div class="p-6 space-y-6">
+                        <div class="flex gap-4">
+                            <div class="text-royal-gold font-bold whitespace-nowrap">8pm - 10pm</div>
+                            <div>
+                                <h4 class="font-bold text-royal-blue">One-on-One Prayers</h4>
+                                <p class="text-sm text-slate-500">Personal prophetic sessions on Zoom.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wednesday -->
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-200">
+                    <div class="bg-royal-blue p-6 text-white">
+                        <h3 class="text-2xl font-serif font-bold text-royal-gold">Wednesday</h3>
+                        <p class="text-white/60 text-sm">Mid-week Gathering</p>
+                    </div>
+                    <div class="p-6 space-y-6">
+                        <div class="flex gap-4">
+                            <div class="text-royal-gold font-bold whitespace-nowrap">6pm - 9pm</div>
+                            <div>
+                                <h4 class="font-bold text-royal-blue">Physical Gathering</h4>
+                                <p class="text-sm text-slate-500">Louder Fellowship physical meeting in Kampala.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thursday -->
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-200">
+                    <div class="bg-royal-blue p-6 text-white">
+                        <h3 class="text-2xl font-serif font-bold text-royal-gold">Thursday</h3>
+                        <p class="text-white/60 text-sm">Community & Development</p>
+                    </div>
+                    <div class="p-6 space-y-6">
+                        <div class="flex gap-4">
+                            <div class="text-royal-gold font-bold whitespace-nowrap">Evening</div>
+                            <div>
+                                <h4 class="font-bold text-royal-blue">Cell Gatherings</h4>
+                                <p class="text-sm text-slate-500">Meeting in homes across the country for nourishment.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="text-royal-gold font-bold whitespace-nowrap">Zoom</div>
+                            <div>
+                                <h4 class="font-bold text-royal-blue">Fundraising</h4>
+                                <p class="text-sm text-slate-500">Church land and building campaign updates.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Friday -->
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-200">
+                    <div class="bg-royal-blue p-6 text-white">
+                        <h3 class="text-2xl font-serif font-bold text-royal-gold">Friday</h3>
+                        <p class="text-white/60 text-sm">Spiritual Warfare</p>
+                    </div>
+                    <div class="p-6 space-y-6">
+                        <div class="flex gap-4">
+                            <div class="text-royal-gold font-bold whitespace-nowrap">Last Fri</div>
+                            <div>
+                                <h4 class="font-bold text-royal-blue">Overnight Prayer</h4>
+                                <p class="text-sm text-slate-500">Intense physical overnight gathering once a month.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="text-royal-gold font-bold whitespace-nowrap">Zoom</div>
+                            <div>
+                                <h4 class="font-bold text-royal-blue">General Church Altar</h4>
+                                <p class="text-sm text-slate-500">Weekly online prayer altar for all members.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-royal-blue text-white pt-20 pb-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="border-t border-white/10 pt-10 text-center text-white/40 text-sm">
+                <p>&copy; 2026 Louder Fellowship & Rehoboth Discipleship Global Ministries. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        const menuBtn = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

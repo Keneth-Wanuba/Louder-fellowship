@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@theme {
+  --color-royal-blue: #002366;
+  --color-royal-gold: #D4AF37;
+  --color-royal-light-gold: #F4D03F;
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Inter", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-white text-slate-900 font-sans;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+}
+
+.gold-gradient {
+  background: linear-gradient(135deg, #D4AF37 0%, #F4D03F 50%, #D4AF37 100%);
+}
+
+.blue-gradient {
+  background: linear-gradient(135deg, #001a4d 0%, #002366 100%);
+}
+
+.text-gold {
+  @apply text-royal-gold;
+}
+
+.bg-royal {
+  @apply bg-royal-blue;
+}
+
+.border-gold {
+  @apply border-royal-gold;
+}
