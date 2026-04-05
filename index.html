@@ -6,7 +6,7 @@
     <title>Home | Louder Fellowship & Rehoboth Ministries</title>
     <link rel="stylesheet" href="/src/index.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide@0.263.0"></script>
 </head>
 <body class="overflow-x-hidden">
     <!-- Navigation -->
@@ -50,52 +50,61 @@
     </nav>
 
     <!-- Hero Section -->
-    <header class="relative h-[95vh] flex items-center justify-center overflow-hidden">
+    <header class="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <!-- Background Layer -->
         <div class="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1544427920-c49ccfb85579?auto=format&fit=crop&q=80&w=2000" alt="Worship" class="w-full h-full object-cover opacity-20" referrerPolicy="no-referrer">
-            <div class="absolute inset-0 bg-royal-blue"></div>
-            <!-- Subtle decorative elements -->
-            <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(212,175,55,0.1),transparent_70%)]"></div>
+            <img src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80&w=2000" 
+                 alt="Church Worship" 
+                 class="w-full h-full object-cover animate-subtle-zoom" 
+                 referrerPolicy="no-referrer">
+            <!-- Gradient Overlay for readability -->
+            <div class="absolute inset-0 bg-gradient-to-b from-royal-blue/95 via-royal-blue/80 to-royal-blue"></div>
+            <!-- Decorative Light Flare -->
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(212,175,55,0.2),transparent_60%)]"></div>
         </div>
         
-        <div class="relative z-10 text-center px-4 max-w-5xl">
-
-            <!-- Main Vision -->
-            <h1 class="text-5xl md:text-8xl font-serif font-black text-white mb-8 leading-[0.9] tracking-tighter uppercase">
-                Win Souls.<br>
-                <span class="text-royal-gold">Equip Saints.</span>
-            </h1>
-            <!-- Scripture Lead-in -->
-            <div class="mb-16 animate-fade-in opacity-0" style="animation: fadeIn 1s ease-out forwards;">
-                <p class="text-royal-gold font-serif italic text-xl md:text-2xl mb-3">"To equip the saints for the work of ministry..."</p>
-                <div class="w-12 h-px bg-royal-gold mx-auto mb-3"></div>
-                <p class="text-white/40 text-[10px] font-bold uppercase tracking-[0.5em]">Ephesians 4:12</p>
+        <div class="relative z-10 text-center px-4 max-w-5xl mx-auto">
+            <!-- Join Us Badge -->
+            <div class="mb-8 inline-flex items-center gap-2 px-4 py-2 bg-royal-gold/10 border border-royal-gold/30 rounded-full animate-fade-in">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-royal-gold opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-royal-gold"></span>
+                </span>
+                <span class="text-royal-gold text-[10px] md:text-xs font-bold uppercase tracking-[0.2em]">Join us this Sunday @ 10:00 AM</span>
             </div>
 
-            <div class="w-20 h-1 bg-royal-gold mx-auto mb-10"></div>
+            <!-- Main Headline -->
+            <h1 class="text-5xl md:text-9xl font-serif font-black text-white mb-8 leading-[1] tracking-tighter uppercase animate-fade-in" style="animation-delay: 0.2s;">
+                Winning <span class="text-royal-gold italic">Souls</span>.<br class="hidden md:block">
+                Equipping <span class="text-royal-gold italic">Saints</span>.
+            </h1>
 
-            <!-- Description -->
-            <p class="text-lg md:text-xl text-white/60 mb-12 max-w-2xl mx-auto leading-relaxed font-light tracking-wide">
-                A born-again fellowship dedicated to winning souls to the kingdom of God and equipping believers in Jesus Christ.
+            <!-- Vision Statement -->
+            <p class="text-lg md:text-2xl text-white/70 mb-12 max-w-3xl mx-auto leading-relaxed font-light tracking-wide animate-fade-in" style="animation-delay: 0.4s;">
+                A born again fellowship dedicated to winning souls to the kingdom of God & equipping believers in Christ Jesus.
             </p>
 
-            <!-- Actions -->
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="https://wa.me/256701751463" target="_blank" class="w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-4 bg-[#25D366] text-white font-bold rounded-full hover:scale-105 transition-all shadow-lg">
-                    <i data-lucide="message-circle"></i>
-                    WhatsApp Us
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in" style="animation-delay: 0.6s;">
+                <a href="/about.html" class="w-full sm:w-auto px-12 py-5 bg-royal-gold text-royal-blue font-bold rounded-full hover:bg-white hover:scale-105 transition-all shadow-2xl flex items-center justify-center gap-2 group">
+                    Our Story
+                    <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
                 </a>
-                <a href="tel:+256701751463" class="w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-4 bg-royal-gold text-royal-blue font-bold rounded-full hover:scale-105 transition-all shadow-lg">
-                    <i data-lucide="phone"></i>
-                    Call Now
-                </a>
+                <div class="flex gap-4 w-full sm:w-auto">
+                    <a href="https://wa.me/256701751463" target="_blank" class="flex-1 sm:flex-none p-5 bg-white/5 backdrop-blur-md text-white rounded-full hover:bg-white/10 transition-all border border-white/10 flex items-center justify-center group" title="WhatsApp">
+                        <i data-lucide="message-circle" class="w-6 h-6 group-hover:scale-110 transition-transform"></i>
+                    </a>
+                    <a href="tel:+256701751463" class="flex-1 sm:flex-none p-5 bg-white/5 backdrop-blur-md text-white rounded-full hover:bg-white/10 transition-all border border-white/10 flex items-center justify-center group" title="Call Us">
+                        <i data-lucide="phone" class="w-6 h-6 group-hover:scale-110 transition-transform"></i>
+                    </a>
+                </div>
             </div>
         </div>
 
         <!-- Scroll Indicator -->
-        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/30">
-            <span class="text-[10px] uppercase tracking-[0.3em]">Scroll</span>
-            <div class="w-px h-12 bg-gradient-to-b from-royal-gold to-transparent"></div>
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 text-white/20 animate-bounce">
+            <span class="text-[10px] uppercase tracking-[0.4em] font-bold">Discover</span>
+            <i data-lucide="chevron-down" class="w-5 h-5"></i>
         </div>
     </header>
 

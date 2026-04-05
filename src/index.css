@@ -36,3 +36,21 @@
 .border-gold {
   @apply border-royal-gold;
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 1s ease-out forwards;
+}
+
+@keyframes subtleZoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
+}
+
+.animate-subtle-zoom {
+  animation: subtleZoom 20s ease-in-out infinite alternate;
+}
