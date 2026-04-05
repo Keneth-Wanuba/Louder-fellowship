@@ -27,6 +27,7 @@ export default defineConfig(({mode}) => {
           sermons: path.resolve(__dirname, 'sermons.html'),
           give: path.resolve(__dirname, 'give.html'),
           contact: path.resolve(__dirname, 'contact.html'),
+          faith: path.resolve(__dirname, 'faith.html'),
         },
       },
     },
