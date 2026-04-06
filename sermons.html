@@ -54,11 +54,31 @@
         <div class="absolute inset-0 opacity-10">
             <img src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&q=80&w=2000" alt="Background" class="w-full h-full object-cover" referrerPolicy="no-referrer">
         </div>
-        <div class="relative z-10">
-            <h1 class="text-4xl md:text-6xl font-serif font-bold text-white mb-4">Video Sermons</h1>
-            <p class="text-royal-gold uppercase tracking-[0.3em] font-bold">Prophetic Word from our YouTube Channel</p>
+        <div class="relative p-3 z-10">
+            <h1 class="text-4xl md:text-6xl font-serif font-bold text-white mb-4">Our Sermons</h1>
+            <p class="text-royal-gold uppercase tracking-[0.3em] font-bold">The Word of God from our YouTube and Telegram Channels</p>
         </div>
     </header>
+    
+    <!-- Telegram CTA -->
+    <div class="bg-royal-gold/10 border-y border-royal-gold/20 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-5">
+                    <div class="w-14 h-14 bg-royal-gold rounded-2xl flex items-center justify-center text-royal-blue flex-shrink-0 shadow-lg rotate-3">
+                        <i data-lucide="send" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-royal-blue">Audio Sermons on Telegram</h3>
+                        <p class="text-slate-600">All audio sermons are in our channel for easy download. It's open to anyone who wants to get sermons!</p>
+                    </div>
+                </div>
+                <a href="https://t.me/+c-qcHSR4-2U0YTA0" target="_blank" class="w-full md:w-auto bg-royal-blue text-white px-10 py-4 rounded-2xl font-bold hover:bg-royal-blue/90 transition-all flex items-center justify-center gap-3 shadow-xl hover:shadow-royal-blue/20">
+                    Join Telegram Channel <i data-lucide="external-link" class="w-5 h-5"></i>
+                </a>
+            </div>
+        </div>
+    </div>
 
     <!-- Dynamic Sermons Section -->
     <section id="sermons-section" class="py-12 md:py-24 bg-white">
@@ -97,8 +117,8 @@
                 </div>
 
                 <!-- Sermon List Area -->
-                <div class="lg:w-1/3 flex flex-col h-[500px] lg:h-[650px]">
-                    <div class="bg-slate-50 rounded-3xl border border-slate-200 flex flex-col h-full overflow-hidden shadow-inner">
+                <div class="lg:w-1/3 flex flex-col">
+                    <div class="bg-slate-50 rounded-3xl border border-slate-200 flex flex-col h-[500px] lg:h-[650px] overflow-hidden shadow-inner">
                         <div class="p-6 border-b border-slate-200 bg-white flex items-center justify-between">
                             <h3 class="font-bold text-royal-blue flex items-center gap-2">
                                 <i data-lucide="list-video" class="w-5 h-5 text-royal-gold"></i>
@@ -120,6 +140,21 @@
                                     <span class="text-xs font-bold text-royal-blue uppercase tracking-widest">Fetching...</span>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Telegram Audio Card -->
+                    <div class="mt-6 bg-royal-blue rounded-3xl p-8 text-white shadow-xl relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 -m-4 w-32 h-32 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition-all"></div>
+                        <div class="relative z-10">
+                            <div class="w-14 h-14 bg-royal-gold rounded-2xl flex items-center justify-center text-royal-blue mb-6 shadow-lg rotate-3 group-hover:rotate-6 transition-transform">
+                                <i data-lucide="headphones" class="w-7 h-7"></i>
+                            </div>
+                            <h3 class="text-2xl font-serif font-bold mb-3">Audio Sermons</h3>
+                            <p class="text-white/70 text-sm mb-8 leading-relaxed">All audio sermons are in our Telegram channel for easy download. It's open to anyone who wants to get the Word on the go!</p>
+                            <a href="https://t.me/+c-qcHSR4-2U0YTA0" target="_blank" class="w-full bg-royal-gold text-royal-blue py-4 rounded-xl font-bold hover:bg-white transition-all flex items-center justify-center gap-2 shadow-lg">
+                                Open Telegram <i data-lucide="send" class="w-4 h-4"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
