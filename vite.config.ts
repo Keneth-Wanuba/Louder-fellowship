@@ -22,12 +22,6 @@ export default defineConfig(({mode}) => {
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
-          about: path.resolve(__dirname, 'about.html'),
-          programs: path.resolve(__dirname, 'programs.html'),
-          sermons: path.resolve(__dirname, 'sermons.html'),
-          give: path.resolve(__dirname, 'give.html'),
-          contact: path.resolve(__dirname, 'contact.html'),
-          faith: path.resolve(__dirname, 'faith.html'),
         },
       },
     },
