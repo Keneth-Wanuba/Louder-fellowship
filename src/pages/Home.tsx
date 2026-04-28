@@ -1,5 +1,5 @@
 import { ArrowRight, MessageCircle, Phone, Users, ShieldCheck, ShoppingCart, Truck, Award, Calendar, Video, Heart, MapPin } from 'lucide-react';
-import papaImage from '../assets/papa.png';
+import papaImage from './src/assets/papa.png';
 import bookCover from '../assets/master-teach-us-to-pray.jpg';
 
 export default function Home() {
