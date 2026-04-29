@@ -1,7 +1,7 @@
 import { ArrowRight, MessageCircle, Phone, Users, ShieldCheck, ShoppingCart, Truck, Award, Calendar, Video, Heart, MapPin } from 'lucide-react';
 export default function Home() {
-  const papaImage = "/assets/papa.png";
-  const bookCover = "/assets/master-teach-us-to-pray.jpg";
+  const papaImage = "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800"; // High-quality ministerial placeholder
+  const bookCover = "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=800"; // Professional book placeholder
   return (
     <>
       {/* Hero Section */}
