@@ -1,6 +1,6 @@
 import { ArrowRight, MessageCircle, Phone, Users, ShieldCheck, ShoppingCart, Truck, Award, Calendar, Video, Heart, MapPin } from 'lucide-react';
 export default function Home() {
-  const papaImage = "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800"; // High-quality ministerial placeholder
+  const papaImage = "https://images.unsplash.com/photo-1777448690535-d3c89f20f73c?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?auto=format&fit=crop&q=80&w=800"; // High-quality ministerial placeholder
   const bookCover = "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=800"; // Professional book placeholder
   return (
     <>

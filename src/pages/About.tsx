@@ -1,6 +1,6 @@
 import { Eye, Home, Users, Globe, BookOpen, Video, PenTool, Heart, Target, Baby, Building, GraduationCap, School } from 'lucide-react';
 export default function About() {
-  const papaImage = "https://unsplash.com/photos/CFuU1kQazgU?auto=format&fit=crop&q=80&w=800";
+  const papaImage = "https://images.unsplash.com/photo-1777448690535-d3c89f20f73c?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?auto=format&fit=crop&q=80&w=800";
   const achievements = [
     { icon: <Home className="text-royal-gold" />, text: "Rehoboth: Our first church, with land in Kasubi" },
     { icon: <Users className="text-royal-gold" />, text: "Children's ministry: Over 300 children in Sunday school" },
