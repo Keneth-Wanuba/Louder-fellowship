@@ -1,5 +1,5 @@
 import { MapPin, Phone, Mail, Facebook, Twitter, Youtube, Instagram, Send, Share2 } from 'lucide-react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 export default function Contact() {
   const [status, setStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
