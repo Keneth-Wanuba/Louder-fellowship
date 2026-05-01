@@ -35,7 +35,7 @@ export default function Layout() {
         </div>
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden bg-royal-blue border-t border-royal-gold/20 pb-6 px-4">
+          <div className="lg:hidden bg-royal-blue border-t border-royal-gold/20 pb-6 px-4">
             <div className="flex flex-col space-y-4 pt-4">
               <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-royal-gold">Home</Link>
               <Link to="/about" onClick={() => setIsMenuOpen(false)}>Our Story</Link>

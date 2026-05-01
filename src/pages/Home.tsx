@@ -1,7 +1,7 @@
-import { ArrowRight, MessageCircle, Phone, Users, ShieldCheck, ShoppingCart, Truck, Award, Calendar, Video, Heart, MapPin } from 'lucide-react';
+import { ArrowRight, MessageCircle, Phone, Users, ShieldCheck, ShoppingCart, Calendar, Video, Heart, MapPin } from 'lucide-react';
 export default function Home() {
   const papaImage = "https://images.unsplash.com/photo-1777622394988-acd91f9ec99b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwcm9maWxlLXBhZ2V8Mnx8fGVufDB8fHx8fA%3D%3D?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?auto=format&fit=crop&q=80&w=800"; // High-quality ministerial placeholder
-  const bookCover = "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=800"; // Professional book placeholder
+  const bookCover = "/book-discount.jpg"; // Newly uploaded book image
   return (
     <>
       {/* Hero Section */}
@@ -109,7 +109,7 @@ export default function Home() {
             <p className="text-white/60 max-w-2xl mx-auto">All proceeds from our resources go directly to supporting the church development projects and spreading the Gospel further.</p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="max-w-4xl mx-auto">
             {/* Book Item */}
             <div className="group bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-8 md:p-12 transition-all hover:bg-white/10">
               <div className="grid md:grid-cols-2 gap-8 items-center">
@@ -139,47 +139,6 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Shirt Item */}
-            <div className="group bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-8 md:p-12 transition-all hover:bg-white/10">
-              <div className="grid md:grid-cols-2 gap-8 items-center">
-                <div className="relative group-hover:scale-105 transition-transform duration-500">
-                  <div className="aspect-square bg-white/10 rounded-2xl flex items-center justify-center p-8">
-                    <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=600" alt="Friends of Jesus Shirt" className="max-w-full h-auto drop-shadow-2xl rounded-xl" />
-                  </div>
-                  <div className="absolute top-4 right-4 bg-royal-gold text-royal-blue text-[10px] font-black px-2 py-1 rounded shadow-lg">NEW ARRIVAL</div>
-                </div>
-                <div>
-                  <h3 className="text-2xl font-serif font-bold mb-2">"Friends of Jesus" Shirt</h3>
-                  <p className="text-royal-gold font-bold mb-4">Official Ministry Apparel</p>
-                  <p className="text-white/70 text-sm mb-6 leading-relaxed">
-                    Premium quality fabric featuring the "Friends of Jesus" print. Wear your identity with pride and start conversations about Christ.
-                  </p>
-                  <div className="p-4 bg-white/5 rounded-2xl border border-white/10 mb-6">
-                    <p className="text-xs text-white/40 uppercase font-bold tracking-tight">Price</p>
-                    <p className="text-2xl font-bold">UGX 50,000</p>
-                  </div>
-                  <a href="https://wa.me/256701751463?text=I%27m%20interested%20in%20the%20Friends%20of%20Jesus%20shirt" target="_blank" rel="noreferrer" className="w-full bg-royal-gold text-royal-blue py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-white transition-colors">
-                    <MessageCircle className="w-4 h-4" /> Order via WhatsApp
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-16 flex flex-col md:flex-row items-center justify-center gap-8 text-white/40 border-t border-white/5 pt-12">
-            <div className="flex items-center gap-3">
-              <Truck className="w-5 h-5 text-royal-gold" />
-              <span className="text-sm">Delivery available in Kampala</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <ShieldCheck className="w-5 h-5 text-royal-gold" />
-              <span className="text-sm">Proceeds fund church building projects</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Award className="w-5 h-5 text-royal-gold" />
-              <span className="text-sm">Quality Ministry Apparel</span>
             </div>
           </div>
         </div>
