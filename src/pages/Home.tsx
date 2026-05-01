@@ -1,7 +1,7 @@
 import { ArrowRight, MessageCircle, Phone, Users, ShieldCheck, ShoppingCart, Calendar, Video, Heart, MapPin } from 'lucide-react';
 export default function Home() {
-  const papaImage = "https://images.unsplash.com/photo-1777622394988-acd91f9ec99b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwcm9maWxlLXBhZ2V8Mnx8fGVufDB8fHx8fA%3D%3D?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?auto=format&fit=crop&q=80&w=800"; // High-quality ministerial placeholder
-  const bookCover = "images/photo.jpg"; // Newly uploaded book image
+  const papaImage = "https://i.ibb.co/s97GCMX7/Untitled-design.jpg"; // High-quality ministerial placeholder
+  const bookCover = "https://i.ibb.co/C3KXCrft/book-discount.jpg"; // Newly provided book image URL
   return (
     <>
       {/* Hero Section */}
