@@ -89,15 +89,15 @@ export default function Layout() {
               <ul className="space-y-4 text-white/70">
                 <li className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-royal-gold flex-shrink-0" />
-                  <span>Kasubi-Kawaala, Mugema zone, Opposite Matvic Primary school, Kampala, Uganda</span>
+                  <span>25 Hajji Juma Kayondo Rd, Kampala (8HP2+4G)</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Phone className="w-5 h-5 text-royal-gold flex-shrink-0" />
-                  <span>+256 701751463</span>
+                  <a href="tel:+256701751463" className="hover:text-royal-gold transition-colors">+256 701751463</a>
                 </li>
                 <li className="flex items-center gap-3">
                   <Mail className="w-5 h-5 text-royal-gold flex-shrink-0" />
-                  <span>rehobothdgul@gmail.com</span>
+                  <a href="mailto:rehobothdgul@gmail.com" className="hover:text-royal-gold transition-colors">rehobothdgul@gmail.com</a>
                 </li>
               </ul>
             </div>
