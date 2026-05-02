@@ -17,16 +17,17 @@ export default function Layout() {
                 <span className="text-[10px] uppercase tracking-[0.2em] text-white/80">Fellowship</span>
               </Link>
             </div>
-            <div className="hidden md:flex items-center space-x-8">
+            <div className="hidden xl:flex items-center space-x-8">
               <Link to="/" className="hover:text-royal-gold transition-colors font-medium">Home</Link>
               <Link to="/about" className="hover:text-royal-gold transition-colors">Our Story</Link>
               <Link to="/faith" className="hover:text-royal-gold transition-colors">Statement of Faith</Link>
+              <Link to="/projects" className="hover:text-royal-gold transition-colors">Kingdom Outreach</Link>
               <Link to="/programs" className="hover:text-royal-gold transition-colors">Programs</Link>
               <Link to="/sermons" className="hover:text-royal-gold transition-colors">Sermons</Link>
               <Link to="/give" className="hover:text-royal-gold transition-colors">Donate</Link>
               <Link to="/contact" className="bg-royal-gold text-royal-blue px-5 py-2 rounded-full font-bold hover:bg-white transition-all">Contact</Link>
             </div>
-            <div className="md:hidden flex items-center">
+            <div className="xl:hidden flex items-center">
               <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-white">
                 {isMenuOpen ? <X /> : <Menu />}
               </button>
@@ -35,11 +36,12 @@ export default function Layout() {
         </div>
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="lg:hidden bg-royal-blue border-t border-royal-gold/20 pb-6 px-4">
+          <div className="xl:hidden bg-royal-blue border-t border-royal-gold/20 pb-6 px-4">
             <div className="flex flex-col space-y-4 pt-4">
               <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-royal-gold">Home</Link>
               <Link to="/about" onClick={() => setIsMenuOpen(false)}>Our Story</Link>
               <Link to="/faith" onClick={() => setIsMenuOpen(false)}>Statement of Faith</Link>
+              <Link to="/projects" onClick={() => setIsMenuOpen(false)}>Kingdom Outreach</Link>
               <Link to="/programs" onClick={() => setIsMenuOpen(false)}>Programs</Link>
               <Link to="/sermons" onClick={() => setIsMenuOpen(false)}>Sermons</Link>
               <Link to="/give" onClick={() => setIsMenuOpen(false)}>Donate</Link>
@@ -79,6 +81,7 @@ export default function Layout() {
                 <li><Link to="/" className="hover:text-white transition-colors">Home</Link></li>
                 <li><Link to="/about" className="hover:text-white transition-colors">Our Story</Link></li>
                 <li><Link to="/faith" className="hover:text-white transition-colors">Statement of Faith</Link></li>
+                <li><Link to="/projects" className="hover:text-white transition-colors">Outreach Projects</Link></li>
                 <li><Link to="/programs" className="hover:text-white transition-colors">Programs</Link></li>
                 <li><Link to="/sermons" className="hover:text-white transition-colors">Sermons</Link></li>
                 <li><Link to="/give" className="hover:text-white transition-colors">Donate</Link></li>
