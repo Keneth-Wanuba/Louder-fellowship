@@ -1,9 +1,15 @@
 import { MapPin, Phone, Mail, Facebook, Twitter, Youtube, Instagram, Send, Share2, MessageCircle } from 'lucide-react';
 import React from 'react';
+import SEO from '../components/SEO';
 
 export default function Contact() {
   return (
     <>
+      <SEO 
+        title="Contact"
+        description="Connect with Louder Fellowship and Rehoboth Ministries in Kampala. Reach out for prayer, counseling, or inquiries via WhatsApp, phone, or visit us in Kawaala."
+        keywords="contact church Kampala, prayer request Uganda, Louder Fellowship phone number, prophetic counseling, Rehoboth Ministries address"
+      />
       <header className="bg-royal-blue py-20 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <img 

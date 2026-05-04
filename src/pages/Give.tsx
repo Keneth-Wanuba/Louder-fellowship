@@ -1,8 +1,14 @@
 import { Gift, Building, Building2 } from 'lucide-react';
+import SEO from '../components/SEO';
 
 export default function Give() {
   return (
     <>
+      <SEO 
+        title="Give"
+        description="Support Louder Fellowship and Rehoboth Ministries. Your tithes, offerings, and donations fund our missions, church development projects, and soul-winning efforts in Uganda."
+        keywords="donate to church Uganda, tithes and offerings, Christian giving, support missions Kampala, building project donation"
+      />
       <header className="bg-royal-blue py-20 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <img 

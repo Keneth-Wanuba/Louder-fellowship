@@ -1,4 +1,5 @@
 import { BookOpen, Sun, Cross, Heart, Wind, Users, Sparkles, CloudSun, Home, Baby } from 'lucide-react';
+import SEO from '../components/SEO';
 
 export default function Faith() {
   const beliefs = [
@@ -30,7 +31,7 @@ export default function Faith() {
       id: "05",
       icon: <Wind className="w-40 h-40 text-royal-blue" />,
       title: "Holy Spirit",
-      text: "We believe that the Holy Spirit is the Spirit of God and is God. The Holy Spirit is a divine Person possessing all the attributes of personality and deity. The Holy Spirit is coequal with the Father and the Son (Matthew 28:19; Acts 5:3-4; 28:25-26; 1 Corinthians 12:4-6; 2 Corinthians 13:14). We believe the Holy Spirit is continuing the work He started at Pentecost, empowering believers to live godly and to continue in all the works of Jesus Christ. We believe in the baptism with the Holy Spirit, expressed with speaking in tongues according to Acts 1:8; 2:4; 9:17; 10:44-46; 11:15-16; and 19:6. We believe this experience is distinct from and subsequent to the new birth and can be received by faith (Galatians 3:2). We believe that spiritual gifts and manifestations of the Holy Spirit are for the common good and building up of others today (1 Corinthians 12:7). We do not accept the doctrine that the gifts of the Holy Spirit ceased, but we believe they are all still available and active today."
+      text: "We believe that the Holy Spirit is the Spirit of God and is God. The Holy Spirit is a divine Person possessing all the attributes of personality and deity. The Holy Spirit is a divine Person possessing all the attributes of personality and deity. The Holy Spirit is coequal with the Father and the Son (Matthew 28:19; Acts 5:3-4; 28:25-26; 1 Corinthians 12:4-6; 2 Corinthians 13:14). We believe the Holy Spirit is continuing the work He started at Pentecost, empowering believers to live godly and to continue in all the works of Jesus Christ. We believe in the baptism with the Holy Spirit, expressed with speaking in tongues according to Acts 1:8; 2:4; 9:17; 10:44-46; 11:15-16; and 19:6. We believe this experience is distinct from and subsequent to the new birth and can be received by faith (Galatians 3:2). We believe that spiritual gifts and manifestations of the Holy Spirit are for the common good and building up of others today (1 Corinthians 12:7). We do not accept the doctrine that the gifts of the Holy Spirit ceased, but we believe they are all still available and active today."
     },
     {
       id: "06",
@@ -48,7 +49,7 @@ export default function Faith() {
       id: "08",
       icon: <CloudSun className="w-40 h-40 text-royal-blue" />,
       title: "The Second Coming & Resurrection",
-      text: "We believe in a literal, physical second return of the Lord Jesus Christ (1 Thessalonians 1:10; 4:16-17) and that His return did not happen in A.D. 70 but is a future, physical event. (Revelation 1:7; Matthew 24:30; Acts 1:11) We believe His return is imminent, that upon His return, those who have believed in Him will be resurrected to a heavenly dwelling in an incorruptible body. We also believe that those who do not believe will join Satan and his host in everlasting punishment. (Matthew 25:46; 1 Corinthians 15). We believe that hell as described in both Old and New Testaments is a literal, eternal destination for all who have rejected Christ’s redemptive work and refused the gift of salvation. (2 Pet. 2:4-9; Luke 12:5)"
+      text: "We believe in a literal, physical second return of the Lord Jesus Christ (1 Thessalonians 1:10; 4:16-17) and that His return did not happen in A.D. 70 but is a future, physical event. (Revelation 1:7; Matthew 24:30; Acts 1:11) We believe His return is imminent, that upon His return, those who have believed in Him will be resurrected to a heavenly dwelling in an incorruptible body. We also believe that those who do not believe will join Satan and his host in everlasting punishment. (Matthew 25:46; I Corinthians 15). We believe that hell as described in both Old and New Testaments is a literal, eternal destination for all who have rejected Christ’s redemptive work and refused the gift of salvation. (2 Pet. 2:4-9; Luke 12:5)"
     },
     {
       id: "09",
@@ -66,6 +67,11 @@ export default function Faith() {
 
   return (
     <>
+      <SEO 
+        title="What We Believe"
+        description="Read the Statement of Faith for Louder Fellowship. Our core beliefs include Scripture, the Trinity, salvation through Christ, the Holy Spirit, and the sanctity of life."
+        keywords="church beliefs, statement of faith, Louder Fellowship doctrine, Christian theology Uganda, what we believe church"
+      />
       <header className="relative py-24 bg-royal-blue overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-20">
           <img 

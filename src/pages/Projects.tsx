@@ -6,6 +6,7 @@ import {
   ShieldCheck, Wallet, Sparkles, Filter
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 // --- Types ---
 interface Project {
@@ -29,7 +30,7 @@ const projects: Project[] = [
     timeframe: "March 2024",
     description: "A 5-day open-air crusade reaching over 4,000 souls in Namboole grounds with life-changing messages.",
     funded: 85,
-    image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80&w=800"
+    image: "https://i.ibb.co/RGqsk9pn/image.png"
   },
   {
     id: 2,
@@ -39,7 +40,7 @@ const projects: Project[] = [
     timeframe: "Jan–Feb 2024",
     description: "Emergency food relief distributed to 600 families in drought-hit Karamoja regions.",
     funded: 100,
-    image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=800"
+    image: "https://i.ibb.co/kgLC3WdC/image.png"
   },
   {
     id: 3,
@@ -49,7 +50,7 @@ const projects: Project[] = [
     timeframe: "April 2024",
     description: "2-day leadership and discipleship conference for 500 young people from across the country.",
     funded: 60,
-    image: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&q=80&w=800"
+    image: "https://i.ibb.co/FL8wcCk5/image.png"
   },
   {
     id: 4,
@@ -59,7 +60,7 @@ const projects: Project[] = [
     timeframe: "February 2024",
     description: "Free medical checkups, prayer, and HIV testing for 300+ community members in remote areas.",
     funded: 100,
-    image: "https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&q=80&w=800"
+    image: "https://i.ibb.co/8nrVbkrC/image.png"
   },
   {
     id: 5,
@@ -69,7 +70,7 @@ const projects: Project[] = [
     timeframe: "January 2024",
     description: "School supplies and uniforms donated to 200 children from vulnerable families to support their education.",
     funded: 72,
-    image: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=800"
+    image: "https://i.ibb.co/mrqKTXr5/image.png"
   },
   {
     id: 6,
@@ -79,7 +80,7 @@ const projects: Project[] = [
     timeframe: "Ongoing",
     description: "Teams of trained evangelists visiting remote villages weekly with the gospel and support.",
     funded: 45,
-    image: "https://images.unsplash.com/photo-1542037104857-ffbb0b9155fb?auto=format&fit=crop&q=80&w=800"
+    image: "https://i.ibb.co/b5hNzDvx/image.png"
   }
 ];
 
@@ -216,6 +217,11 @@ export default function Projects() {
 
   return (
     <div className="bg-slate-50 min-h-screen">
+      <SEO 
+        title="Kingdom Outreach"
+        description="Explore the impact of Louder Fellowship and Rehoboth Ministries through our outreach projects in Uganda - from crusades and relief to medical camps and youth conferences."
+        keywords="church outreach Uganda, Christian aid Kampala, evangelical missions, humanitarian work Uganda, community development Kampala"
+      />
       {/* 1. HERO SECTION */}
       <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
         <motion.div 
@@ -225,7 +231,7 @@ export default function Projects() {
           <div className="absolute inset-0 bg-gradient-to-b from-royal-blue/95 via-royal-blue/80 to-royal-blue z-10" />
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(212,175,55,0.2),transparent_60%)] z-10"></div>
           <img 
-            src="https://images.unsplash.com/photo-1542037104857-ffbb0b9155fb?auto=format&fit=crop&q=80&w=2000" 
+            src="https://i.ibb.co/S4N0hFVW/image.png" 
             alt="Outreach" 
             className="w-full h-full object-cover animate-subtle-zoom"
           />
@@ -375,11 +381,11 @@ export default function Projects() {
               className="relative"
             >
               <div className="rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] border-4 border-white/10">
-                <img 
-                  src="https://images.unsplash.com/photo-1542037104857-ffbb0b9155fb?auto=format&fit=crop&q=80&w=1200" 
-                  alt="Spotlight" 
-                  className="w-full aspect-[4/5] object-cover"
-                />
+          <img 
+            src="https://i.ibb.co/pj6440YQ/image.png" 
+            alt="Spotlight" 
+            className="w-full aspect-[4/5] object-cover"
+          />
               </div>
               <div className="absolute -bottom-10 -left-10 bg-white p-8 rounded-3xl shadow-2xl max-w-xs border border-slate-100 italic font-serif">
                 <Quote className="w-10 h-10 text-royal-gold mb-4" />

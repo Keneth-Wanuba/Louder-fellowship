@@ -12,9 +12,12 @@ export default function Layout() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-20">
             <div className="flex items-center">
-              <Link to="/" className="flex flex-col">
-                <span className="text-2xl font-serif font-bold tracking-tighter text-royal-gold leading-none">LOUDER</span>
-                <span className="text-[10px] uppercase tracking-[0.2em] text-white/80">Fellowship</span>
+              <Link to="/" className="flex items-center gap-3">
+                // <img src="https://i.ibb.co/Z1mL88kL/image.png" alt="Louder Fellowship Logo" className="h-14 w-auto" />
+                <div className="flex flex-col">
+                  <span className="text-xl font-serif font-bold tracking-tighter text-royal-gold leading-none">LOUDER</span>
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-white/80">Fellowship</span>
+                </div>
               </Link>
             </div>
             <div className="hidden xl:flex items-center space-x-8">
@@ -60,9 +63,12 @@ export default function Layout() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-1 md:col-span-2">
-              <Link to="/" className="flex flex-col mb-6">
-                <span className="text-3xl font-serif font-bold tracking-tighter text-royal-gold leading-none">LOUDER</span>
-                <span className="text-xs uppercase tracking-[0.2em] text-white/80">Fellowship</span>
+              <Link to="/" className="flex items-center gap-3 mb-6">
+                <img src="https://i.ibb.co/Z1mL88kL/image.png" alt="Louder Fellowship Logo" className="h-16 w-auto" />
+                <div className="flex flex-col">
+                  <span className="text-3xl font-serif font-bold tracking-tighter text-royal-gold leading-none">LOUDER</span>
+                  <span className="text-xs uppercase tracking-[0.2em] text-white/80">Fellowship</span>
+                </div>
               </Link>
               <p className="text-white/60 max-w-md mb-8">
                 A Christ and Bible believing church under Louder Fellowship, based in Kampala. Our heart is to mentor believers into mature Christians who light up their environments.

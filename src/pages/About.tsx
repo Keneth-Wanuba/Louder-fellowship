@@ -1,4 +1,6 @@
 import { Eye, Home, Users, Globe, BookOpen, Video, PenTool, Heart, Target, Baby, Building, GraduationCap, School } from 'lucide-react';
+import SEO from '../components/SEO';
+
 export default function About() {
   const papaImage = "https://i.ibb.co/s97GCMX7/Untitled-design.jpg";
   const achievements = [
@@ -18,6 +20,11 @@ export default function About() {
 
   return (
     <>
+      <SEO 
+        title="Our Story"
+        description="Learn about the history of Louder Fellowship and Rehoboth Ministries, from a core 3-person Bible study in Makerere Kivulu to a global prophetic ministry."
+        keywords="church history, Louder Fellowship origin, Rehoboth Discipleship Global Ministries, Ezekiel Kayondo vision, ministry achievements Uganda"
+      />
       <header className="bg-royal-blue py-20 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <img src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80&w=2000" alt="Background" className="w-full h-full object-cover" />
@@ -57,7 +64,7 @@ export default function About() {
               <h2 className="text-3xl font-serif font-bold text-royal-blue m-0">New revelation - God Speaks LOUDER</h2>
             </div>
             <p className="text-slate-700 leading-relaxed mb-8">
-              In 2018, following a series of outdoor all-night prayer meetings at the MTR grounds in Makerere University, alongside cell meetings in Kivulu and room fellowships Mitchel hall, God directed us to start <strong>Louder Fellowship</strong>. God declared, "I speak louder" — that His voice is not merely a whisper, but audible, loud, and clear — and we were called to proclaim and demonstrate exactly that through prophetic teaching.
+              In 2018, following a series of outdoor all-night prayer meetings at the MTR grounds in Makerere University, alongside cell meetings in Kivulu and inhouse fellowships, God directed us to start <strong>Louder Fellowship</strong>. God declared, "I speak louder" — that His voice is not merely a whisper, but audible, loud, and clear — and we were called to proclaim and demonstrate exactly that through prophetic teaching.
             </p>
             <div className="bg-slate-50 p-8 rounded-2xl border-l-4 border-royal-gold mb-12">
               <p className="text-slate-600 m-0">

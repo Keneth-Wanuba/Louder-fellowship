@@ -1,9 +1,16 @@
 import { ArrowRight, MessageCircle, Phone, Users, ShieldCheck, ShoppingCart, Calendar, Video, Heart, MapPin } from 'lucide-react';
+import SEO from '../components/SEO';
+
 export default function Home() {
   const papaImage = "https://i.ibb.co/s97GCMX7/Untitled-design.jpg"; // High-quality ministerial placeholder
   const bookCover = "https://i.ibb.co/C3KXCrft/book-discount.jpg"; // Newly provided book image URL
   return (
     <>
+      <SEO 
+        title="Home"
+        description="Join Louder Fellowship and Rehoboth Ministries in Kampala, Uganda. Led by Prophet Ezekiel Kayondo. Witness the audible voice of God, soul winning, and saint equipping."
+        keywords="prophetic ministry Uganda, Ezekiel Kayondo, Louder Fellowship, Christian fellowship Kampala, winning souls, equipping saints"
+      />
       {/* Hero Section */}
       <header className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -59,7 +66,7 @@ export default function Home() {
               <div className="w-20 h-1 bg-royal-gold mb-8"></div>
               <h2 className="text-4xl font-serif font-bold text-royal-blue mb-6">Why/What we do</h2>
               <p className="text-lg text-slate-600 mb-8 leading-relaxed italic">
-                "Louder fellowship started due to a revelation that God speaks loudly, not only in small still voices."
+                "Louder fellowship started by a revelation that God speaks loudly, not only in a still small voice."
               </p>
               <div className="space-y-6">
                 <div className="flex gap-4">

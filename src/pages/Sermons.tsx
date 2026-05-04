@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Send, ExternalLink, Search, Play, ListVideo, ChevronDown, VideoOff, Youtube, AlertCircle } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const YOUTUBE_API_KEY = 'AIzaSyDn8F66taaeSnVquSNphgt_W6H9Dnv3hCE';
 const CHANNEL_HANDLE = '@louderfellowship1828';
@@ -112,6 +113,11 @@ export default function Sermons() {
 
   return (
     <>
+      <SEO 
+        title="Sermons"
+        description="Watch and listen to the latest prophetic teachings from Prophet Ezekiel Kayondo. Access our YouTube archives and Telegram audio sermons for spiritual growth."
+        keywords="church sermons Kampala, Ezekiel Kayondo teachings, prophetic revelation, Christian audio sermons, YouTube church Uganda"
+      />
       <header className="bg-royal-blue py-20 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <img 

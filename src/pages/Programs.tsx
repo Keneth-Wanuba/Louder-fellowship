@@ -1,3 +1,5 @@
+import SEO from '../components/SEO';
+
 export default function Programs() {
   const schedule = [
     {
@@ -65,6 +67,11 @@ export default function Programs() {
 
   return (
     <>
+      <SEO 
+        title="Weekly Programs"
+        description="View the service times and weekly activities for Louder Fellowship. Join us for physical Sunday services in Kampala or our global Zoom fellowships throughout the week."
+        keywords="church services Kampala, Sunday service times, Zoom fellowship, prophetic prayers online, church weekly schedule"
+      />
       <header className="bg-royal-blue py-20 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <img 
