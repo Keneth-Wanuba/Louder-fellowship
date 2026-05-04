@@ -13,7 +13,6 @@ export default function Layout() {
           <div className="flex justify-between h-20">
             <div className="flex items-center">
               <Link to="/" className="flex items-center gap-3">
-                // <img src="https://i.ibb.co/Z1mL88kL/image.png" alt="Louder Fellowship Logo" className="h-14 w-auto" />
                 <div className="flex flex-col">
                   <span className="text-xl font-serif font-bold tracking-tighter text-royal-gold leading-none">LOUDER</span>
                   <span className="text-[10px] uppercase tracking-[0.2em] text-white/80">Fellowship</span>
