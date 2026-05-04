@@ -223,7 +223,7 @@ export default function Projects() {
         keywords="church outreach Uganda, Christian aid Kampala, evangelical missions, humanitarian work Uganda, community development Kampala"
       />
       {/* 1. HERO SECTION */}
-      <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[90vh] py-32 flex items-center justify-center overflow-hidden">
         <motion.div 
           style={{ opacity: heroOpacity, scale: heroScale }}
           className="absolute inset-0 z-0"
@@ -286,23 +286,27 @@ export default function Projects() {
       </section>
 
       {/* 3. FILTER BAR (Sticky) */}
-      <div id="projects-grid" className="sticky top-20 z-40 py-8 bg-slate-50/90 backdrop-blur-md">
-        <div className="container mx-auto px-6 overflow-x-auto">
-          <div className="flex items-center gap-2 bg-white p-2 rounded-full shadow-lg border border-slate-100 max-w-fit mx-auto">
-            <div className="p-3 text-royal-gold"><Filter className="w-5 h-5" /></div>
-            {['All', 'Evangelism', 'Humanitarian Aid', 'Youth', 'Health', 'Education'].map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setFilter(cat)}
-                className={`px-6 py-3 rounded-full text-sm font-bold transition-all whitespace-nowrap ${
-                  filter === cat 
-                    ? 'bg-royal-gold text-royal-blue shadow-inner' 
-                    : 'text-slate-500 hover:text-royal-blue hover:bg-slate-50'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+      <div id="projects-grid" className="sticky top-20 z-40 py-4 md:py-8 bg-slate-50/90 backdrop-blur-md">
+        <div className="w-full">
+          <div className="overflow-x-auto hide-scrollbar px-4 md:px-6 pb-2">
+            <div className="flex justify-start md:justify-center min-w-full">
+              <div className="flex gap-1 md:gap-2 bg-white p-2 rounded-full shadow-md border border-slate-100 w-max">
+                <div className="p-2 md:p-3 text-royal-gold hidden sm:flex items-center"><Filter className="w-4 h-4 md:w-5 md:h-5" /></div>
+                {['All', 'Evangelism', 'Humanitarian Aid', 'Youth', 'Health', 'Education'].map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setFilter(cat)}
+                    className={`px-4 md:px-6 py-2.5 md:py-3 rounded-full text-xs md:text-sm font-bold transition-all whitespace-nowrap ${
+                      filter === cat 
+                        ? 'bg-royal-gold text-royal-blue shadow-inner' 
+                        : 'text-slate-500 hover:text-royal-blue hover:bg-slate-50'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>

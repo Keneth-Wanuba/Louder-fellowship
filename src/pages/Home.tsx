@@ -1,4 +1,4 @@
-import { ArrowRight, MessageCircle, Phone, Users, ShieldCheck, ShoppingCart, Calendar, Video, Heart, MapPin } from 'lucide-react';
+import { ArrowRight, MessageCircle, Phone, Users, ShieldCheck, ShoppingCart, Calendar, Video, Heart, MapPin, Globe } from 'lucide-react';
 import SEO from '../components/SEO';
 
 export default function Home() {
@@ -24,12 +24,19 @@ export default function Home() {
         </div>
         
         <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-          <div className="mb-8 inline-flex items-center gap-2 px-4 py-2 bg-royal-gold/10 border border-royal-gold/30 rounded-full animate-fade-in">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-royal-gold opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-royal-gold"></span>
-            </span>
-            <span className="text-royal-gold text-[10px] md:text-xs font-bold uppercase tracking-[0.2em]">Join us this Sunday @ 07:00 AM</span>
+          <div className="mb-8 flex flex-col md:flex-row items-center justify-center gap-4 animate-fade-in">
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-royal-gold/10 backdrop-blur-md border border-royal-gold/30 rounded-full">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-royal-gold opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-royal-gold"></span>
+              </span>
+              <span className="text-royal-gold text-xs md:text-sm font-bold uppercase tracking-widest">Sunday Service @ 07:00 AM</span>
+            </div>
+            <div className="hidden md:block w-1.5 h-1.5 rounded-full bg-white/30"></div>
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white/90">
+              <MapPin className="w-4 h-4 text-royal-gold" />
+              <span className="text-xs md:text-sm font-medium tracking-wide">25 Hajji Juma Kayondo Rd, Kampala</span>
+            </div>
           </div>
 
           <h1 className="text-5xl md:text-9xl font-serif font-black text-white mb-8 leading-[1] tracking-tighter uppercase animate-fade-in delay-200">
@@ -42,7 +49,14 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in delay-700">
-            <a href="/about" className="w-full sm:w-auto px-12 py-5 bg-royal-gold text-royal-blue font-bold rounded-full hover:bg-white hover:scale-105 transition-all shadow-2xl flex items-center justify-center gap-2 group">
+            <a href="https://www.youtube.com/@louderfellowship1828/streams" target="_blank" rel="noreferrer" className="w-full sm:w-auto px-8 py-4 bg-red-600 text-white rounded-full hover:bg-red-700 hover:scale-105 transition-all shadow-[0_0_30px_rgba(220,38,38,0.4)] flex items-center justify-center gap-3 group animate-pulse-slow border border-red-500">
+              <Video className="w-6 h-6 group-hover:scale-110 transition-transform" />
+              <div className="flex flex-col items-start font-sans">
+                <span className="text-[10px] uppercase tracking-widest text-white/80 font-bold">Sunday 07:00 AM</span>
+                <span className="text-lg font-bold leading-none mt-0.5">Watch Live Stream</span>
+              </div>
+            </a>
+            <a href="/about" className="w-full sm:w-auto px-8 py-5 bg-royal-gold text-royal-blue font-bold rounded-full hover:bg-white hover:scale-105 transition-all shadow-2xl flex items-center justify-center gap-2 group">
               Our Story
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </a>
@@ -146,6 +160,42 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Kingdom Outreach Summary */}
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-r from-royal-blue/95 via-royal-blue/80 to-transparent z-10" />
+          <img 
+            src="https://i.ibb.co/S4N0hFVW/image.png" 
+            alt="Outreach" 
+            className="w-full h-full object-cover animate-subtle-zoom"
+          />
+        </div>
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-white">
+          <div className="max-w-2xl">
+            <span className="inline-block px-4 py-1 rounded-full bg-royal-gold/20 border border-royal-gold/30 text-royal-gold font-bold text-xs uppercase tracking-widest mb-6 backdrop-blur-sm">
+              Kingdom Outreach
+            </span>
+            <h2 className="text-4xl md:text-5xl font-serif font-black mb-6 leading-tight">
+              Transforming Lives <br />
+              <span className="text-royal-gold italic text-3xl md:text-4xl">Beyond the Four Walls</span>
+            </h2>
+            <p className="text-lg text-white/80 mb-8 font-light leading-relaxed">
+              We believe the church is a movement. Our outreach projects span across Uganda — from rural evangelism and emergency relief to medical camps and youth conferences. Partner with us as we bring hope and practical love to communities in need.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <a href="/projects" className="px-8 py-4 bg-white text-royal-blue font-bold rounded-full hover:bg-royal-gold hover:text-white transition-all shadow-xl text-center flex items-center justify-center gap-2 group">
+                <Globe className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                Explore Our Projects
+              </a>
+              <a href="/give" className="px-8 py-4 bg-royal-blue/50 border border-white/30 text-white font-bold rounded-full hover:bg-white hover:text-royal-blue transition-all shadow-xl text-center flex items-center justify-center gap-2 group backdrop-blur-sm">
+                <Heart className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                Partner With Us
+              </a>
             </div>
           </div>
         </div>
