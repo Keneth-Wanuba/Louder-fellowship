@@ -9,10 +9,10 @@ export default function Home() {
       <SEO 
         title="Home"
         description="Join Louder Fellowship and Rehoboth Ministries in Kampala, Uganda. Led by Prophet Ezekiel Kayondo. Witness the audible voice of God, soul winning, and saint equipping."
-        keywords="prophetic ministry Uganda, Ezekiel Kayondo, Louder Fellowship, Christian fellowship Kampala, winning souls, equipping saints"
+        keywords="Rehoboth, Discipleship, Ezekiel Kayondo, Louder, Fellowship, Christian fellowship Kampala, winning souls, equipping saints"
       />
       {/* Hero Section */}
-      <header className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+      <header className="relative min-h-[90vh] py-24 md:py-32 flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80&w=2000" 
@@ -23,42 +23,42 @@ export default function Home() {
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(212,175,55,0.2),transparent_60%)]"></div>
         </div>
         
-        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-          <div className="mb-8 flex flex-col md:flex-row items-center justify-center gap-4 animate-fade-in">
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-royal-gold/10 backdrop-blur-md border border-royal-gold/30 rounded-full">
-              <span className="relative flex h-2.5 w-2.5">
+        <div className="relative z-10 text-center px-4 max-w-6xl mx-auto w-full">
+          <div className="mb-6 md:mb-8 flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 animate-fade-in">
+            <div className="flex items-center gap-2 px-4 md:px-5 py-1 bg-royal-gold/10 backdrop-blur-md border border-royal-gold/30 rounded-full w-full sm:w-auto justify-center flex-wrap">
+              <span className="relative flex h-2.5 w-2.5 shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-royal-gold opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-royal-gold"></span>
               </span>
-              <span className="text-royal-gold text-xs md:text-sm font-bold uppercase tracking-widest">Sunday Service @ 07:00 AM</span>
+              <span className="text-royal-gold text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-widest text-center">Sunday Service @ 07:00 AM</span>
             </div>
-            <div className="hidden md:block w-1.5 h-1.5 rounded-full bg-white/30"></div>
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white/90">
-              <MapPin className="w-4 h-4 text-royal-gold" />
-              <span className="text-xs md:text-sm font-medium tracking-wide">25 Hajji Juma Kayondo Rd, Kampala</span>
+            <div className="hidden sm:block w-1.5 h-1.5 rounded-full bg-white/30 shrink-0"></div>
+            <div className="flex items-center gap-2 px-4 md:px-5 py-2.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white/90 w-full sm:w-auto justify-center flex-wrap">
+              <MapPin className="w-4 h-4 text-royal-gold shrink-0" />
+              <span className="text-[10px] sm:text-xs md:text-sm font-medium tracking-wide text-center">25 Hajji Juma Kayondo Rd, Kampala</span>
             </div>
           </div>
 
-          <h1 className="text-5xl md:text-9xl font-serif font-black text-white mb-8 leading-[1] tracking-tighter uppercase animate-fade-in delay-200">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-serif font-black text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1] tracking-tighter uppercase animate-fade-in delay-200">
             Winning <span className="text-royal-gold italic">Souls</span>.  <br className="lg:hidden md:block sm:block" />
             Equipping <span className="text-royal-gold italic">Saints</span>.
           </h1>
 
-          <p className="text-lg md:text-2xl text-white/70 mb-12 max-w-3xl mx-auto leading-relaxed font-light tracking-wide animate-fade-in delay-500">
+          <p className="text-base sm:text-lg md:text-2xl text-white/70 mb-8 md:mb-12 max-w-3xl mx-auto leading-relaxed font-light tracking-wide animate-fade-in delay-500 px-2 md:px-0">
             A born again fellowship dedicated to winning souls to the kingdom of God & equipping believers in Christ Jesus.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in delay-700">
-            <a href="https://www.youtube.com/@louderfellowship1828/streams" target="_blank" rel="noreferrer" className="w-full sm:w-auto px-8 py-4 bg-red-600 text-white rounded-full hover:bg-red-700 hover:scale-105 transition-all shadow-[0_0_30px_rgba(220,38,38,0.4)] flex items-center justify-center gap-3 group animate-pulse-slow border border-red-500">
-              <Video className="w-6 h-6 group-hover:scale-110 transition-transform" />
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 sm:gap-6 animate-fade-in delay-700 w-full max-w-md sm:max-w-none mx-auto">
+            <a href="https://www.youtube.com/@louderfellowship1828/streams" target="_blank" rel="noreferrer" className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 bg-red-600 text-white rounded-full hover:bg-red-700 hover:scale-105 transition-all shadow-[0_0_30px_rgba(220,38,38,0.4)] flex items-center justify-center gap-3 group animate-pulse-slow border border-red-500">
+              <Video className="w-5 h-5 md:w-6 md:h-6 group-hover:scale-110 transition-transform shrink-0" />
               <div className="flex flex-col items-start font-sans">
-                <span className="text-[10px] uppercase tracking-widest text-white/80 font-bold">Sunday 07:00 AM</span>
-                <span className="text-lg font-bold leading-none mt-0.5">Watch Live Stream</span>
+                <span className="text-[9px] md:text-[10px] uppercase tracking-widest text-white/80 font-bold">Sunday 07:00 AM</span>
+                <span className="text-base md:text-lg font-bold leading-none mt-0.5 whitespace-nowrap">Watch Live Stream</span>
               </div>
             </a>
-            <a href="/about" className="w-full sm:w-auto px-8 py-5 bg-royal-gold text-royal-blue font-bold rounded-full hover:bg-white hover:scale-105 transition-all shadow-2xl flex items-center justify-center gap-2 group">
+            <a href="/about" className="w-full sm:w-auto px-6 md:px-8 py-3.5 md:py-5 bg-royal-gold text-royal-blue font-bold rounded-full hover:bg-white hover:scale-105 transition-all shadow-2xl flex items-center justify-center gap-2 group whitespace-nowrap">
               Our Story
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-5 h-5 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform shrink-0" />
             </a>
             <div className="flex gap-4 w-full sm:w-auto">
               <a href="https://wa.me/256701751463" target="_blank" rel="noreferrer" className="flex-1 sm:flex-none p-5 bg-white/5 backdrop-blur-md text-white rounded-full hover:bg-white/10 transition-all border border-white/10 flex items-center justify-center group">
