@@ -12,7 +12,7 @@ export default function Home() {
         keywords="Rehoboth, Discipleship, Ezekiel Kayondo, Louder, Fellowship, Christian fellowship Kampala, winning souls, equipping saints"
       />
       {/* Hero Section */}
-      <header className="relative min-h-[90vh] py-24 md:py-32 flex items-center justify-center overflow-hidden">
+      <header className="relative min-h-[90vh] py-5 md:py-6 flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80&w=2000" 
