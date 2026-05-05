@@ -70,7 +70,7 @@ export default function Layout() {
                 </div>
               </Link>
               <p className="text-white/60 max-w-md mb-8">
-                A Christ and Bible believing church under Louder Fellowship, based in Kampala. Our heart is to mentor believers into mature Christians who light up their environments.
+                A Christ and Bible believing Prophetic Fellowship in the heart of Kampala. Our heart is to mentor believers into mature Christians who light up their environments.
               </p>
               <div className="flex space-x-4">
                 <a href="https://www.facebook.com/louderfellowship" target="_blank" rel="noreferrer" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-royal-gold hover:border-royal-gold transition-all"><Facebook className="w-5 h-5" /></a>

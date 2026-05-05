@@ -98,7 +98,9 @@ export default function Home() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-royal-blue mb-2">Equip Saints</h3>
-                    <p className="text-slate-600">equipping believers for the work of ministry, for the edifying of the body of Christ, till we all come to the unity of the faith and of the knowledge of the Son of God, to a perfect man, to the measure of the stature of the fullness of Christ.<br /> <strong> Ephesians 4:10-16 </strong>(for the equipping of the saints for the work of ministry, for the [a]edifying of the body of Christ,)</p>
+                    <p className="text-slate-600">Equipping believers for the work of ministry, for the edifying of the body of Christ, till we all come to the unity of the faith and of the knowledge of the Son of God, to a perfect man, to the measure of the stature of the fullness of Christ.
+                      <br /> <strong> Ephesians 4:12-13 </strong>
+                    </p>
                   </div>
                 </div>
               </div>
