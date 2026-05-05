@@ -148,7 +148,7 @@ export default function Projects() {
         keywords="church outreach Uganda, Christian aid Kampala, evangelical missions, humanitarian work Uganda, community development Kampala"
       />
       {/* 1. HERO SECTION */}
-      <section className="relative min-h-[90vh] pt-5 pb-20 flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[90vh] pt-5 pb-32 flex items-center justify-center overflow-hidden">
         <motion.div 
           style={{ opacity: heroOpacity, scale: heroScale }}
           className="absolute inset-0 z-0"
