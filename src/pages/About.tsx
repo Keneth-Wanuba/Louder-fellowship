@@ -1,12 +1,5 @@
 import { Eye, Home, Users, Globe, BookOpen, Video, PenTool, Heart, Target, Baby, Building, GraduationCap, School } from 'lucide-react';
 import SEO from '../components/SEO';
-import img2018GodSpeaks from '../assets/journey/2018-god-speaks.jpeg';
-import img2018NewLevel from '../assets/journey/2018-new-level.jpeg';
-import img2021Hotel from '../assets/journey/2021-in-hotel.jpeg';
-import img2025Radio from '../assets/journey/2025-radio-ministry.jpeg';
-import imgTv from '../assets/journey/tv.jpeg';
-import img8thAnniv from '../assets/journey/8th-anniversary.jpeg';
-import imgWhatsapp from '../assets/journey/whatsapp-generic.jpeg';
 
 export default function About() {
   const papaImage = "https://i.ibb.co/s97GCMX7/Untitled-design.jpg";
@@ -64,7 +57,7 @@ export default function About() {
             <p className="text-slate-700 leading-relaxed mb-8">
               God then gave our vision bearer, Ezekiel Kayondo, a vision during a time of prayer and fasting. In it, God showed him multitudes of people moving along the road from Kasubi to Makerere University Western gate — a sign that He was sending us to that area, and that many would turn to Him through our service there.
             </p>
-            <img src={imgWhatsapp} alt="The Vision Journey" className="w-full rounded-2xl shadow-lg mb-12 object-cover max-h-96" />
+            <img src="/journey/whatsapp-generic.jpeg" alt="The Vision Journey" className="w-full rounded-2xl shadow-lg mb-12 object-cover max-h-96" />
 
             {/* 2018 */}
             <div className="flex items-center gap-4 mb-12">
@@ -75,8 +68,8 @@ export default function About() {
               In 2018, following a series of outdoor all-night prayer meetings at the MTR grounds in Makerere University, alongside cell meetings in Kivulu and inhouse fellowships, God directed us to start <strong>Louder Fellowship</strong>. God declared, "I speak louder" — that His voice is not merely a whisper, but audible, loud, and clear — and we were called to proclaim and demonstrate exactly that through prophetic teaching.
             </p>
             <div className="grid md:grid-cols-2 gap-6 mb-8">
-              <img src={img2018GodSpeaks} alt="God Speaks LOUDER" className="w-full h-80 rounded-2xl shadow-lg object-cover" />
-              <img src={img2018NewLevel} alt="A New Level in 2018" className="w-full h-80 rounded-2xl shadow-lg object-cover" />
+              <img src="/journey/2018-god-speaks.jpeg" alt="God Speaks LOUDER" className="w-full h-80 rounded-2xl shadow-lg object-cover" />
+              <img src="/journey/2018-new-level.jpeg" alt="A New Level in 2018" className="w-full h-80 rounded-2xl shadow-lg object-cover" />
             </div>
             <div className="bg-slate-50 p-8 rounded-2xl border-l-4 border-royal-gold mb-12">
               <p className="text-slate-600 m-0">
@@ -101,7 +94,7 @@ export default function About() {
             <p className="text-slate-700 leading-relaxed mb-8">
               As physical gatherings slowly resumed, our numbers had multiplied. God graced us to host our powerful services in hotel conference halls. This marked a significant phase of corporate growth and maturity for the ministry.
             </p>
-            <img src={img2021Hotel} alt="2021 Fellowship in Hotel" className="w-full rounded-2xl shadow-lg mb-12 max-h-[500px] object-cover" />
+            <img src="/journey/2021-in-hotel.jpeg" alt="2021 Fellowship in Hotel" className="w-full rounded-2xl shadow-lg mb-12 max-h-[500px] object-cover" />
 
             {/* 2022 */}
             <div className="flex items-center gap-4 mb-12">
@@ -124,8 +117,8 @@ export default function About() {
               Taking the message to the airwaves. By 2025, our media outreach exploded as the prophetic voice of Louder Fellowship extended to national Radio and TV broadcasts, bringing the uncompromised truth of Christ to millions in their homes and workplaces.
             </p>
             <div className="grid md:grid-cols-2 gap-6 mb-12">
-              <img src={img2025Radio} alt="Radio Ministry" className="w-full h-80 rounded-2xl shadow-lg object-cover" />
-              <img src={imgTv} alt="TV Ministry" className="w-full h-80 rounded-2xl shadow-lg object-cover" />
+              <img src="/journey/2025-radio-ministry.jpeg" alt="Radio Ministry" className="w-full h-80 rounded-2xl shadow-lg object-cover" />
+              <img src="/journey/tv.jpeg" alt="TV Ministry" className="w-full h-80 rounded-2xl shadow-lg object-cover" />
             </div>
 
             {/* 8th Anniversary */}
@@ -136,7 +129,7 @@ export default function About() {
             <p className="text-slate-700 leading-relaxed mb-8">
               Celebrating eight years of God's faithfulness! From a humble start of three people on a veranda to a global movement, His grace has been our anchor. This milestone marks not just our past, but the launchpad for a bolder future.
             </p>
-            <img src={img8thAnniv} alt="8th Anniversary" className="w-full rounded-2xl shadow-lg mb-16 max-h-[500px] object-cover object-top" />
+            <img src="/journey/8th-anniversary.jpeg" alt="8th Anniversary" className="w-full rounded-2xl shadow-lg mb-16 max-h-[500px] object-cover object-top" />
 
             {/* Achievements */}
             <div className="bg-royal-blue text-white p-8 rounded-2xl mb-12 shadow-xl">
