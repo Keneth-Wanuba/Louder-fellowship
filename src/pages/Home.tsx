@@ -2,7 +2,7 @@ import { ArrowRight, MessageCircle, Phone, Users, ShieldCheck, ShoppingCart, Cal
 import SEO from '../components/SEO';
 
 export default function Home() {
-  const papaImage = "https://i.ibb.co/s97GCMX7/Untitled-design.jpg"; // High-quality ministerial placeholder
+  const papaImage = "/papa.jpg"; // High-quality ministerial placeholder
   const bookCover = "https://i.ibb.co/C3KXCrft/book-discount.jpg"; // Newly provided book image URL
   return (
     <>
