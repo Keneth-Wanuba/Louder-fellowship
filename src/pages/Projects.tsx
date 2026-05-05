@@ -169,7 +169,7 @@ export default function Projects() {
             <span className="inline-block px-4 py-1 rounded-full bg-royal-gold text-royal-blue font-bold text-xs uppercase tracking-[0.3em] mb-6">
               Our Kingdom Work
             </span>
-            <h1 className="text-6xl md:text-6xl font-serif font-black mb-8 leading-tight uppercase tracking-tighter">
+            <h1 className="text-4xl md:text-8xl font-serif font-black mb-8 leading-tight uppercase tracking-tighter">
               Transforming <span className="text-royal-gold italic">Lives</span>.<br />
               <span className="text-royal-gold italic">Communities</span> at a Time.
             </h1>
