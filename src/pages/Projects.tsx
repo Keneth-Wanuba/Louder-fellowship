@@ -7,82 +7,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
-
-// --- Types ---
-interface Project {
-  id: number;
-  title: string;
-  type: 'Evangelism' | 'Humanitarian Aid' | 'Youth' | 'Health' | 'Education';
-  location: string;
-  timeframe: string;
-  description: string;
-  funded: number;
-  image: string;
-}
-
-// --- Sample Data ---
-const projects: Project[] = [
-  {
-    id: 1,
-    title: "Pearl of Africa Crusade",
-    type: 'Evangelism',
-    location: "Kampala, Uganda",
-    timeframe: "March 2024",
-    description: "A 5-day open-air crusade reaching over 4,000 souls in Namboole grounds with life-changing messages.",
-    funded: 85,
-    image: "https://i.ibb.co/RGqsk9pn/image.png"
-  },
-  {
-    id: 2,
-    title: "Feeding the Forgotten",
-    type: 'Humanitarian Aid',
-    location: "Karamoja, Uganda",
-    timeframe: "Jan–Feb 2024",
-    description: "Emergency food relief distributed to 600 families in drought-hit Karamoja regions.",
-    funded: 100,
-    image: "https://i.ibb.co/kgLC3WdC/image.png"
-  },
-  {
-    id: 3,
-    title: "Youth Arise Conference",
-    type: 'Youth',
-    location: "Jinja, Uganda",
-    timeframe: "April 2024",
-    description: "2-day leadership and discipleship conference for 500 young people from across the country.",
-    funded: 60,
-    image: "https://i.ibb.co/FL8wcCk5/image.png"
-  },
-  {
-    id: 4,
-    title: "Mobile Medical Camp",
-    type: 'Health',
-    location: "Masaka District",
-    timeframe: "February 2024",
-    description: "Free medical checkups, prayer, and HIV testing for 300+ community members in remote areas.",
-    funded: 100,
-    image: "https://i.ibb.co/8nrVbkrC/image.png"
-  },
-  {
-    id: 5,
-    title: "Back to School Mission",
-    type: 'Education',
-    location: "Gulu, Northern Uganda",
-    timeframe: "January 2024",
-    description: "School supplies and uniforms donated to 200 children from vulnerable families to support their education.",
-    funded: 72,
-    image: "https://i.ibb.co/mrqKTXr5/image.png"
-  },
-  {
-    id: 6,
-    title: "Village Evangelism Tour",
-    type: 'Evangelism',
-    location: "Eastern Uganda",
-    timeframe: "Ongoing",
-    description: "Teams of trained evangelists visiting remote villages weekly with the gospel and support.",
-    funded: 45,
-    image: "https://i.ibb.co/b5hNzDvx/image.png"
-  }
-];
+import { Project, projects } from '../data/projects';
 
 // --- Components ---
 
@@ -198,10 +123,10 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
           )}
         </div>
         
-        <button className="w-full flex items-center justify-center gap-2 py-4 bg-royal-blue text-white rounded-xl font-bold hover:bg-royal-gold transition-all group/btn">
+        <Link to={`/projects/${project.id}`} className="w-full flex items-center justify-center gap-2 py-4 bg-royal-blue text-white rounded-xl font-bold hover:bg-royal-gold transition-all group/btn">
           <span>Read More Impact</span>
           <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-        </button>
+        </Link>
       </div>
     </motion.div>
   );
