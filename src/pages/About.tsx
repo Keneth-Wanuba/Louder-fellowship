@@ -1,9 +1,9 @@
 import { Eye, Home, Users, Globe, BookOpen, Video, PenTool, Heart, Target, Baby, Building, GraduationCap, School } from 'lucide-react';
 import SEO from '../components/SEO';
-import img2018GodSpeaks from '../assets/journey/2018-god-speaks.jpeg';
-import img2018NewLevel from '../assets/journey/2018-new-level.jpeg';
-import img2021Hotel from '../assets/journey/2021-in-hotel.jpeg';
-import img2025Radio from '../assets/journey/2025-radio-ministry.jpeg';
+import img2018GodSpeaks from './assets/journey/2018-god-speaks.jpeg';
+import img2018NewLevel from '/assets/journey/2018-new-level.jpeg';
+import img2021Hotel from '2021-in-hotel.jpeg';
+import img2025Radio from '/2025-radio-ministry.jpeg';
 import imgTv from '../assets/journey/tv.jpeg';
 import img8thAnniv from '../assets/journey/8th-anniversary.jpeg';
 
