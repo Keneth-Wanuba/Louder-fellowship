@@ -68,8 +68,8 @@ export default function About() {
               In 2018, following a series of outdoor all-night prayer meetings at the MTR grounds in Makerere University, alongside cell meetings in Kivulu and inhouse fellowships, God directed us to start <strong>Louder Fellowship</strong>. God declared, "I speak louder" — that His voice is not merely a whisper, but audible, loud, and clear — and we were called to proclaim and demonstrate exactly that through prophetic teaching.
             </p>
             <div className="grid md:grid-cols-2 gap-6 mb-8">
-              <img src="/journey/2018-god-speaks.jpeg" alt="God Speaks LOUDER" className="w-full h-80 rounded-2xl shadow-lg object-cover" />
-              <img src="/journey/2018-new-level.jpeg" alt="A New Level in 2018" className="w-full h-80 rounded-2xl shadow-lg object-cover" />
+              <img src="/2018-god-speaks.jpeg" alt="God Speaks LOUDER" className="w-full h-80 rounded-2xl shadow-lg object-cover" />
+              <img src="/2018-new-level.jpeg" alt="A New Level in 2018" className="w-full h-80 rounded-2xl shadow-lg object-cover" />
             </div>
             <div className="bg-slate-50 p-8 rounded-2xl border-l-4 border-royal-gold mb-12">
               <p className="text-slate-600 m-0">
