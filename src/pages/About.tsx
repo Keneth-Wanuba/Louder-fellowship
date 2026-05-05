@@ -57,7 +57,7 @@ export default function About() {
             <p className="text-slate-700 leading-relaxed mb-8">
               God then gave our vision bearer, Ezekiel Kayondo, a vision during a time of prayer and fasting. In it, God showed him multitudes of people moving along the road from Kasubi to Makerere University Western gate — a sign that He was sending us to that area, and that many would turn to Him through our service there.
             </p>
-            <img src="/journey/whatsapp-generic.jpeg" alt="The Vision Journey" className="w-full rounded-2xl shadow-lg mb-12 object-cover max-h-96" />
+            <img src="/1.jpeg" alt="The Vision Journey" className="w-full rounded-2xl shadow-lg mb-12 object-cover max-h-96" />
 
             {/* 2018 */}
             <div className="flex items-center gap-4 mb-12">
