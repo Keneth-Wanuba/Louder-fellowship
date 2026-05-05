@@ -148,7 +148,7 @@ export default function Projects() {
         keywords="church outreach Uganda, Christian aid Kampala, evangelical missions, humanitarian work Uganda, community development Kampala"
       />
       {/* 1. HERO SECTION */}
-      <section className="relative min-h-[90vh] py-32 flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[90vh] py-5 flex items-center justify-center overflow-hidden">
         <motion.div 
           style={{ opacity: heroOpacity, scale: heroScale }}
           className="absolute inset-0 z-0"
@@ -171,7 +171,7 @@ export default function Projects() {
             <span className="inline-block px-4 py-1 rounded-full bg-royal-gold text-royal-blue font-bold text-xs uppercase tracking-[0.3em] mb-6">
               Our Kingdom Work
             </span>
-            <h1 className="text-5xl md:text-8xl font-serif font-black mb-8 leading-tight uppercase tracking-tighter">
+            <h1 className="text-6xl md:text-9xl font-serif font-black mb-8 leading-tight uppercase tracking-tighter">
               Transforming <span className="text-royal-gold italic">Lives</span>.<br />
               <span className="text-royal-gold italic">Communities</span> at a Time.
             </h1>
