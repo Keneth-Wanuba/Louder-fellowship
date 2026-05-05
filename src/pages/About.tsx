@@ -1,11 +1,12 @@
 import { Eye, Home, Users, Globe, BookOpen, Video, PenTool, Heart, Target, Baby, Building, GraduationCap, School } from 'lucide-react';
 import SEO from '../components/SEO';
-import img2018GodSpeaks from './assets/journey/2018-god-speaks.jpeg';
-import img2018NewLevel from '/assets/journey/2018-new-level.jpeg';
-import img2021Hotel from '2021-in-hotel.jpeg';
-import img2025Radio from '/2025-radio-ministry.jpeg';
+import img2018GodSpeaks from '../assets/journey/2018-god-speaks.jpeg';
+import img2018NewLevel from '../assets/journey/2018-new-level.jpeg';
+import img2021Hotel from '../assets/journey/2021-in-hotel.jpeg';
+import img2025Radio from '../assets/journey/2025-radio-ministry.jpeg';
 import imgTv from '../assets/journey/tv.jpeg';
 import img8thAnniv from '../assets/journey/8th-anniversary.jpeg';
+import imgWhatsapp from '../assets/journey/whatsapp-generic.jpeg';
 
 export default function About() {
   const papaImage = "https://i.ibb.co/s97GCMX7/Untitled-design.jpg";
@@ -63,6 +64,7 @@ export default function About() {
             <p className="text-slate-700 leading-relaxed mb-8">
               God then gave our vision bearer, Ezekiel Kayondo, a vision during a time of prayer and fasting. In it, God showed him multitudes of people moving along the road from Kasubi to Makerere University Western gate — a sign that He was sending us to that area, and that many would turn to Him through our service there.
             </p>
+            <img src={imgWhatsapp} alt="The Vision Journey" className="w-full rounded-2xl shadow-lg mb-12 object-cover max-h-96" />
 
             {/* 2018 */}
             <div className="flex items-center gap-4 mb-12">
