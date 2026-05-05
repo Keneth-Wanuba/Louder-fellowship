@@ -54,7 +54,7 @@ export default function About() {
               </div>
               <h2 className="text-3xl font-serif font-bold text-royal-blue m-0">The Ministry Vision</h2>
             </div>
-            <p className="text-slate-700 leading-relaxed mb-12">
+            <p className="text-slate-700 leading-relaxed mb-8">
               God then gave our vision bearer, Ezekiel Kayondo, a vision during a time of prayer and fasting. In it, God showed him multitudes of people moving along the road from Kasubi to Makerere University Western gate — a sign that He was sending us to that area, and that many would turn to Him through our service there.
             </p>
 
@@ -66,6 +66,10 @@ export default function About() {
             <p className="text-slate-700 leading-relaxed mb-8">
               In 2018, following a series of outdoor all-night prayer meetings at the MTR grounds in Makerere University, alongside cell meetings in Kivulu and inhouse fellowships, God directed us to start <strong>Louder Fellowship</strong>. God declared, "I speak louder" — that His voice is not merely a whisper, but audible, loud, and clear — and we were called to proclaim and demonstrate exactly that through prophetic teaching.
             </p>
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              <img src="/journey/2018-god-speaks.jpeg" alt="God Speaks LOUDER" className="w-full h-80 rounded-2xl shadow-lg object-cover" />
+              <img src="/journey/2018-new-level.jpeg" alt="A New Level in 2018" className="w-full h-80 rounded-2xl shadow-lg object-cover" />
+            </div>
             <div className="bg-slate-50 p-8 rounded-2xl border-l-4 border-royal-gold mb-12">
               <p className="text-slate-600 m-0">
                 The fellowship began by faith. It moved from a rented restaurant, to a rented hall, to a rented garage, to a rented house, to an offered office, then through two rented schools consecutively — and now to our own land in Kampala, Kasubi–Kawaala, and beyond to the nations.
@@ -81,6 +85,16 @@ export default function About() {
               When the COVID-19 pandemic struck in 2020 and physical gatherings were no longer possible, our man of God was led by the Holy Spirit to launch online meetings. This expanded our reach beyond Uganda to other nations, and into the army, police, schools, and communities across the country.
             </p>
 
+            {/* 2021 */}
+            <div className="flex items-center gap-4 mb-12">
+              <div className="w-16 h-16 bg-royal-blue rounded-full flex items-center justify-center text-royal-gold text-2xl font-serif font-bold flex-shrink-0">2021</div>
+              <h2 className="text-3xl font-serif font-bold text-royal-blue m-0">Corporate Growth & Hotels</h2>
+            </div>
+            <p className="text-slate-700 leading-relaxed mb-8">
+              As physical gatherings slowly resumed, our numbers had multiplied. God graced us to host our powerful services in hotel conference halls. This marked a significant phase of corporate growth and maturity for the ministry.
+            </p>
+            <img src="/journey/2021-in-hotel.jpeg" alt="2021 Fellowship in Hotel" className="w-full rounded-2xl shadow-lg mb-12 max-h-[500px] object-cover" />
+
             {/* 2022 */}
             <div className="flex items-center gap-4 mb-12">
               <div className="w-16 h-16 bg-royal-blue rounded-full flex items-center justify-center text-royal-gold text-2xl font-serif font-bold flex-shrink-0">2022</div>
@@ -92,6 +106,29 @@ export default function About() {
             <p className="text-slate-700 leading-relaxed mb-12 text-xl font-serif italic text-royal-blue text-center">
               Rehoboth means "God has made room for us to flourish and be fruitful in the land" — and that is precisely what is happening.
             </p>
+
+            {/* 2025 */}
+            <div className="flex items-center gap-4 mb-12">
+              <div className="w-16 h-16 bg-royal-blue rounded-full flex items-center justify-center text-royal-gold text-2xl font-serif font-bold flex-shrink-0">2025</div>
+              <h2 className="text-3xl font-serif font-bold text-royal-blue m-0">Media Ministry: Radio & TV</h2>
+            </div>
+            <p className="text-slate-700 leading-relaxed mb-8">
+              Taking the message to the airwaves. By 2025, our media outreach exploded as the prophetic voice of Louder Fellowship extended to national Radio and TV broadcasts, bringing the uncompromised truth of Christ to millions in their homes and workplaces.
+            </p>
+            <div className="grid md:grid-cols-2 gap-6 mb-12">
+              <img src="/journey/2025-radio-ministry.jpeg" alt="Radio Ministry" className="w-full h-80 rounded-2xl shadow-lg object-cover" />
+              <img src="/journey/tv.jpeg" alt="TV Ministry" className="w-full h-80 rounded-2xl shadow-lg object-cover" />
+            </div>
+
+            {/* 8th Anniversary */}
+            <div className="flex items-center gap-4 mb-12">
+              <div className="w-16 h-16 bg-royal-gold rounded-full flex items-center justify-center text-royal-blue text-2xl font-serif font-bold flex-shrink-0 mt-2">8th</div>
+              <h2 className="text-3xl font-serif font-bold text-royal-blue m-0">Anniversary Milestone</h2>
+            </div>
+            <p className="text-slate-700 leading-relaxed mb-8">
+              Celebrating eight years of God's faithfulness! From a humble start of three people on a veranda to a global movement, His grace has been our anchor. This milestone marks not just our past, but the launchpad for a bolder future.
+            </p>
+            <img src="/journey/8th-anniversary.jpeg" alt="8th Anniversary" className="w-full rounded-2xl shadow-lg mb-16 max-h-[500px] object-cover object-top" />
 
             {/* Achievements */}
             <div className="bg-royal-blue text-white p-8 rounded-2xl mb-12 shadow-xl">
