@@ -171,7 +171,7 @@ export default function Projects() {
             </span>
             <h1 className="text-4xl md:text-8xl font-serif font-black mb-8 leading-tight uppercase tracking-tighter">
               Transforming <span className="text-royal-gold italic">Lives</span>.<br />
-              <span className="text-royal-gold italic">Communities</span> at a Time.
+              <span className="text-royal-gold italic">One Community</span> at a Time.
             </h1>
             <p className="text-xl md:text-2xl font-light text-white/80 max-w-3xl mx-auto mb-12 leading-relaxed">
               Explore our recent outreach projects - from rural evangelism to emergency aid - and witness the power of your partnership.
