@@ -1,7 +1,7 @@
 export interface Project {
   id: number;
   title: string;
-  type: 'Evangelism' | 'Humanitarian Aid' | 'Youth' | 'Health' | 'Education';
+  type: 'Evangelism' | 'Humanitarian Aid' | 'Youth' | 'Health' | 'Education' | 'Ministry Training';
   location: string;
   timeframe: string;
   description: string;
@@ -145,9 +145,9 @@ export const projects: Project[] = [
     description: "Teams of trained evangelists visiting remote villages of Kasangati daily with the gospel and support, delivering induviduals and places.",
     fullDescription: "The Kigobeddwa mission wasn't just about sharing messages; it was about building sustainable faith communities in villages that haven't seen a church in generations. We send out trained teams every day to share the gospel, equip new believers, and establish local cell groups. We successfully reached over 10 villages, with many testimonies of lives transformed, changed the place name from Kitagobwa to Kigobedwa.",
     funded: 100,
-    image: "/journey/Mission Kigobeddwa.jpeg",
+    image: "/journey/Mission Kigobeddwa.jpg",
     gallery: [
-      "/journey/Mission Kigobeddwa.jpeg"
+      "/journey/Mission Kigobeddwa.jpg"
     ],
     impactStats: [
       { label: "Villages Reached", value: "10+" },
@@ -157,6 +157,32 @@ export const projects: Project[] = [
     ],
     stories: [
       { quote: "For the first time in 40 years, our village has hope. Rehoboth didn't just bring words, they brought family.", name: "Elder Masaba" }
+    ]
+  },
+  {
+    id: 7,
+    title: "Minister's Discipleship Retreat",
+    type: 'Ministry Training',
+    location: "Kampala, Uganda",
+    timeframe: "December, Annual, Ongoing",
+    description: "Annual intensive training, equipping, and separation unto God for ministers to deepen their spiritual foundation, theological knowledge, and ministry skills.",
+    fullDescription: "Every December, we organize an intensive Minister's Discipleship Retreat where ordained ministers and ministry leaders are taken into separation unto God for deep spiritual renewal and professional development. The retreat focuses on intensive Bible study, strategic prayer sessions, theological training, and practical ministry equipment. Over 100 ministers have been raised and strengthened through this annual program, returning better equipped and spiritually rejuvenated to serve their communities and congregations with renewed passion and clarity.",
+    funded: 50,
+    image: "/journey/8th-anniversary.jpeg",
+    gallery: [
+      "/journey/8th-anniversary.jpeg",
+      "/journey/2021-in-hotel.jpeg",
+      "/journey/Papa and choir.jpeg"
+    ],
+    impactStats: [
+      { label: "Ministers Trained", value: "100+" },
+      { label: "Annual Retreats", value: "Ongoing" },
+      { label: "Training Hours", value: "40+" },
+      { label: "Spiritual Impact", value: "Life-changing" }
+    ],
+    stories: [
+      { quote: "The retreat reconnected me with my first love for ministry. The intensive prayer and Bible study sessions transformed my approach to shepherding. I returned home with renewed vision and spiritual fire.", name: "Meico." },
+      { quote: "This yearly investment in our ministers is what keeps our church leadership strong and spiritually grounded. Every leader should experience this", name: "Trevor." }
     ]
   }
 ];
