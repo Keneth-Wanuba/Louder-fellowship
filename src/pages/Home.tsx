@@ -1,4 +1,4 @@
-import { ArrowRight, MessageCircle, Phone, Users, ShieldCheck, ShoppingCart, Calendar, Video, Heart, MapPin, Globe, Zap } from 'lucide-react';
+import { ArrowRight, MessageCircle, Phone, Users, ShieldCheck, ShoppingCart, Calendar, Video, Heart, MapPin, Globe, Zap, Church, BookOpen, Award, Star } from 'lucide-react';
 import SEO from '../components/SEO';
 
 export default function Home() {
@@ -192,7 +192,7 @@ export default function Home() {
               <div className="space-y-4 mb-8">
                 <div className="flex gap-4 p-4 bg-royal-blue/5 rounded-lg border border-royal-blue/10">
                   <div className="flex-shrink-0 w-8 h-8 rounded-full bg-royal-gold/20 flex items-center justify-center text-royal-gold">
-                    <span className="text-sm font-bold">⛪</span>
+                    <Church className="w-5 h-5" />
                   </div>
                   <div>
                     <h4 className="font-bold text-royal-blue text-sm">Children's Church</h4>
@@ -201,7 +201,7 @@ export default function Home() {
                 </div>
                 <div className="flex gap-4 p-4 bg-royal-blue/5 rounded-lg border border-royal-blue/10">
                   <div className="flex-shrink-0 w-8 h-8 rounded-full bg-royal-gold/20 flex items-center justify-center text-royal-gold">
-                    <span className="text-sm font-bold">🏫</span>
+                    <BookOpen className="w-5 h-5" />
                   </div>
                   <div>
                     <h4 className="font-bold text-royal-blue text-sm">School Ministry</h4>
@@ -210,7 +210,7 @@ export default function Home() {
                 </div>
                 <div className="flex gap-4 p-4 bg-royal-blue/5 rounded-lg border border-royal-blue/10">
                   <div className="flex-shrink-0 w-8 h-8 rounded-full bg-royal-gold/20 flex items-center justify-center text-royal-gold">
-                    <span className="text-sm font-bold">🎓</span>
+                    <Award className="w-5 h-5" />
                   </div>
                   <div>
                     <h4 className="font-bold text-royal-blue text-sm">Candidate Dedication & Back-to-School Drives</h4>
@@ -219,7 +219,7 @@ export default function Home() {
                 </div>
                 <div className="flex gap-4 p-4 bg-royal-gold/10 rounded-lg border border-royal-gold/20">
                   <div className="flex-shrink-0 w-8 h-8 rounded-full bg-royal-gold/30 flex items-center justify-center text-royal-gold font-bold">
-                    <span className="text-sm">★</span>
+                    <Star className="w-5 h-5" />
                   </div>
                   <div>
                     <h4 className="font-bold text-royal-blue text-sm">The Children's Mega Cell</h4>
