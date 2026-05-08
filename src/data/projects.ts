@@ -97,9 +97,9 @@ export const projects: Project[] = [
     description: "Free medical checkups, diagnosis, medication, counseling, prayer, and HIV testing for 300+ community members in all surrounding remote areas.",
     fullDescription: "Combining medical care with the healing power of Jesus, our healing Medical Camp set up in the underprivileged areas of Kasubi. Volunteer doctors and nurses provided free checkups, medication, and HIV testing. Simultaneously, our prayer teams ministered to the sick, seeing remarkable testimonies of physical healing.",
     funded: 20,
-    image: "https://i.ibb.co/8nrVbkrC/image.png",
+    image: "/journey/MedicalCamp.JPG",
     gallery: [
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=1000"
+      "/journey/MedicalCamp.JPG"
     ],
     impactStats: [
       { label: "Patients Treated", value: "300+" },
@@ -145,9 +145,9 @@ export const projects: Project[] = [
     description: "Teams of trained evangelists visiting remote villages of Kasangati daily with the gospel and support, delivering induviduals and places.",
     fullDescription: "The Kigobeddwa mission wasn't just about sharing messages; it was about building sustainable faith communities in villages that haven't seen a church in generations. We send out trained teams every day to share the gospel, equip new believers, and establish local cell groups. We successfully reached over 10 villages, with many testimonies of lives transformed, changed the place name from Kitagobwa to Kigobedwa.",
     funded: 100,
-    image: "/journey/Mission Kigobeddwa 1.jpeg",
+    image: "/journey/Mission Kigobeddwa.jpeg",
     gallery: [
-      "/journey/Mission Kigobeddwa 1.jpeg"
+      "/journey/Mission Kigobeddwa.jpeg"
     ],
     impactStats: [
       { label: "Villages Reached", value: "10+" },

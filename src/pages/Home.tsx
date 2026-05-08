@@ -1,4 +1,4 @@
-import { ArrowRight, MessageCircle, Phone, Users, ShieldCheck, ShoppingCart, Calendar, Video, Heart, MapPin, Globe } from 'lucide-react';
+import { ArrowRight, MessageCircle, Phone, Users, ShieldCheck, ShoppingCart, Calendar, Video, Heart, MapPin, Globe, Zap } from 'lucide-react';
 import SEO from '../components/SEO';
 
 export default function Home() {
@@ -184,22 +184,78 @@ export default function Home() {
             <div>
               <div className="w-20 h-1 bg-royal-gold mb-8"></div>
               <h2 className="text-4xl font-serif font-bold text-royal-blue mb-4">Children's Ministry</h2>
-              <p className="text-lg text-royal-gold font-bold mb-4">The Children's Mega Cell</p>
+              <p className="text-lg text-royal-gold font-bold mb-4">Investing in the Next Generation</p>
               <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                The Children's Mega Cell is a ministry to real needs of the children, in real time, in a real community, from real places. Our goal is to ignite a passion for Christ in the next generation. We hold Bible studies, prayer meetings, movie shows, meals, sports and games, music sessions, and interactive sessions to help children grow spiritually and develop strong Christian values.
+                Our children's ministry is dedicated to fostering spiritual growth, character development, and a strong relationship with Christ in a safe, fun, and engaging environment. We believe every child deserves to experience God's love and purpose for their life.
               </p>
-              <div className="flex flex-wrap gap-4 mb-8">
-                <div className="flex items-center gap-2">
-                  <span className="inline-block w-8 h-8 rounded-full bg-royal-gold/20 flex items-center justify-center text-royal-gold font-bold text-sm">✓</span>
-                  <span className="text-slate-600 font-medium">500+ Children Served</span>
+              
+              <div className="space-y-4 mb-8">
+                <div className="flex gap-4 p-4 bg-royal-blue/5 rounded-lg border border-royal-blue/10">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-royal-gold/20 flex items-center justify-center text-royal-gold">
+                    <span className="text-sm font-bold">⛪</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-royal-blue text-sm">Children's Church</h4>
+                    <p className="text-slate-600 text-sm">Every Sunday at 9:00 AM</p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="inline-block w-8 h-8 rounded-full bg-royal-gold/20 flex items-center justify-center text-royal-gold font-bold text-sm">✓</span>
-                  <span className="text-slate-600 font-medium">Weekly Programs</span>
+                <div className="flex gap-4 p-4 bg-royal-blue/5 rounded-lg border border-royal-blue/10">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-royal-gold/20 flex items-center justify-center text-royal-gold">
+                    <span className="text-sm font-bold">🏫</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-royal-blue text-sm">School Ministry</h4>
+                    <p className="text-slate-600 text-sm">For interested schools in our community</p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="inline-block w-8 h-8 rounded-full bg-royal-gold/20 flex items-center justify-center text-royal-gold font-bold text-sm">✓</span>
-                  <span className="text-slate-600 font-medium">24 Schools Represented</span>
+                <div className="flex gap-4 p-4 bg-royal-blue/5 rounded-lg border border-royal-blue/10">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-royal-gold/20 flex items-center justify-center text-royal-gold">
+                    <span className="text-sm font-bold">🎓</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-royal-blue text-sm">Candidate Dedication & Back-to-School Drives</h4>
+                    <p className="text-slate-600 text-sm">Annual support programs for students</p>
+                  </div>
+                </div>
+                <div className="flex gap-4 p-4 bg-royal-gold/10 rounded-lg border border-royal-gold/20">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-royal-gold/30 flex items-center justify-center text-royal-gold font-bold">
+                    <span className="text-sm">★</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-royal-blue text-sm">The Children's Mega Cell</h4>
+                    <p className="text-slate-600 text-sm mb-1">1:00 PM Every Saturday</p>
+                    <p className="text-slate-500 text-xs"><strong>Holidays:</strong> Every Saturday | <strong>School Time:</strong> Last Saturday of the month</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-6 mb-8">
+                <div className="flex items-center gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-royal-gold/20 flex items-center justify-center text-royal-gold">
+                    <Users className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500 uppercase font-bold tracking-tight">Attendees</p>
+                    <p className="text-slate-600 font-semibold">500+ Children</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-royal-gold/20 flex items-center justify-center text-royal-gold">
+                    <Calendar className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500 uppercase font-bold tracking-tight">Schedule</p>
+                    <p className="text-slate-600 font-semibold">Weekly Programs</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-royal-gold/20 flex items-center justify-center text-royal-gold">
+                    <Globe className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500 uppercase font-bold tracking-tight">Reach</p>
+                    <p className="text-slate-600 font-semibold">24 Schools</p>
+                  </div>
                 </div>
               </div>
               <a href="/projects" onClick={(e) => {
