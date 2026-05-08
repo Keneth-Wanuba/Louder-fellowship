@@ -190,8 +190,8 @@ export default function Home() {
               </p>
               
               <div className="space-y-4 mb-8">
-                <div className="flex gap-4 p-4 bg-royal-blue/5 rounded-lg border border-royal-blue/10">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-royal-gold/20 flex items-center justify-center text-royal-gold">
+                <div className="flex gap-4 p-4 bg-white rounded-lg border-l-4 border-royal-blue border-t border-r border-b border-royal-blue/10 hover:shadow-md transition-all group">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-royal-blue/15 flex items-center justify-center text-royal-blue group-hover:scale-110 transition-transform">
                     <Church className="w-5 h-5" />
                   </div>
                   <div>
@@ -199,8 +199,8 @@ export default function Home() {
                     <p className="text-slate-600 text-sm">Every Sunday at 9:00 AM</p>
                   </div>
                 </div>
-                <div className="flex gap-4 p-4 bg-royal-blue/5 rounded-lg border border-royal-blue/10">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-royal-gold/20 flex items-center justify-center text-royal-gold">
+                <div className="flex gap-4 p-4 bg-white rounded-lg border-l-4 border-slate-400 border-t border-r border-b border-slate-200 hover:shadow-md transition-all group">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 group-hover:scale-110 transition-transform">
                     <BookOpen className="w-5 h-5" />
                   </div>
                   <div>
@@ -208,8 +208,8 @@ export default function Home() {
                     <p className="text-slate-600 text-sm">For interested schools in our community</p>
                   </div>
                 </div>
-                <div className="flex gap-4 p-4 bg-royal-blue/5 rounded-lg border border-royal-blue/10">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-royal-gold/20 flex items-center justify-center text-royal-gold">
+                <div className="flex gap-4 p-4 bg-white rounded-lg border-l-4 border-royal-gold border-t border-r border-b border-royal-gold/20 hover:shadow-md transition-all group">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-royal-gold/15 flex items-center justify-center text-royal-gold group-hover:scale-110 transition-transform">
                     <Award className="w-5 h-5" />
                   </div>
                   <div>
@@ -217,8 +217,8 @@ export default function Home() {
                     <p className="text-slate-600 text-sm">Annual support programs for students</p>
                   </div>
                 </div>
-                <div className="flex gap-4 p-4 bg-royal-gold/10 rounded-lg border border-royal-gold/20">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-royal-gold/30 flex items-center justify-center text-royal-gold font-bold">
+                <div className="flex gap-4 p-4 bg-gradient-to-r from-royal-gold/5 to-royal-blue/5 rounded-lg border-l-4 border-royal-gold border-t border-r border-b border-royal-gold/30 hover:shadow-md transition-all group">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-r from-royal-gold/25 to-royal-blue/25 flex items-center justify-center text-royal-gold group-hover:scale-110 transition-transform">
                     <Star className="w-5 h-5" />
                   </div>
                   <div>
