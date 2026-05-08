@@ -144,9 +144,9 @@ export const projects: Project[] = [
     description: "Teams of trained evangelists visiting remote villages of Kasangati daily with the gospel and support, delivering induviduals and places.",
     fullDescription: "The Kitagobwa mission wasn't just about sharing messages; it was about building sustainable faith communities in villages that haven't seen a church in generations. We send out trained teams every day to share the gospel, equip new believers, and establish local cell groups. We successfully reached over 10 villages, with many testimonies of lives transformed, changed the place name from Kitagobwa to Kigobedwa.",
     funded: 100,
-    image: "/journey/mission kigobedwa 1.jpeg",
+    image: "/journey/mission kigobeddwa 1.jpeg",
     gallery: [
-      "/journey/mission kigobedwa 1.jpeg"
+      "/journey/mission kigobeddwa 1.jpeg"
     ],
     impactStats: [
       { label: "Villages Reached", value: "10+" },
