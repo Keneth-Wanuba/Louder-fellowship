@@ -302,7 +302,7 @@ export default function Projects() {
             >
               <div className="rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] border-4 border-white/10">
                 <img
-                  src="https://i.ibb.co/pj6440YQ/image.png"
+                  src="/journey/Childrens cell 5.jpeg"
                   alt="Spotlight"
                   className="w-full aspect-[4/5] object-cover"
                 />
