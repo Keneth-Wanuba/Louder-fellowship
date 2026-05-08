@@ -264,10 +264,10 @@ export default function Projects() {
                 <Star className="w-4 h-4" /> Featured Impact
               </div>
               <h2 className="text-4xl md:text-6xl font-serif font-bold text-white leading-tight">
-                Reaching the Unreached in <span className="text-royal-gold">Eastern Uganda</span>
+                Reaching the little ones in <span className="text-royal-gold">Children's ministry</span>
               </h2>
               <p className="text-xl text-white/70 font-light leading-relaxed">
-                The Eastern Uganda Evangelism tour isn't just about sharing messages; it's about building sustainable faith communities in villages that haven't seen a church in generations.
+                Children's ministry in school ministry, children's mega cell and children's church isn't just about sharing meals and games; it's about building a sustainable, Spirit filled, radical faith generation out of our still blank little ones before they grow up. We are planting a seed for the future of the church, nurturing a generation that will carry the torch of faith with passion and purpose. Through engaging activities, heartfelt discipleship, and a loving community, we're seeing lives transformed and destinies shaped in the most beautiful way.
               </p>
 
               <div className="space-y-6">
@@ -277,12 +277,12 @@ export default function Projects() {
                 </div>
                 <div className="grid grid-cols-2 gap-8">
                   <div className="bg-white/5 p-6 rounded-3xl border border-white/10">
-                    <p className="text-3xl font-bold text-white mb-2">50+</p>
-                    <p className="text-white/50 text-sm uppercase tracking-widest">Villages Active</p>
+                    <p className="text-3xl font-bold text-white mb-2">500+</p>
+                    <p className="text-white/50 text-sm uppercase tracking-widest">Schools reached</p>
                   </div>
                   <div className="bg-white/5 p-6 rounded-3xl border border-white/10">
-                    <p className="text-3xl font-bold text-white mb-2">1,200</p>
-                    <p className="text-white/50 text-sm uppercase tracking-widest">Baptisms in 2024</p>
+                    <p className="text-3xl font-bold text-white mb-2">1000+</p>
+                    <p className="text-white/50 text-sm uppercase tracking-widest">Baptisms every year</p>
                   </div>
                 </div>
               </div>
@@ -310,9 +310,9 @@ export default function Projects() {
               <div className="absolute -bottom-10 -left-10 bg-white p-8 rounded-3xl shadow-2xl max-w-xs border border-slate-100 italic font-serif">
                 <Quote className="w-10 h-10 text-royal-gold mb-4" />
                 <p className="text-slate-700 leading-relaxed">
-                  "For the first time in 40 years, our village has hope. Louder Fellowship didn't just bring words, they brought family."
+                  "The children's ministry has transformed our community. We see the impact of faith being passed down through generations."
                 </p>
-                <p className="mt-4 font-bold text-royal-blue not-italic">- Elder Masaba, Mbale District</p>
+                <p className="mt-4 font-bold text-royal-blue not-italic">- Tr. Ishmael, Headteacher, Matvic P/S</p>
               </div>
             </motion.div>
           </div>
@@ -329,22 +329,28 @@ export default function Projects() {
           <div className="grid md:grid-cols-3 gap-12">
             {[
               {
-                name: 'Sarah A.',
-                place: 'Karamoja',
-                quote: 'When the drought hit, we thought we were finished. The food arrived just in time.',
-                img: 'https://images.unsplash.com/photo-1531123897727-8f129e16fd3c?auto=format&fit=crop&q=80&w=400'
+                name: 'Maama King.',
+                place: 'Kasubi',
+                quote: 'The Lord instructed me to start praying from Rehoboth. I have not regretted it. I have seen the hand of God in my life and family since then.',
+                img: '/journey/Maama King.jpeg'
               },
               {
-                name: 'John Baptist',
-                place: 'Jinja',
-                quote: 'The conference showed me that as a young man, I have a place in the Kingdom.',
-                img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400'
+                name: 'Florence A.',
+                place: 'Gayaza',
+                quote: 'The church stood with me in my most trying time when I lost my twins and almost died.',
+                img: '/journey/Florence.jpg'
               },
               {
-                name: 'Mama Florence',
-                place: 'Masaka',
+                name: 'Gloria K.',
+                place: 'Bombo',
+                quote: 'I have been raised spiritually, my ministry in the army is prospering, my family is doing well, I have no more worries about my health and finances. I am a living testimony of the power of prayer and partnership with Rehoboth.',
+                img: '/journey/Gloria.PNG'
+              },
+              {
+                name: 'Mama Mukisa',
+                place: 'Kawaala',
                 quote: 'The doctors prayed with me before the checkup. I felt healed in my spirit first.',
-                img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400'
+                img: ''
               }
             ].map((story, i) => (
               <motion.div
