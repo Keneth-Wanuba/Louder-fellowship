@@ -167,6 +167,53 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Children's Ministry Section */}
+      <section className="py-24 bg-white overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-royal-gold/5 rounded-full blur-3xl -mr-48 -mt-48"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div className="relative group">
+              <div className="absolute -inset-2 bg-gradient-to-r from-royal-gold/20 to-royal-blue/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <img 
+                src="/journey/Childrens cell 5.jpeg" 
+                alt="Children's Mega Cell Ministry" 
+                className="relative w-full h-[500px] object-cover rounded-3xl shadow-2xl group-hover:scale-[1.02] transition-transform duration-500 border-4 border-white shadow-xl" 
+              />
+            </div>
+            <div>
+              <div className="w-20 h-1 bg-royal-gold mb-8"></div>
+              <h2 className="text-4xl font-serif font-bold text-royal-blue mb-4">Children's Ministry</h2>
+              <p className="text-lg text-royal-gold font-bold mb-4">The Children's Mega Cell</p>
+              <p className="text-lg text-slate-600 mb-6 leading-relaxed">
+                The Children's Mega Cell is a ministry to real needs of the children, in real time, in a real community, from real places. Our goal is to ignite a passion for Christ in the next generation. We hold Bible studies, prayer meetings, movie shows, meals, sports and games, music sessions, and interactive sessions to help children grow spiritually and develop strong Christian values.
+              </p>
+              <div className="flex flex-wrap gap-4 mb-8">
+                <div className="flex items-center gap-2">
+                  <span className="inline-block w-8 h-8 rounded-full bg-royal-gold/20 flex items-center justify-center text-royal-gold font-bold text-sm">✓</span>
+                  <span className="text-slate-600 font-medium">500+ Children Served</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="inline-block w-8 h-8 rounded-full bg-royal-gold/20 flex items-center justify-center text-royal-gold font-bold text-sm">✓</span>
+                  <span className="text-slate-600 font-medium">Weekly Programs</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="inline-block w-8 h-8 rounded-full bg-royal-gold/20 flex items-center justify-center text-royal-gold font-bold text-sm">✓</span>
+                  <span className="text-slate-600 font-medium">24 Schools Represented</span>
+                </div>
+              </div>
+              <a href="/projects" onClick={(e) => {
+                e.preventDefault();
+                window.location.href = '/projects#project-3';
+              }} className="inline-flex items-center gap-2 px-8 py-4 bg-royal-blue text-white font-bold rounded-full hover:bg-royal-gold hover:text-royal-blue transition-all shadow-lg group">
+                Read More
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Kingdom Outreach Summary */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
