@@ -69,7 +69,7 @@ export const projects: Project[] = [
     description: "Weekly discipleship program for 500+ children and teenagers, with workshops on Spiritual Growth, purity, salvation and deliverance.",
     fullDescription: "The Children's Mega Cell is ministry to real needs of the children, in real time, in a real community, from real places.. The goal is to ignite a passion for Christ in the next generation. We hold bible studies, prayer meetings, movie shows, meals, sports and games, music sessions, interactive sessions among others.",
     funded: 60,
-    image: "/journey/Childrens cell 5.jpeg",
+    image: "/journey/Childrens cell 2.jpeg",
     gallery: [
       "/journey/Childrens cell 1.jpeg",
       "/journey/Childrens cell 2.jpeg",
@@ -119,11 +119,11 @@ export const projects: Project[] = [
     description: "Candidates dedication, scholastic materials, sanitary pads, spiritual materials donated to over 200 children from vulnerable families to support their education.",
     fullDescription: "Education is a powerful tool for breaking the cycle of poverty. The students dedication and back to school drivetargets over 2000 vulnerable children in Kampala Uganda, providing them with essential school supplies, backpacks, and uniforms for the new academic year.",
     funded: 10,
-    image: "/journey/School outreach 2.jpeg",
+    image: "/journey/SchoolDrive2.jpeg",
     gallery: [
       "https://i.ibb.co/mrqKTXr5/image.png",
-      "/journey/School outreach 2.jpeg",
-      "/journey/School outreach 1.jpeg"
+      "/journey/SchoolDrive2.jpeg",
+      "/journey/SchoolDrive1.jpeg"
       
     ],
     impactStats: [
@@ -138,16 +138,16 @@ export const projects: Project[] = [
   },
   {
     id: 6,
-    title: "Mission Kitagobwa",
+    title: "Mission Kigobeddwa",
     type: 'Evangelism',
     location: "Wakiso, Uganda",
     timeframe: "May, 2025",
     description: "Teams of trained evangelists visiting remote villages of Kasangati daily with the gospel and support, delivering induviduals and places.",
-    fullDescription: "The Kitagobwa mission wasn't just about sharing messages; it was about building sustainable faith communities in villages that haven't seen a church in generations. We send out trained teams every day to share the gospel, equip new believers, and establish local cell groups. We successfully reached over 10 villages, with many testimonies of lives transformed, changed the place name from Kitagobwa to Kigobedwa.",
+    fullDescription: "The Kigobeddwa mission wasn't just about sharing messages; it was about building sustainable faith communities in villages that haven't seen a church in generations. We send out trained teams every day to share the gospel, equip new believers, and establish local cell groups. We successfully reached over 10 villages, with many testimonies of lives transformed, changed the place name from Kitagobwa to Kigobedwa.",
     funded: 100,
-    image: "/journey/Mission kigobeddwa 1.jpeg",
+    image: "/journey/Mission Kigobeddwa 1.jpeg",
     gallery: [
-      "/journey/Mission kigobeddwa 1.jpeg"
+      "/journey/Mission Kigobeddwa 1.jpeg"
     ],
     impactStats: [
       { label: "Villages Reached", value: "10+" },
