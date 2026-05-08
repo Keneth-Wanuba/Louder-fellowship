@@ -23,11 +23,10 @@ export const projects: Project[] = [
     description: "A 5-day open-air crusade reaching over 4,000 souls Butebe grounds, and daily door-to-doorgospel evangelism with life-changing messages.",
     fullDescription: "The mission Mukono Crusade was a monumental 5-day evangelistic event held at the famous Butebe grounds. We saw unprecedented crowds hungry for the word of God. The focus was on soul winning, healing, and equipping the local saints for the work of the ministry. Through powerful preaching and prophetic ministry, thousands committed their lives to Christ.",
     funded: 100,
-    image: "https://i.ibb.co/RGqsk9pn/image.png",
+    image: "/journey/Mission Mukono 1.jpeg",
     gallery: [
-      "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1542037104857-ffbb0b9155fb?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&q=80&w=1000"
+      "/journey/Mission Mukono 1.jpeg",
+      "/journey/Mission Mukono 2.jpeg"
     ],
     impactStats: [
       { label: "Souls Saved", value: "4,000+" },
@@ -69,9 +68,15 @@ export const projects: Project[] = [
     description: "2-day leadership and discipleship conference for 500 young people from across the country.",
     fullDescription: "Youth Arise Conference brought together 500 teenagers and young adults for an intense 2-day discipleship program. The goal was to ignite a passion for Christ in the next generation. We had workshops on leadership, purity, and career development, all rooted in strong biblical principles.",
     funded: 60,
-    image: "https://i.ibb.co/FL8wcCk5/image.png",
+    image: "/journey/Childrens cell 1.jpeg",
     gallery: [
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=1000"
+      "/journey/Childrens cell 1.jpeg",
+      "/journey/Childrens cell 2.jpeg",
+      "/journey/Childrens cell 3.jpeg",
+      "/journey/Childrens cell 4.jpeg",
+      "/journey/Childrens cell 5.jpeg",
+      "/journey/Childrens cell tr Derrick.jpeg",
+      "/journey/Childrens cell TV.jpeg"
     ],
     impactStats: [
       { label: "Attendees", value: "500" },
