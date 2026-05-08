@@ -46,9 +46,10 @@ export const projects: Project[] = [
     description: "Emergency chrismas food relief distributed to 300 families in drought-hit Karamoja regions.",
     fullDescription: "In response to severe hunger in the area of Kasubi-Kawaala region, Louder Fellowship launched the 'Feed Kasubi' initiative, an annual food relief program. Our teams delivered emergency food supplies, clean water, and medical essentials to over 300 families  in 2025. We believe that meeting physical needs opens the door for spiritual transformation.",
     funded: 10,
-    image: "https://i.ibb.co/kgLC3WdC/image.png",
+    image: "/journey/Feed Kasubi.jpeg",
     gallery: [
-      "https://images.unsplash.com/photo-1531123897727-8f129e16fd3c?auto=format&fit=crop&q=80&w=1000"
+      "https://images.unsplash.com/photo-1531123897727-8f129e16fd3c?auto=format&fit=crop&q=80&w=1000",
+      "/journey/Feed Kasubi.jpeg"
     ],
     impactStats: [
       { label: "Families Fed", value: "300" },
@@ -56,7 +57,7 @@ export const projects: Project[] = [
       { label: "Tons of Food", value: "15" }
     ],
     stories: [
-      { quote: "When the hunger hit, we thought we were finished. The food arrived just in time.", name: "Sarah A." }
+      { quote: "Last December was economically very hard. When the hunger hit, we thought we were finished. The food arrived just in time.", name: "Mrs. Nakato Martha." }
     ]
   },
   {
@@ -65,8 +66,8 @@ export const projects: Project[] = [
     type: 'Youth',
     location: "Kampala, Uganda",
     timeframe: "Weekly, Ongoing",
-    description: "2-day leadership and discipleship conference for 500 young people from across the country.",
-    fullDescription: "Youth Arise Conference brought together 500 teenagers and young adults for an intense 2-day discipleship program. The goal was to ignite a passion for Christ in the next generation. We had workshops on leadership, purity, and career development, all rooted in strong biblical principles.",
+    description: "Weekly discipleship program for 500+ children and teenagers, with workshops on Spiritual Growth, purity, salvation and deliverance.",
+    fullDescription: "The Children's Mega Cell is ministry to real needs of the children, in real time, in a real community, from real places.. The goal is to ignite a passion for Christ in the next generation. We hold bible studies, prayer meetings, movie shows, meals, sports and games, music sessions, interactive sessions among others.",
     funded: 60,
     image: "/journey/Childrens cell 1.jpeg",
     gallery: [
@@ -81,10 +82,10 @@ export const projects: Project[] = [
     impactStats: [
       { label: "Attendees", value: "500" },
       { label: "Schools Represented", value: "24" },
-      { label: "Workshops", value: "8" }
+      { label: "Cell gatherings", value: "8" }
     ],
     stories: [
-      { quote: "The conference showed me that as a young man, I have a place in the Kingdom.", name: "John Baptist" }
+      { quote: "Our pupils love coming to the Children's Mega Cell. It's a safe place where they learn about God and have fun. I have noticed a real transformation in their prayes lives and their love for God. They now even preach to their friends about Jesus!", name: "Muwanguzi Donald" }
     ]
   },
   {
@@ -118,14 +119,20 @@ export const projects: Project[] = [
     description: "Candidates dedication, scholastic materials, sanitary pads, spiritual materials donated to over 200 children from vulnerable families to support their education.",
     fullDescription: "Education is a powerful tool for breaking the cycle of poverty. The students dedication and back to school drivetargets over 2000 vulnerable children in Kampala Uganda, providing them with essential school supplies, backpacks, and uniforms for the new academic year.",
     funded: 10,
-    image: "https://i.ibb.co/mrqKTXr5/image.png",
+    image: "/journey/School outreach 1.jpeg",
     gallery: [
-      "https://i.ibb.co/mrqKTXr5/image.png"
+      "https://i.ibb.co/mrqKTXr5/image.png",
+      "/journey/school outreach 2.jpeg"
+      
     ],
     impactStats: [
       { label: "Children Supported", value: "500" },
       { label: "exam-kits given", value: "500" },
-      { label: "sanitary pads distributed", value: "350" }
+      { label: "sanitary pads distributed", value: "350" },
+      { label: "schools reached", value: "10" }
+    ],
+    stories: [
+      { quote: "Our school strugggled alot last year. The pupils could not afford sanitary towels, inner garments, scholastic materials, etc. Louder Fellowship's back to school drive was a blessing.", name: "Geofrey M." }
     ]
   },
   {
@@ -137,17 +144,18 @@ export const projects: Project[] = [
     description: "Teams of trained evangelists visiting remote villages of Kasangati daily with the gospel and support, delivering induviduals and places.",
     fullDescription: "The Kitagobwa mission wasn't just about sharing messages; it was about building sustainable faith communities in villages that haven't seen a church in generations. We send out trained teams every day to share the gospel, equip new believers, and establish local cell groups. We successfully reached over 10 villages, with many testimonies of lives transformed, changed the place name from Kitagobwa to Kigobedwa.",
     funded: 100,
-    image: "https://i.ibb.co/b5hNzDvx/image.png",
+    image: "/journey/mission kigobedwa 1.jpeg",
     gallery: [
-      "https://i.ibb.co/pj6440YQ/image.png"
+      "/journey/mission kigobedwa 1.jpeg"
     ],
     impactStats: [
       { label: "Villages Reached", value: "10+" },
+      { label: "Souls won", value: "1000+" },
       { label: "Baptisms in 2025", value: "100" },
       { label: "New Cell Groups", value: "10" }
     ],
     stories: [
-      { quote: "For the first time in 40 years, our village has hope. Louder Fellowship didn't just bring words, they brought family.", name: "Elder Masaba" }
+      { quote: "For the first time in 40 years, our village has hope. Rehoboth didn't just bring words, they brought family.", name: "Elder Masaba" }
     ]
   }
 ];
