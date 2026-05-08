@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🌟 Louder Fellowship & Rehoboth Ministries
 
 Welcome to the official website of **Louder Fellowship & Rehoboth Discipleship Global Ministries** – a prophetic fellowship dedicated to winning souls and equipping saints for the work of ministry.
@@ -122,3 +123,25 @@ Discover how you can be part of God's work around the world. Whether you're look
 *Last Updated: May 2026*
 *Louder Fellowship & Rehoboth Discipleship Global Ministries*
 
+=======
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+</div>
+
+# Run and deploy your AI Studio app
+
+This contains everything you need to run your app locally.
+
+View your app in AI Studio: https://ai.studio/apps/6fff0d0c-ed0d-46be-ba25-e29823cc6012
+
+## Run Locally
+
+**Prerequisites:**  Node.js
+
+
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`
+>>>>>>> 0c394ee26133e61ced8b8be980e4f85e2f84caf3
