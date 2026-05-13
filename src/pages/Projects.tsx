@@ -7,6 +7,7 @@ import {
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 import { Project, projects } from '../data/projects';
+import { Skeleton } from '../components/ui/Skeleton';
 
 const Counter = ({ value, label, icon }: { value: string; label: string; icon: React.ReactNode }) => {
   const ref = useRef(null);
@@ -48,6 +49,24 @@ const Counter = ({ value, label, icon }: { value: string; label: string; icon: R
     </div>
   );
 };
+
+const ProjectCardSkeleton = () => (
+  <div className="bg-white rounded-[2rem] overflow-hidden shadow-xl border border-slate-100 p-0">
+    <Skeleton className="h-64 w-full rounded-none" />
+    <div className="p-8 space-y-4">
+      <Skeleton className="h-8 w-3/4" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-1/2" />
+        <Skeleton className="h-4 w-1/3" />
+      </div>
+      <Skeleton className="h-16 w-full" />
+      <div className="space-y-2">
+        <Skeleton className="h-2 w-full" />
+        <Skeleton className="h-12 w-full rounded-xl" />
+      </div>
+    </div>
+  </div>
+);
 
 const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
   const badgeColors = {
@@ -132,7 +151,15 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
 
 export default function Projects() {
   const [filter, setFilter] = useState('All');
+  const [isLoading, setIsLoading] = useState(true);
   const filteredProjects = filter === 'All' ? projects : projects.filter((p) => p.type === filter);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, []);
 
   const { scrollYProgress } = useScroll();
   const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
@@ -236,9 +263,15 @@ export default function Projects() {
         <div className="container mx-auto px-6">
           <motion.div layout className="grid lg:grid-cols-3 gap-10">
             <AnimatePresence mode="popLayout">
-              {filteredProjects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))}
+              {isLoading ? (
+                Array.from({ length: 6 }).map((_, i) => (
+                  <ProjectCardSkeleton key={`skeleton-${i}`} />
+                ))
+              ) : (
+                filteredProjects.map((project) => (
+                  <ProjectCard key={project.id} project={project} />
+                ))
+              )}
             </AnimatePresence>
           </motion.div>
         </div>

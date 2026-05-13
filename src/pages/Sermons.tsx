@@ -1,6 +1,19 @@
 import { useState, useEffect } from 'react';
 import { Send, ExternalLink, Search, Play, ListVideo, ChevronDown, VideoOff, Youtube, AlertCircle } from 'lucide-react';
 import SEO from '../components/SEO';
+import { Skeleton } from '../components/ui/Skeleton';
+
+const SermonItemSkeleton = () => (
+  <div className="p-4 rounded-2xl bg-white/50 border border-transparent">
+    <div className="flex items-start gap-3">
+      <Skeleton className="w-8 h-8 rounded-full flex-shrink-0" />
+      <div className="flex-1 space-y-2">
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-3 w-1/4" />
+      </div>
+    </div>
+  </div>
+);
 
 const YOUTUBE_API_KEY = 'AIzaSyDn8F66taaeSnVquSNphgt_W6H9Dnv3hCE';
 const CHANNEL_HANDLE = '@louderfellowship1828';
@@ -230,6 +243,10 @@ export default function Sermons() {
                 </div>
                 
                 <div className="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
+                  {isLoading && allSermons.length === 0 && (
+                    Array.from({ length: 10 }).map((_, i) => <SermonItemSkeleton key={i} />)
+                  )}
+
                   {error && (
                     <div className="flex flex-col items-center justify-center py-10 text-red-500 px-4 text-center">
                       <AlertCircle className="w-10 h-10 mb-2 opacity-50" />

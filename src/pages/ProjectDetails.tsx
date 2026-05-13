@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import {
@@ -7,16 +7,78 @@ import {
 } from 'lucide-react';
 import SEO from '../components/SEO';
 import { projects } from '../data/projects';
+import { Skeleton } from '../components/ui/Skeleton';
+
+const ProjectDetailsSkeleton = () => (
+  <div className="bg-slate-50 min-h-screen pb-20">
+    <div className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-slate-200">
+      <div className="container mx-auto px-6 relative z-10">
+        <Skeleton className="w-32 h-4 mb-8 bg-slate-300" />
+        <div className="max-w-4xl space-y-6">
+          <Skeleton className="w-24 h-6 rounded-full bg-slate-300" />
+          <Skeleton className="w-3/4 h-16 bg-slate-300" />
+          <div className="flex gap-6">
+            <Skeleton className="w-32 h-6 bg-slate-300" />
+            <Skeleton className="w-32 h-6 bg-slate-300" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="container mx-auto px-6 -mt-10 relative z-20">
+      <div className="grid lg:grid-cols-3 gap-10">
+        <div className="lg:col-span-2 space-y-12">
+          <div className="bg-white p-8 md:p-12 rounded-[2rem] shadow-xl border border-slate-100 space-y-6">
+            <Skeleton className="h-10 w-48" />
+            <div className="space-y-4">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+            </div>
+          </div>
+          <div className="bg-white p-8 md:p-12 rounded-[2rem] shadow-xl border border-slate-100 space-y-6">
+            <Skeleton className="h-10 w-32" />
+            <div className="grid grid-cols-2 gap-4">
+              <Skeleton className="aspect-video w-full rounded-2xl" />
+              <Skeleton className="aspect-video w-full rounded-2xl" />
+            </div>
+          </div>
+        </div>
+        <div className="space-y-8">
+          <div className="bg-white p-8 rounded-[2rem] shadow-xl border border-slate-100 space-y-6">
+            <Skeleton className="h-8 w-3/4" />
+            <Skeleton className="h-12 w-full" />
+            <div className="space-y-4">
+              <Skeleton className="h-6 w-full" />
+              <Skeleton className="h-6 w-full" />
+              <Skeleton className="h-6 w-full" />
+            </div>
+            <Skeleton className="h-14 w-full rounded-xl" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
 
 export default function ProjectDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
   
   const project = projects.find(p => p.id === Number(id));
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
   }, [id]);
+
+  if (isLoading) {
+    return <ProjectDetailsSkeleton />;
+  }
 
   if (!project) {
     return (
