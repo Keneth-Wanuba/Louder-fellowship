@@ -45,7 +45,20 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-royal-blue mb-1">Call / WhatsApp</h3>
-                    <a href="tel:+256701751463" className="text-slate-600 font-light hover:text-royal-gold transition-colors">+256 701751463</a>
+                    <div className="space-y-2">
+                       <div className="flex items-center gap-2">
+                         <img src="/airtel-logo.svg" alt="Airtel" className="w-5 h-5 object-contain" />
+                         <a href="tel:+256701751463" className="text-slate-600 font-light hover:text-royal-gold transition-colors">+256 701 751463</a>
+                       </div>
+                       <div className="flex items-center gap-2">
+                         <img src="/journey/New-mtn-logo.jpg" alt="MTN" className="w-5 h-5 object-contain bg-[#FFCC00] rounded-sm" />
+                         <a href="tel:+256761503111" className="text-slate-600 font-light hover:text-royal-gold transition-colors">+256 761 503111</a>
+                       </div>
+                       <div className="flex items-center gap-2">
+                         <img src="/airtel-logo.svg" alt="Airtel" className="w-5 h-5 object-contain" />
+                         <a href="tel:+256756333301" className="text-slate-600 font-light hover:text-royal-gold transition-colors">+256 756 333301</a>
+                       </div>
+                    </div>
                   </div>
                 </div>
                 <div className="flex gap-6">

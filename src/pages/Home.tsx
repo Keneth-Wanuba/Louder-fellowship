@@ -168,103 +168,100 @@ export default function Home() {
       </section>
 
       {/* Children's Ministry Section */}
-      <section className="py-24 bg-white overflow-hidden relative">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-royal-gold/5 rounded-full blur-3xl -mr-48 -mt-48"></div>
+      <section className="py-24 bg-slate-50 overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-royal-gold/5 rounded-full blur-3xl -mr-64 -mt-64"></div>
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-royal-blue/5 rounded-full blur-3xl -ml-64 -mb-64"></div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            <div className="relative group">
-              <div className="absolute -inset-2 bg-gradient-to-r from-royal-gold/20 to-royal-blue/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <img 
-                src="/journey/Childrens cell 5.jpeg" 
-                alt="Children's Mega Cell Ministry" 
-                className="relative w-full h-[500px] object-cover rounded-3xl shadow-2xl group-hover:scale-[1.02] transition-transform duration-500 border-4 border-white shadow-xl" 
-              />
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="relative order-2 lg:order-1">
+              <div className="absolute -inset-4 bg-royal-gold/20 rounded-[3rem] blur-2xl opacity-50"></div>
+              <div className="relative rounded-[3rem] overflow-hidden border-8 border-white shadow-2xl">
+                <img 
+                  src="/journey/Childrens cell 5.jpeg" 
+                  alt="Children's Mega Cell Ministry" 
+                  className="w-full h-[600px] object-cover transition-transform duration-700 hover:scale-105" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-royal-blue/60 via-transparent to-transparent"></div>
+                <div className="absolute bottom-8 left-8 right-8 p-6 bg-white/90 backdrop-blur-md rounded-2xl border border-white/20">
+                  <div className="flex items-center gap-4 mb-2">
+                    <div className="w-10 h-10 rounded-full bg-royal-gold flex items-center justify-center text-royal-blue">
+                      <Star className="w-5 h-5" />
+                    </div>
+                    <h4 className="text-royal-blue font-bold">500+ Children Reached</h4>
+                  </div>
+                  <p className="text-slate-600 text-sm italic">Building a Spirit filled, radical faith generation.</p>
+                </div>
+              </div>
             </div>
-            <div>
-              <div className="w-20 h-1 bg-royal-gold mb-8"></div>
-              <h2 className="text-4xl font-serif font-bold text-royal-blue mb-4">Children's Ministry</h2>
-              <p className="text-lg text-royal-gold font-bold mb-4">Investing in the Next Generation</p>
-              <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                Our children's ministry is dedicated to fostering spiritual growth, character development, and a strong relationship with Christ in a safe, fun, and engaging environment. We believe every child deserves to experience God's love and purpose for their life.
-              </p>
+
+            <div className="order-1 lg:order-2 space-y-8">
+              <div>
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-royal-gold/10 text-royal-gold font-bold text-xs uppercase tracking-widest border border-royal-gold/20 mb-6">
+                  <Heart className="w-4 h-4" /> The Next Generation
+                </div>
+                <h2 className="text-4xl md:text-6xl font-serif font-black text-royal-blue mb-6 leading-tight">
+                  Children's <br /> <span className="text-royal-gold italic">Ministry</span>
+                </h2>
+                <p className="text-xl text-slate-600 font-light leading-relaxed">
+                  Our children's ministry isn't just about sharing meals and games; it's about building a sustainable, Spirit filled, radical faith generation. We are planting a seed for the future of the church.
+                </p>
+              </div>
               
-              <div className="space-y-4 mb-8">
-                <div className="flex gap-4 p-4 bg-white rounded-lg border-l-4 border-royal-blue border-t border-r border-b border-royal-blue/10 hover:shadow-md transition-all group">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-royal-blue/15 flex items-center justify-center text-royal-blue group-hover:scale-110 transition-transform">
-                    <Church className="w-5 h-5" />
+              <div className="grid sm:grid-cols-1 gap-4">
+                {[
+                  {
+                    title: "Children's Church",
+                    time: "Every Sunday at 9:00 AM",
+                    icon: <Church className="w-5 h-5" />,
+                    color: "border-royal-blue"
+                  },
+                  {
+                    title: "School Ministry",
+                    time: "Partnering with schools in our community",
+                    icon: <BookOpen className="w-5 h-5" />,
+                    color: "border-slate-400"
+                  },
+                  {
+                    title: "Educational Drives",
+                    time: "Annual Candidate Dedication & Back-to-School",
+                    icon: <Award className="w-5 h-5" />,
+                    color: "border-royal-gold"
+                  },
+                  {
+                    title: "The Children's Mega Cell",
+                    time: "Every Saturday at 1:00 PM",
+                    sub: "Holidays: All Saturdays | School: Last Saturday",
+                    icon: <Zap className="w-5 h-5" />,
+                    color: "border-royal-gold",
+                    highlight: true
+                  }
+                ].map((item, idx) => (
+                  <div 
+                    key={idx}
+                    className={`p-5 bg-white rounded-2xl border-l-[6px] ${item.color} shadow-sm hover:shadow-md transition-all flex gap-5 items-center ${item.highlight ? 'bg-royal-gold/5' : ''}`}
+                  >
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${item.highlight ? 'bg-royal-gold text-royal-blue' : 'bg-slate-100 text-slate-600'}`}>
+                      {item.icon}
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-royal-blue text-lg">{item.title}</h4>
+                      <p className="text-slate-500 text-sm">{item.time}</p>
+                      {item.sub && <p className="text-slate-400 text-[10px] uppercase font-bold mt-1 tracking-wider">{item.sub}</p>}
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-bold text-royal-blue text-sm">Children's Church</h4>
-                    <p className="text-slate-600 text-sm">Every Sunday at 9:00 AM</p>
-                  </div>
-                </div>
-                <div className="flex gap-4 p-4 bg-white rounded-lg border-l-4 border-slate-400 border-t border-r border-b border-slate-200 hover:shadow-md transition-all group">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 group-hover:scale-110 transition-transform">
-                    <BookOpen className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-royal-blue text-sm">School Ministry</h4>
-                    <p className="text-slate-600 text-sm">For interested schools in our community</p>
-                  </div>
-                </div>
-                <div className="flex gap-4 p-4 bg-white rounded-lg border-l-4 border-royal-gold border-t border-r border-b border-royal-gold/20 hover:shadow-md transition-all group">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-royal-gold/15 flex items-center justify-center text-royal-gold group-hover:scale-110 transition-transform">
-                    <Award className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-royal-blue text-sm">Candidate Dedication & Back-to-School Drives</h4>
-                    <p className="text-slate-600 text-sm">Annual support programs for students</p>
-                  </div>
-                </div>
-                <div className="flex gap-4 p-4 bg-gradient-to-r from-royal-gold/5 to-royal-blue/5 rounded-lg border-l-4 border-royal-gold border-t border-r border-b border-royal-gold/30 hover:shadow-md transition-all group">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-r from-royal-gold/25 to-royal-blue/25 flex items-center justify-center text-royal-gold group-hover:scale-110 transition-transform">
-                    <Star className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-royal-blue text-sm">The Children's Mega Cell</h4>
-                    <p className="text-slate-600 text-sm mb-1">1:00 PM Every Saturday</p>
-                    <p className="text-slate-500 text-xs"><strong>Holidays:</strong> Every Saturday | <strong>School Time:</strong> Last Saturday of the month</p>
-                  </div>
-                </div>
+                ))}
               </div>
 
-              <div className="flex flex-wrap gap-6 mb-8">
-                <div className="flex items-center gap-3">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-royal-gold/20 flex items-center justify-center text-royal-gold">
-                    <Users className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500 uppercase font-bold tracking-tight">Attendees</p>
-                    <p className="text-slate-600 font-semibold">500+ Children</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-royal-gold/20 flex items-center justify-center text-royal-gold">
-                    <Calendar className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500 uppercase font-bold tracking-tight">Schedule</p>
-                    <p className="text-slate-600 font-semibold">Weekly Programs</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-royal-gold/20 flex items-center justify-center text-royal-gold">
-                    <Globe className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500 uppercase font-bold tracking-tight">Reach</p>
-                    <p className="text-slate-600 font-semibold">24 Schools</p>
-                  </div>
-                </div>
+              <div className="pt-4">
+                <a 
+                  href="/projects/3" 
+                  className="inline-flex items-center gap-4 px-10 py-5 bg-royal-blue text-white font-bold rounded-full hover:bg-royal-gold hover:text-royal-blue transition-all shadow-xl group"
+                >
+                  See Full Impact
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </a>
               </div>
-              <a href="/projects" onClick={(e) => {
-                e.preventDefault();
-                window.location.href = '/projects#project-3';
-              }} className="inline-flex items-center gap-2 px-8 py-4 bg-royal-blue text-white font-bold rounded-full hover:bg-royal-gold hover:text-royal-blue transition-all shadow-lg group">
-                Read More
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </a>
             </div>
           </div>
         </div>

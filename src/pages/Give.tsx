@@ -39,12 +39,22 @@ export default function Give() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200">
                   <div className="flex items-center gap-3">
+                    <img 
+                      src="/journey/New-mtn-logo.jpg" 
+                      alt="MTN" 
+                      className="w-10 h-10 object-contain rounded-lg p-1 bg-[#FFCC00]" 
+                    />
                     <span className="font-bold text-royal-blue">MTN Merchant Code</span>
                   </div>
                   <span className="text-2xl font-mono font-bold text-royal-gold">706552</span>
                 </div>
                 <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200">
                   <div className="flex items-center gap-3">
+                    <img 
+                      src="/airtel-logo.svg" 
+                      alt="Airtel" 
+                      className="w-10 h-10 object-contain rounded-lg p-1 bg-white" 
+                    />
                     <span className="font-bold text-royal-blue">AIRTEL Merchant Code</span>
                   </div>
                   <span className="text-2xl font-mono font-bold text-royal-gold">4371416</span>
@@ -75,11 +85,25 @@ export default function Give() {
               
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
-                  <span className="font-bold">MTN Number</span>
+                  <div className="flex items-center gap-3">
+                    <img 
+                      src="/journey/New-mtn-logo.jpg" 
+                      alt="MTN" 
+                      className="w-10 h-10 object-contain rounded-lg p-1 bg-[#FFCC00]" 
+                    />
+                    <span className="font-bold">MTN Number</span>
+                  </div>
                   <span className="text-2xl font-mono font-bold text-royal-gold">0761503111</span>
                 </div>
                 <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
-                  <span className="font-bold">AIRTEL Number</span>
+                  <div className="flex items-center gap-3">
+                    <img 
+                      src="/airtel-logo.svg" 
+                      alt="Airtel" 
+                      className="w-10 h-10 object-contain rounded-lg p-1 bg-white" 
+                    />
+                    <span className="font-bold">AIRTEL Number</span>
+                  </div>
                   <span className="text-2xl font-mono font-bold text-royal-gold">0756333301</span>
                 </div>
                 <div className="p-4 bg-white/5 rounded-xl border border-white/10">
