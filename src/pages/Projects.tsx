@@ -365,7 +365,7 @@ export default function Projects() {
                 name: 'Reagan W.',
                 place: 'Namungoona',
                 quote: 'I had stomach issues, but they have slowly faded away. I have also been able to continue my studies and I am doing well in school. I am grateful for the prayers and support from the church.',
-                img: '/journey/Maama King.jpeg'
+                img: '/journey/Reagan.png'
               },
               {
                 name: 'Malachai Omar.',
@@ -383,7 +383,7 @@ export default function Projects() {
                 name: 'Kenny Boaz',
                 place: 'Namungoona',
                 quote: 'Kingdom life is real. The love for Christ, miracles, healings, deliverance, provision, breakthroughs, and more are happening in our church and community. I have personally experienced the power of God in my life and seen it in the lives of others.',
-                img: ''
+                img: '/journey/Kenny.jpeg'
               }
             ].map((story, i) => (
               <motion.div
