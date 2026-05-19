@@ -362,27 +362,27 @@ export default function Projects() {
           <div className="grid md:grid-cols-3 gap-12">
             {[
               {
-                name: 'Maama King.',
-                place: 'Kasubi',
-                quote: 'The Lord instructed me to start praying from Rehoboth. I have not regretted it. I have seen the hand of God in my life and family since then.',
+                name: 'Reagan W.',
+                place: 'Namungoona',
+                quote: 'I had stomach issues, but they have slowly faded away. I have also been able to continue my studies and I am doing well in school. I am grateful for the prayers and support from the church.',
                 img: '/journey/Maama King.jpeg'
               },
               {
                 name: 'Malachai Omar.',
                 place: 'Kikoni',
-                quote: 'The book(Master Teach us to pray) is so encouraging, for intance one page makes you want to read the next one it's like a story that follows itself.',
+                quote: 'The book(Master Teach us to pray) is so encouraging, for intance one page makes you want to read the next one its like a story that follows itself.',
                 img: '/journey/Malachai.jpg'
               },
+              // {
+              //   name: 'Gloria K.',
+              //   place: 'Bombo',
+              //   quote: 'I have been raised spiritually, my ministry in the army is prospering, my family is doing well, I have no more worries about my health and finances. I am a living testimony of the power of prayer and partnership with Rehoboth.',
+              //   img: '/journey/Gloria.PNG'
+              // },
               {
-                name: 'Gloria K.',
-                place: 'Bombo',
-                quote: 'I have been raised spiritually, my ministry in the army is prospering, my family is doing well, I have no more worries about my health and finances. I am a living testimony of the power of prayer and partnership with Rehoboth.',
-                img: '/journey/Gloria.PNG'
-              },
-              {
-                name: 'Mama Mukisa',
-                place: 'Kawaala',
-                quote: 'The doctors prayed with me before the checkup. I felt healed in my spirit first.',
+                name: 'Kenny Boaz',
+                place: 'Namungoona',
+                quote: 'Kingdom life is real. The love for Christ, miracles, healings, deliverance, provision, breakthroughs, and more are happening in our church and community. I have personally experienced the power of God in my life and seen it in the lives of others.',
                 img: ''
               }
             ].map((story, i) => (
