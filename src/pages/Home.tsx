@@ -35,7 +35,7 @@ export default function Home() {
             <div className="hidden sm:block w-1.5 h-1.5 rounded-full bg-white/30 shrink-0"></div>
             <div className="flex items-center gap-2 px-4 md:px-5 py-2.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white/90 w-full sm:w-auto justify-center flex-wrap">
               <MapPin className="w-4 h-4 text-royal-gold shrink-0" />
-              <span className="text-[10px] sm:text-xs md:text-sm font-medium tracking-wide text-center">25 Hajji Juma Kayondo Rd, Kampala</span>
+              <span className="text-[10px] sm:text-xs md:text-sm font-medium tracking-wide text-center">Kasubi-Kawaala, Kampala (Opp Matvic Primary School)</span>
             </div>
           </div>
 
