@@ -368,10 +368,10 @@ export default function Projects() {
                 img: '/journey/Maama King.jpeg'
               },
               {
-                name: 'Florence A.',
-                place: 'Gayaza',
-                quote: 'The church stood with me in my most trying time when I lost my twins and almost died.',
-                img: '/journey/Florence.jpg'
+                name: 'Malachai Omar.',
+                place: 'Kikoni',
+                quote: 'The book(Master Teach us to pray) is so encouraging, for intance one page makes you want to read the next one it's like a story that follows itself.',
+                img: '/journey/Malachai.jpg'
               },
               {
                 name: 'Gloria K.',
