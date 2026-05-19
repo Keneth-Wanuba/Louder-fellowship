@@ -16,7 +16,7 @@ const SEO: React.FC<SEOProps> = ({
   ogImage, 
   ogType = 'website' 
 }) => {
-  const siteTitle = 'Louder Fellowship - Rehoboth Ministries';
+  const siteTitle = 'Louder Fellowship - Rehoboth Discipleship Global Ministries';
   const fullTitle = title ? `${title} | ${siteTitle}` : siteTitle;
   const defaultDescription = 'Official website for Louder Fellowship and Rehoboth Discipleship Global Ministries led by Prophet Ezekiel Kayondo. God speaks LOUDER.';
   const metaDescription = description || defaultDescription;
