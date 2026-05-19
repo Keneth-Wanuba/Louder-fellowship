@@ -168,11 +168,11 @@ export const projects: Project[] = [
     description: "Annual intensive training, equipping, and separation unto God for ministers to deepen their spiritual foundation, theological knowledge, and ministry skills.",
     fullDescription: "Every December, we organize an intensive Minister's Discipleship Retreat where ordained ministers and ministry leaders are taken into separation unto God for deep spiritual renewal and professional development. The retreat focuses on intensive Bible study, strategic prayer sessions, theological training, and practical ministry equipment. Over 100 ministers have been raised and strengthened through this annual program, returning better equipped and spiritually rejuvenated to serve their communities and congregations with renewed passion and clarity.",
     funded: 50,
-    image: "/journey/Retreat 1.jpeg",
+    image: "/journey/Retreat 1.jpg",
     gallery: [
-      "/journey/Retreat 1.jpeg",
-      "/journey/Retreat 2.jpeg",
-      "/journey/Retreat 3.jpeg"
+      "/journey/Retreat 1.jpg",
+      "/journey/Retreat 2.jpg",
+      "/journey/Retreat 3.jpg"
     ],
     impactStats: [
       { label: "Ministers Trained", value: "100+" },
