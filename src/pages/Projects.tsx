@@ -371,14 +371,8 @@ export default function Projects() {
                 name: 'Malachai Omar.',
                 place: 'Kikoni',
                 quote: 'The book(Master Teach us to pray) is so encouraging, for intance one page makes you want to read the next one its like a story that follows itself.',
-                img: '/journey/Malachai.jpg'
+                img: '/journey/Malachai.JPG'
               },
-              // {
-              //   name: 'Gloria K.',
-              //   place: 'Bombo',
-              //   quote: 'I have been raised spiritually, my ministry in the army is prospering, my family is doing well, I have no more worries about my health and finances. I am a living testimony of the power of prayer and partnership with Rehoboth.',
-              //   img: '/journey/Gloria.PNG'
-              // },
               {
                 name: 'Kenny Boaz',
                 place: 'Namungoona',
