@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -12,7 +13,8 @@ import Contact from './pages/Contact';
 
 export default function App() {
   return (
-    <Routes>
+    <>
+      <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
@@ -20,10 +22,12 @@ export default function App() {
           <Route path="projects" element={<Projects />} />
           <Route path="projects/:id" element={<ProjectDetails />} />
           <Route path="programs" element={<Programs />} />
-        <Route path="sermons" element={<Sermons />} />
-        <Route path="give" element={<Give />} />
-        <Route path="contact" element={<Contact />} />
-      </Route>
-    </Routes>
+          <Route path="sermons" element={<Sermons />} />
+          <Route path="give" element={<Give />} />
+          <Route path="contact" element={<Contact />} />
+        </Route>
+      </Routes>
+      <SpeedInsights />
+    </>
   );
 }
