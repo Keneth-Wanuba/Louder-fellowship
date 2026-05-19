@@ -368,9 +368,9 @@ export default function Projects() {
                 img: '/journey/Reagan.png'
               },
               {
-                name: 'Malachai Omar.',
+                name: 'Malachi Omar.',
                 place: 'Kikoni',
-                quote: 'The book(Master Teach us to pray) is so encouraging, for intance one page makes you want to read the next one its like a story that follows itself.',
+                quote: 'The book(Master Teach us to pray) is so encouraging, forintance one page makes you want to read the next one its like a story that follows itself.',
                 img: '/journey/Malachai.JPG'
               },
               {
