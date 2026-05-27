@@ -168,11 +168,11 @@ export const projects: Project[] = [
     description: "Annual intensive training, equipping, and separation unto God for ministers to deepen their spiritual foundation, theological knowledge, and ministry skills.",
     fullDescription: "Every December, we organize an intensive Minister's Discipleship Retreat where ordained ministers and ministry leaders are taken into separation unto God for deep spiritual renewal and professional development. The retreat focuses on intensive Bible study, strategic prayer sessions, theological training, and practical ministry equipment. Over 100 ministers have been raised and strengthened through this annual program, returning better equipped and spiritually rejuvenated to serve their communities and congregations with renewed passion and clarity.",
     funded: 50,
-    image: "/journey/Retreat 1.jpg",
+    image: "/journey/8th-anniversary.jpeg",
     gallery: [
-      "/journey/Retreat 1.jpg",
-      "/journey/Retreat 2.jpg",
-      "/journey/Retreat 3.jpg"
+      "/journey/8th-anniversary.jpeg",
+      "/journey/2021-in-hotel.jpeg",
+      "/journey/Papa and choir.jpeg"
     ],
     impactStats: [
       { label: "Ministers Trained", value: "100+" },
@@ -184,5 +184,25 @@ export const projects: Project[] = [
       { quote: "The retreat reconnected me with my first love for ministry. The intensive prayer and Bible study sessions transformed my approach to shepherding. I returned home with renewed vision and spiritual fire.", name: "Meico." },
       { quote: "This yearly investment in our ministers is what keeps our church leadership strong and spiritually grounded. Every leader should experience this", name: "Trevor." }
     ]
+  },
+  {
+    id: 8,
+    title: "Mission Kasubi 3",
+    type: 'Evangelism',
+    location: "Rehoboth Church Grounds, Kasubi",
+    timeframe: "Aug 31 - Sept 4, 2026",
+    description: "A major soul-winning mission featuring door-to-door preaching and a week-long crusade at Rehoboth church grounds. Funding is currently at zero.",
+    fullDescription: "Mission Kasubi 3 is our next major gospel invasion. Over five days, we will saturate Kasubi with the gospel through intensive door-to-door evangelism and powerful evening crusades on the Rehoboth church grounds. We are seeking funds for logistics, equipment, and outreach materials, as well as labourers to join the harvest field. This is a critical mission for the community of Kasubi.",
+    funded: 0,
+    image: "https://images.unsplash.com/photo-1544427928-c49bcdee84ba?auto=format&fit=crop&q=80&w=1000",
+    gallery: [
+      "https://images.unsplash.com/photo-1544427928-c49bcdee84ba?auto=format&fit=crop&q=80&w=1000"
+    ],
+    impactStats: [
+      { label: "Souls Target", value: "1,000+" },
+      { label: "Days", value: "5" },
+      { label: "Funding", value: "0%" }
+    ],
+    stories: []
   }
 ];

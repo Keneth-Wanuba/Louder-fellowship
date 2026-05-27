@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import SEO from '../components/SEO';
 import { projects } from '../data/projects';
+import { TESTIMONIES, Testimony } from '../data/content';
 import { Skeleton } from '../components/ui/Skeleton';
 
 const ProjectDetailsSkeleton = () => (
@@ -65,6 +66,22 @@ export default function ProjectDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const [likes, setLikes] = useState<Record<string, number>>(() => {
+    const initial: Record<string, number> = {};
+    TESTIMONIES.forEach(t => initial[t.id] = t.likes);
+    return initial;
+  });
+  const [blessed, setBlessed] = useState<Set<string>>(new Set());
+
+  const handleBlessed = (id: string) => {
+    if (blessed.has(id)) return;
+    
+    setBlessed(prev => new Set(prev).add(id));
+    setLikes(prev => ({
+      ...prev,
+      [id]: prev[id] + 1
+    }));
+  };
   
   const project = projects.find(p => p.id === Number(id));
 
@@ -203,6 +220,53 @@ export default function ProjectDetails() {
                      <p className="font-bold text-royal-blue uppercase tracking-widest text-sm">— {story.name}</p>
                    </div>
                 ))}
+              </motion.div>
+            )}
+
+            {/* Project-specific Testimonies */}
+            {TESTIMONIES.filter(t => t.projectId === project.id).length > 0 && (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="space-y-6"
+              >
+                <h2 className="text-3xl font-serif font-bold text-royal-blue mb-6">Member Testimonies</h2>
+                <div className="grid gap-6">
+                  {TESTIMONIES.filter(t => t.projectId === project.id).map((testimony) => (
+                    <div key={testimony.id} className="bg-white p-8 rounded-[2rem] shadow-xl border border-slate-100 flex flex-col md:flex-row gap-8 items-start">
+                      <div className="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 shadow-lg border-2 border-royal-gold/20">
+                        <img src={testimony.image} alt={testimony.author} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 text-royal-gold mb-3">
+                          {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
+                        </div>
+                        <p className="text-lg text-slate-700 leading-relaxed italic mb-6">"{testimony.content}"</p>
+                        <div className="flex justify-between items-center">
+                          <div className="flex flex-col items-start">
+                            <p className="font-bold text-royal-blue">{testimony.author}</p>
+                            <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">{testimony.date}</p>
+                          </div>
+                          <button 
+                            onClick={() => handleBlessed(testimony.id)}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${blessed.has(testimony.id) ? 'bg-royal-gold text-royal-blue border-royal-gold shadow-lg' : 'bg-red-50 text-red-500 border-transparent hover:bg-red-100'}`}
+                          >
+                            <motion.div
+                              animate={blessed.has(testimony.id) ? { scale: [1, 1.5, 1] } : {}}
+                            >
+                              <Heart className={`w-3.5 h-3.5 ${blessed.has(testimony.id) ? 'fill-current' : ''}`} />
+                            </motion.div>
+                            <span>
+                              {likes[testimony.id]} Blessed
+                              {blessed.has(testimony.id) && " ✓"}
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </motion.div>
             )}
             

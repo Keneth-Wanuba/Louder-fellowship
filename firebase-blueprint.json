@@ -1,0 +1,78 @@
+{
+  "entities": {
+    "testimony": {
+      "title": "Testimony",
+      "description": "A user-submitted testimony",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "author": { "type": "string" },
+        "content": { "type": "string" },
+        "contact": { "type": "string" },
+        "image": { "type": "string" },
+        "date": { "type": "string" },
+        "status": { 
+          "type": "string",
+          "enum": ["PENDING", "APPROVED", "REJECTED"]
+        }
+      },
+      "required": ["author", "content", "contact", "status"]
+    },
+    "comment": {
+      "title": "Comment",
+      "description": "A comment on a testimony",
+      "type": "object",
+      "properties": {
+        "testimonyId": { "type": "string" },
+        "author": { "type": "string" },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["testimonyId", "author", "content"]
+    },
+    "devotion": {
+      "title": "Devotion",
+      "description": "A daily devotion record",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "scripture": { "type": "string" },
+        "content": { "type": "string" },
+        "author": { "type": "string" },
+        "date": { "type": "string" },
+        "nuggets": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "reactions": {
+          "type": "object",
+          "description": "Counts for different reaction types",
+          "properties": {
+            "Amen": { "type": "integer" },
+            "I receive": { "type": "integer" },
+            "Hallelujah": { "type": "integer" },
+            "Glory": { "type": "integer" },
+            "ThankYou": { "type": "integer" },
+            "Point taken": { "type": "integer" },
+            "Like": { "type": "integer" }
+          }
+        }
+      },
+      "required": ["title", "scripture", "content", "author", "date"]
+    }
+  },
+  "firestore": {
+    "testimonies": {
+      "schema": "testimony",
+      "description": "Collection of testimonies"
+    },
+    "comments": {
+      "schema": "comment",
+      "description": "Collection of comments"
+    },
+    "devotions": {
+      "schema": "devotion",
+      "description": "Collection of devotions"
+    }
+  }
+}
