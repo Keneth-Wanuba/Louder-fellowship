@@ -76,11 +76,13 @@ export default function Home() {
   const approvedTestimonies = testimonies;
 
   const nextTestimony = () => {
+    if (approvedTestimonies.length === 0) return;
     setDirection(1);
     setCurrentTestimony((prev) => (prev + 1) % approvedTestimonies.length);
   };
 
   const prevTestimony = () => {
+    if (approvedTestimonies.length === 0) return;
     setDirection(-1);
     setCurrentTestimony((prev) => (prev - 1 + approvedTestimonies.length) % approvedTestimonies.length);
   };
@@ -475,6 +477,7 @@ export default function Home() {
             </div>
 
             {/* Navigation Controls */}
+            {approvedTestimonies.length > 0 && (
             <div className="flex items-center justify-center gap-8 mt-8">
               <button 
                 onClick={prevTestimony}
@@ -503,6 +506,7 @@ export default function Home() {
                 <ChevronRight className="w-5 h-5" />
               </button>
             </div>
+            )}
           </div>
         </div>
       </section>

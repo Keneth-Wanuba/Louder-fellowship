@@ -116,7 +116,8 @@ export default function ProjectDetails() {
     'Humanitarian Aid': 'bg-teal-500 text-white',
     'Youth': 'bg-purple-500 text-white',
     'Health': 'bg-pink-500 text-white',
-    'Education': 'bg-blue-500 text-white'
+    'Education': 'bg-blue-500 text-white',
+    'Ministry Training': 'bg-indigo-500 text-white'
   };
 
   return (

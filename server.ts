@@ -1,11 +1,9 @@
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
-import { fileURLToPath } from "url";
 import cors from "cors";
 import bodyParser from "body-parser";
 import { google } from "googleapis";
-import { promises as fs } from "fs";
 import multer from "multer";
 
 import { initializeApp } from 'firebase/app';
@@ -44,9 +42,6 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp, firebaseConfigJson.firestoreDatabaseId || '(default)');
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -70,19 +65,24 @@ const upload = multer({
   }
 });
 
-async function startServer() {
+export async function createApp(options: { includeFrontend?: boolean } = {}) {
+  const { includeFrontend = process.env.VERCEL !== '1' } = options;
   const app = express();
-  const PORT = 3000;
 
   app.use(cors());
   app.use(bodyParser.json({ limit: '10mb' }));
   app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
-  const getAdminPassword = () => process.env.ADMIN_PASSWORD || "LF-Admin-2024";
+  const getAdminPassword = () => process.env.ADMIN_PASSWORD;
 
   const verifyAdmin = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    const configuredAdminPassword = getAdminPassword();
+    if (!configuredAdminPassword) {
+      return res.status(500).json({ error: "Admin password is not configured." });
+    }
+
     const adminPassword = req.headers['x-admin-password'];
-    if (adminPassword !== getAdminPassword()) {
+    if (adminPassword !== configuredAdminPassword) {
       return res.status(401).json({ error: "Unauthorized access." });
     }
     next();
@@ -91,7 +91,12 @@ async function startServer() {
   // API Route for Admin Login/Verify
   app.post("/api/admin/verify", (req, res) => {
     const { password } = req.body;
-    if (password === getAdminPassword()) {
+    const configuredAdminPassword = getAdminPassword();
+    if (!configuredAdminPassword) {
+      return res.status(500).json({ error: "Admin password is not configured." });
+    }
+
+    if (password === configuredAdminPassword) {
       res.status(200).json({ success: true });
     } else {
       res.status(401).json({ error: "Incorrect admin password" });
@@ -258,7 +263,7 @@ async function startServer() {
   });
 
   // API Route for Public to upload testimony pictures
-  app.post("/api/testimony/upload-image", (req, res) => {
+  app.post("/api/testimony/upload-image", verifyAdmin, (req, res) => {
     upload.single('image')(req, res, (err) => {
       if (err instanceof multer.MulterError) {
         return res.status(400).json({ error: "Upload error: " + err.message });
@@ -654,10 +659,10 @@ ${message}
     }
 
     try {
-      const subscribersPath = path.join(process.cwd(), "subscribers.txt");
-      
-      // Append the email and a newline to the file
-      await fs.appendFile(subscribersPath, `${email}\n`, 'utf-8');
+      await addDoc(collection(db, 'subscribers'), {
+        email,
+        createdAt: serverTimestamp()
+      });
       
       res.status(200).json({ success: true, message: "Subscribed successfully!" });
     } catch (error: any) {
@@ -666,7 +671,11 @@ ${message}
     }
   });
 
-  // Vite middleware for development
+  if (!includeFrontend) {
+    return app;
+  }
+
+  // Vite middleware for local development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
@@ -681,11 +690,23 @@ ${message}
     });
   }
 
+  return app;
+}
+
+async function startServer() {
+  const app = await createApp({ includeFrontend: true });
+  const PORT = Number(process.env.PORT) || 3000;
+
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
 }
 
-startServer().catch((err) => {
-  console.error("Failed to start server:", err);
-});
+const entrypoint = process.argv[1]?.replace(/\\/g, '/');
+const isDirectServerRun = entrypoint?.endsWith('/server.ts') || entrypoint?.endsWith('/server.cjs');
+
+if (process.env.VERCEL !== '1' && isDirectServerRun) {
+  startServer().catch((err) => {
+    console.error("Failed to start server:", err);
+  });
+}

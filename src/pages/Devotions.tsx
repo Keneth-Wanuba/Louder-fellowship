@@ -227,7 +227,7 @@ export default function Devotions() {
     }
     
     if (shareUrl) {
-      window.open(shareUrl, '_blank');
+      window.open(shareUrl, '_blank', 'noopener,noreferrer');
     }
   };
 
@@ -255,7 +255,7 @@ export default function Devotions() {
       } else {
         // Fallback to WhatsApp
         const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(fullMessage)}`;
-        window.open(whatsappUrl, '_blank');
+        window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
       }
     } catch (err) {
       console.log('Error sharing:', err);

@@ -17,7 +17,7 @@ const developer = {
   name: 'Keneth Wanuba',
   role: 'Web & Systems Developer',
   location: 'Kampala, Uganda',
-  profileImage: '/Meico%20profile.png',
+  profileImage: '/Meico-Profile.png',
   email: 'kennymeico@gmail.com',
   github: 'https://github.com/Keneth-Wanuba',
   linkedin: 'https://www.linkedin.com/in/keneth-wanuba',
