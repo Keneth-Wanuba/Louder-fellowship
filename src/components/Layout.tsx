@@ -19,13 +19,14 @@ export default function Layout() {
                 </div>
               </Link>
             </div>
-            <div className="hidden xl:flex items-center space-x-8">
+            <div className="hidden xl:flex items-center space-x-6">
               <Link to="/" className="hover:text-royal-gold transition-colors font-medium">Home</Link>
               <Link to="/about" className="hover:text-royal-gold transition-colors">Our Story</Link>
               <Link to="/faith" className="hover:text-royal-gold transition-colors">Statement of Faith</Link>
               <Link to="/projects" className="hover:text-royal-gold transition-colors">Kingdom Outreach</Link>
               <Link to="/programs" className="hover:text-royal-gold transition-colors">Programs</Link>
               <Link to="/sermons" className="hover:text-royal-gold transition-colors">Sermons</Link>
+              <Link to="/developer" className="hover:text-royal-gold transition-colors">Developer</Link>
               <Link to="/give" className="hover:text-royal-gold transition-colors">Donate</Link>
               <Link to="/contact" className="bg-royal-gold text-royal-blue px-5 py-2 rounded-full font-bold hover:bg-white transition-all">Contact</Link>
             </div>
@@ -46,6 +47,7 @@ export default function Layout() {
               <Link to="/projects" onClick={() => setIsMenuOpen(false)}>Kingdom Outreach</Link>
               <Link to="/programs" onClick={() => setIsMenuOpen(false)}>Programs</Link>
               <Link to="/sermons" onClick={() => setIsMenuOpen(false)}>Sermons</Link>
+              <Link to="/developer" onClick={() => setIsMenuOpen(false)}>Developer</Link>
               <Link to="/give" onClick={() => setIsMenuOpen(false)}>Donate</Link>
               <Link to="/contact" onClick={() => setIsMenuOpen(false)}>Contact</Link>
             </div>
@@ -90,6 +92,7 @@ export default function Layout() {
                 <li><Link to="/programs" className="hover:text-white transition-colors">Programs</Link></li>
                 <li><Link to="/sermons" className="hover:text-white transition-colors">Sermons</Link></li>
                 <li><Link to="/give" className="hover:text-white transition-colors">Donate</Link></li>
+                <li><Link to="/developer" className="hover:text-white transition-colors">Website Developer</Link></li>
               </ul>
             </div>
             <div>
@@ -112,6 +115,9 @@ export default function Layout() {
           </div>
           <div className="border-t border-white/10 pt-10 text-center text-white/40 text-sm">
             <p>&copy; {(new Date()).getFullYear()} Louder Fellowship & Rehoboth Discipleship Global Ministries. All rights reserved.</p>
+            <p className="mt-3">
+              Website developed by <Link to="/developer" className="text-royal-gold hover:text-white transition-colors">Keneth Wanuba</Link>.
+            </p>
           </div>
         </div>
       </footer>

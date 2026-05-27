@@ -10,6 +10,7 @@ import Programs from './pages/Programs';
 import Sermons from './pages/Sermons';
 import Give from './pages/Give';
 import Contact from './pages/Contact';
+import Developer from './pages/Developer';
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
           <Route path="sermons" element={<Sermons />} />
           <Route path="give" element={<Give />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="developer" element={<Developer />} />
         </Route>
       </Routes>
       <Analytics />  {/* ← added here, outside Routes so it's always mounted */}
