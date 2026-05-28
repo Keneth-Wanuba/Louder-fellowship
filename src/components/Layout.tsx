@@ -15,7 +15,7 @@ const ABOUT_ITEMS = [
 ];
 
 const MINISTRY_ITEMS = [
-  { label: 'Devotions', href: '/devotions', icon: <Heart className="w-5 h-5" />, description: 'Daily bread for your spiritual growth.' },
+  { label: 'Devotions', href: '/devotions', icon: <BookOpen className="w-5 h-5" />, description: 'Daily bread for your spiritual growth.' },
   { label: "Children's Ministry", href: '/children', icon: <Heart className="w-5 h-5" />, description: 'Building a Spirit-filled generation.' },
   { label: 'Programs', href: '/programs', icon: <Calendar className="w-5 h-5" />, description: 'Our weekly and special gatherings.' },
   { label: 'Sermons', href: '/sermons', icon: <Play className="w-5 h-5" />, description: 'Impactful messages from our ministers.' },
@@ -244,7 +244,7 @@ export default function Layout() {
             <p className="text-white/40 text-sm">&copy; {(new Date()).getFullYear()} Louder Fellowship & Rehoboth Discipleship Global Ministries. All rights reserved.</p>
             <Link to="/developer" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-royal-gold/40 hover:text-royal-gold transition-colors duration-300">
               <span className="w-4 h-px bg-current opacity-20"></span>
-              Site by Developer
+              Developer Kenny Meico
               <span className="w-4 h-px bg-current opacity-20"></span>
             </Link>
           </div>
