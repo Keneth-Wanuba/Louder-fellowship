@@ -3,6 +3,7 @@ import { MessageCircle, Facebook, Twitter, Send, X, Link, Check } from 'lucide-r
 import { motion, AnimatePresence } from 'motion/react';
 import { Devotion } from '../pages/Devotions';
 import { getTodayReminder } from '../constants';
+import { generateDevotionShare } from '../utils/shareTemplates';
 
 interface ShareMenuProps {
   isOpen: boolean;
@@ -25,67 +26,24 @@ const ShareMenu: React.FC<ShareMenuProps> = ({ isOpen, onClose, devotion }) => {
   };
 
   const handleShareTo = (platform: 'whatsapp' | 'facebook' | 'twitter' | 'telegram') => {
-    // Determine the base URL for devotions
-    // If the devotion has an ID, we might want to link to a specific path if implemented
-    // But based on the current app structure, devotions seem to be on the /devotions page
-    // We'll use the origin + /devotions and maybe the title as a hash or param if needed
-    // However, the current app doesn't seem to have individual devotion routes like /devotions/:id
-    // So we link to the devotions page.
-    const url = window.location.origin + '/devotions';
-    const reminder = getTodayReminder();
-    
-    // Create formatted text with emojis for a better sharing experience
-    const titleText = `📖 *Theme:* ${devotion.title}`;
-    const scriptureText = `📜 *Scripture:* ${devotion.scripture}`;
-    const authorText = `✍️ *Author:* ${devotion.author || 'Prophet Ezekiel Kayondo'}`;
-    const programText = `🔔 *Today's Program:* ${reminder}`;
-    
-    const baseText = `${titleText}\n${scriptureText}\n${authorText}\n\n`;
-    const footer = `\n\n${programText}\n\nRead more at: ${url}`;
-    
+    const share = generateDevotionShare(devotion);
     let shareUrl = '';
-    
     switch (platform) {
-      case 'whatsapp': {
-        // WhatsApp allows quite a lot of text. We'll include most of it.
-        const contentLimit = 2000;
-        const content = devotion.content.length > contentLimit 
-          ? devotion.content.substring(0, contentLimit) + "..." 
-          : devotion.content;
-        const fullMessage = `${baseText}${content}${footer}`;
-        shareUrl = `https://wa.me/?text=${encodeURIComponent(fullMessage)}`;
+      case 'whatsapp':
+        shareUrl = share.whatsapp;
         break;
-      }
-      case 'facebook': {
-        // Facebook sharer ignores the 'text' param usually, so we just provide the link.
-        // The display will depend on Open Graph tags.
-        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+      case 'facebook':
+        shareUrl = share.facebook;
         break;
-      }
-      case 'twitter': {
-        // Twitter/X has a strict 280 char limit.
-        // We'll only include the title, scripture (shortened if needed), author and link.
-        const twitterTitle = `📖 ${devotion.title}`;
-        const twitterScripture = `📜 ${devotion.scripture.length > 50 ? devotion.scripture.substring(0, 47) + '...' : devotion.scripture}`;
-        const twitterBody = `${twitterTitle}\n${twitterScripture}\n${authorText.split('*')[2]?.trim() || devotion.author}`;
-        shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(twitterBody)}&url=${encodeURIComponent(url)}`;
+      case 'twitter':
+        shareUrl = share.twitter;
         break;
-      }
-      case 'telegram': {
-        // Telegram allows good length text as well.
-        const contentLimit = 1500;
-        const content = devotion.content.length > contentLimit 
-          ? devotion.content.substring(0, contentLimit) + "..." 
-          : devotion.content;
-        const fullMessage = `${baseText}${content}${footer}`;
-        shareUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(fullMessage)}`;
+      case 'telegram':
+        shareUrl = share.telegram;
         break;
-      }
     }
 
-    if (shareUrl) {
-      window.open(shareUrl, '_blank', 'noopener,noreferrer');
-    }
+    if (shareUrl) window.open(shareUrl, '_blank', 'noopener,noreferrer');
     onClose();
   };
 

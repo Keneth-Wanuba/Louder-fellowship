@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Quote, MessageSquare, Heart, Mail, Sparkles, Send, User, Phone, CheckCircle2, AlertCircle, Image as ImageIcon, Upload, Plus } from 'lucide-react';
 import SEO from '../components/SEO';
+import { generateTestimonyShare } from '../utils/shareTemplates';
 import { motion, AnimatePresence } from 'motion/react';
 import CommentsSection from '../components/CommentsSection';
 
@@ -23,6 +24,7 @@ export default function Testimonies() {
   const [likes, setLikes] = useState<Record<string, number>>({});
   const [blessed, setBlessed] = useState<Set<string>>(new Set());
   const [showForm, setShowForm] = useState(false);
+  const [shareOpen, setShareOpen] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionStatus, setSubmissionStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -110,6 +112,28 @@ export default function Testimonies() {
       ...prev,
       [id]: (prev[id] || 0) + 1
     }));
+  };
+
+  const handleShareTestimony = (platform: 'whatsapp' | 'facebook' | 'twitter' | 'telegram', testimony: Testimony) => {
+    const share = generateTestimonyShare(testimony);
+    let shareUrl = '';
+    switch (platform) {
+      case 'whatsapp':
+        shareUrl = share.whatsapp;
+        break;
+      case 'facebook':
+        shareUrl = share.facebook;
+        break;
+      case 'twitter':
+        shareUrl = share.twitter;
+        break;
+      case 'telegram':
+        shareUrl = share.telegram;
+        break;
+    }
+
+    if (shareUrl) window.open(shareUrl, '_blank', 'noopener,noreferrer');
+    setShareOpen(null);
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -387,6 +411,7 @@ export default function Testimonies() {
                           </div>
                         </div>
 
+                        <div className="flex items-center gap-3">
                         <button 
                           onClick={() => handleBlessed(testimony.id)}
                           className={`flex items-center gap-3 px-6 py-3.5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-lg ${blessed.has(testimony.id) ? 'bg-royal-gold text-royal-blue shadow-royal-gold/30' : 'bg-white text-slate-400 hover:text-royal-blue border-transparent hover:shadow-xl'} border active:scale-95`}
@@ -399,6 +424,26 @@ export default function Testimonies() {
                           </motion.div>
                           <span>{likes[testimony.id] || testimony.likes} Blessed</span>
                         </button>
+
+                        <div className="relative">
+                          <button
+                            onClick={() => setShareOpen(prev => prev === testimony.id ? null : testimony.id)}
+                            className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-slate-50 text-slate-600 hover:bg-white hover:shadow-md transition-all border"
+                          >
+                            <Send className="w-4 h-4" />
+                            <span className="text-[10px] font-black uppercase">Share</span>
+                          </button>
+
+                          {shareOpen === testimony.id && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white border rounded-2xl shadow-lg p-3 z-20 grid grid-cols-2 gap-2">
+                              <button onClick={() => handleShareTestimony('whatsapp', testimony)} className="p-2 rounded-lg bg-green-50 text-green-700 text-xs font-black">WhatsApp</button>
+                              <button onClick={() => handleShareTestimony('facebook', testimony)} className="p-2 rounded-lg bg-blue-50 text-blue-700 text-xs font-black">Facebook</button>
+                              <button onClick={() => handleShareTestimony('twitter', testimony)} className="p-2 rounded-lg bg-slate-50 text-slate-900 text-xs font-black">Twitter</button>
+                              <button onClick={() => handleShareTestimony('telegram', testimony)} className="p-2 rounded-lg bg-sky-50 text-sky-700 text-xs font-black">Telegram</button>
+                            </div>
+                          )}
+                        </div>
+                        </div>
                       </div>
                       
                       <div className="relative">
@@ -438,7 +483,7 @@ export default function Testimonies() {
                     onClick={() => setShowForm(true)}
                     className="w-full sm:w-auto bg-royal-blue text-white px-10 py-5 rounded-full font-black uppercase tracking-widest text-xs hover:bg-royal-gold hover:text-royal-blue transition-all shadow-xl"
                   >
-                    Share It Now
+                    Share Now
                   </button>
                   <a 
                     href="mailto:rehobothdgul@gmail.com?subject=My Testimony"
