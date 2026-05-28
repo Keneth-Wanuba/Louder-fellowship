@@ -28,6 +28,14 @@ Until those rules are live, the API returns:
 {"error":"Failed to fetch projects.","details":"Missing or insufficient permissions."}
 ```
 
+The repo includes `firebase.json` and `.firebaserc` so the Firebase CLI can deploy the local rules file to the `kennyboa-b3902` default Firestore database:
+
+```bash
+firebase deploy --only firestore
+```
+
+If the Firebase CLI is not installed, publish the same `firestore.rules` content from Firebase Console > Firestore Database > Rules > Publish. Vercel deploys do not publish Firestore rules.
+
 ## Program Seeding Script
 
 `npm run seed:programs` seeds default weekly programs from `seed-programs.ts`.
