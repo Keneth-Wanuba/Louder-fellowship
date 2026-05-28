@@ -550,6 +550,103 @@ ${message}
     }
   });
 
+  // API Route for Public to get visible Projects
+  app.get(apiRoute("/projects"), async (req, res) => {
+    try {
+      const snapshot = await getDocs(collection(db, 'projects'));
+      const projects = snapshot.docs
+        .map(d => {
+          const data = d.data();
+          return {
+            ...data,
+            id: data.id ?? d.id,
+            documentId: d.id
+          };
+        })
+        .filter((project: any) => project.visible !== false)
+        .sort((a: any, b: any) => {
+          const orderA = Number(a.order ?? a.id) || 0;
+          const orderB = Number(b.order ?? b.id) || 0;
+          return orderA - orderB;
+        });
+
+      res.status(200).json(projects);
+    } catch (error: any) {
+      console.error("Error fetching projects:", error);
+      res.status(500).json({ error: "Failed to fetch projects.", details: error.message });
+    }
+  });
+
+  // API Routes for Programs (Public + Admin)
+  app.get(apiRoute("/programs"), async (req, res) => {
+    try {
+      const snapshot = await getDocs(collection(db, 'programs'));
+      const programs = snapshot.docs
+        .map(d => ({ ...d.data(), id: d.id }))
+        .filter((program: any) => program.visible !== false)
+        .sort((a: any, b: any) => {
+          const orderA = Number(a.order ?? 0);
+          const orderB = Number(b.order ?? 0);
+          return orderA - orderB;
+        });
+      res.status(200).json(programs);
+    } catch (error: any) {
+      console.error("Error fetching programs:", error);
+      res.status(500).json({ error: "Failed to fetch programs.", details: error.message });
+    }
+  });
+
+  // Admin: fetch all programs
+  app.get(apiRoute("/admin/programs"), verifyAdmin, async (req, res) => {
+    try {
+      const snapshot = await getDocs(collection(db, 'programs'));
+      const programs = snapshot.docs.map(d => ({ ...d.data(), id: d.id }));
+      res.status(200).json(programs);
+    } catch (error: any) {
+      console.error("Error fetching admin programs:", error);
+      res.status(500).json({ error: "Failed to fetch programs." });
+    }
+  });
+
+  // Admin: create or update a program
+  app.post(apiRoute("/admin/programs"), verifyAdmin, async (req, res) => {
+    const { id, title, time, description, stats, color, highlight, visible, icon } = req.body;
+    try {
+      if (id) {
+        await updateDoc(doc(db, 'programs', id), { title, time, description, stats, color, highlight: !!highlight, visible: !!visible, icon: icon || null });
+        res.status(200).json({ success: true, id });
+      } else {
+        const docRef = await addDoc(collection(db, 'programs'), {
+          title,
+          time,
+          description,
+          stats: stats || '',
+          color: color || '',
+          highlight: !!highlight,
+          visible: typeof visible === 'boolean' ? visible : true,
+          icon: icon || null,
+          createdAt: serverTimestamp()
+        });
+        res.status(200).json({ success: true, id: docRef.id });
+      }
+    } catch (error: any) {
+      console.error("Error managing program:", error);
+      res.status(500).json({ error: "Failed to manage program." });
+    }
+  });
+
+  // Admin: delete a program
+  app.delete(apiRoute("/admin/programs/:id"), verifyAdmin, async (req, res) => {
+    const { id } = req.params;
+    try {
+      await deleteDoc(doc(db, 'programs', id));
+      res.status(200).json({ success: true });
+    } catch (error: any) {
+      console.error("Error deleting program:", error);
+      res.status(500).json({ error: "Failed to delete program." });
+    }
+  });
+
   // API Route for Fetching Comments
   app.get(apiRoute("/comments/:testimonyId"), async (req, res) => {
     const { testimonyId } = req.params;

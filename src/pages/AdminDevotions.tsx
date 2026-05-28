@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Plus, 
   Save, 
@@ -48,12 +48,36 @@ export default function AdminDevotions() {
   const [isSaving, setIsSaving] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [activeTab, setActiveTab] = useState<'manager' | 'testimonies' | 'backup'>('manager');
+  const [activeTab, setActiveTab] = useState<'manager' | 'testimonies' | 'backup' | 'programs'>('manager');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [imageSourceType, setImageSourceType] = useState<'url' | 'upload'>('url');
   const [isUploading, setIsUploading] = useState(false);
   const [selectedPendingIds, setSelectedPendingIds] = useState<string[]>([]);
   const navigate = useNavigate();
+
+  // Programs management state
+  const [programs, setPrograms] = useState<any[]>([]);
+  const [editingProgramId, setEditingProgramId] = useState<string | null>(null);
+  const [isNewProgram, setIsNewProgram] = useState(false);
+  const [programFormData, setProgramFormData] = useState<{
+    title: string;
+    time: string;
+    description: string;
+    stats?: string;
+    color?: string;
+    highlight?: boolean;
+    visible?: boolean;
+    icon?: string;
+  }>({
+    title: '',
+    time: '',
+    description: '',
+    stats: '',
+    color: '',
+    highlight: false,
+    visible: true,
+    icon: ''
+  });
 
   const handleBulkAction = async (status: 'APPROVED' | 'REJECTED') => {
     if (selectedPendingIds.length === 0) return;
@@ -242,6 +266,37 @@ export default function AdminDevotions() {
     });
   };
 
+  // Programs management helpers
+  const startNewProgram = () => {
+    setEditingProgramId('new');
+    setIsNewProgram(true);
+    setProgramFormData({
+      title: '',
+      time: '',
+      description: '',
+      stats: '',
+      color: '',
+      highlight: false,
+      visible: true,
+      icon: ''
+    });
+  };
+
+  const startEditProgram = (program: any) => {
+    setEditingProgramId(program.id);
+    setIsNewProgram(false);
+    setProgramFormData({
+      title: program.title || '',
+      time: program.time || '',
+      description: program.description || '',
+      stats: program.stats || '',
+      color: program.color || '',
+      highlight: !!program.highlight,
+      visible: program.visible !== false,
+      icon: program.icon || ''
+    });
+  };
+
   const startEditTestimony = (testimony: Testimony) => {
     setEditingTestimonyId(testimony.id);
     setIsNewTestimony(false);
@@ -344,12 +399,30 @@ export default function AdminDevotions() {
     }
   };
 
+  const fetchPrograms = async () => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    try {
+      const response = await fetch('/api/admin/programs', { headers: { 'x-admin-password': password }, signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (response.ok) {
+        const data = await response.json();
+        setPrograms(data);
+      }
+    } catch (e: any) {
+      console.error("Failed to fetch programs", e);
+    }
+  };
+
   React.useEffect(() => {
     if (isAuthenticated) {
       fetchDevotions();
       fetchApprovedTestimonies();
       if (activeTab === 'testimonies') {
         fetchPending();
+      }
+      if (activeTab === 'programs') {
+        fetchPrograms();
       }
     }
   }, [isAuthenticated, activeTab]);
@@ -414,7 +487,8 @@ export default function AdminDevotions() {
   };
 
   const handleSave = async () => {
-    if (!validateForm()) {
+    // For programs, we don't use validateForm which is tailored for devotions/testimonies
+    if (activeTab !== 'programs' && !validateForm()) {
       setStatus({ type: 'error', message: 'Please fix the errors in the form.' });
       return;
     }
@@ -481,6 +555,44 @@ export default function AdminDevotions() {
         } else {
           throw new Error('Failed to save testimony');
         }
+      } else if (activeTab === 'programs') {
+        // Basic validation
+        if (!programFormData.title || !programFormData.time) {
+          setStatus({ type: 'error', message: 'Title and time are required for a program.' });
+          setIsSaving(false);
+          return;
+        }
+
+        const data = {
+          ...programFormData,
+          id: isNewProgram ? null : editingProgramId,
+          title: sanitizeInput(programFormData.title),
+          time: sanitizeInput(programFormData.time),
+          description: sanitizeInput(programFormData.description || ''),
+          stats: sanitizeInput(programFormData.stats || ''),
+          color: sanitizeInput(programFormData.color || ''),
+          highlight: !!programFormData.highlight,
+          visible: programFormData.visible !== false,
+          icon: programFormData.icon || null
+        };
+
+        const response = await fetch('/api/admin/programs', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-password': password
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          await fetchPrograms();
+          setEditingProgramId(null);
+          setIsNewProgram(false);
+          setStatus({ type: 'success', message: 'Program saved successfully!' });
+        } else {
+          throw new Error('Failed to save program');
+        }
       }
     } catch (error: any) {
       setStatus({ type: 'error', message: error.message });
@@ -490,7 +602,7 @@ export default function AdminDevotions() {
   };
 
   const handleDelete = async (id: string) => {
-    const itemName = activeTab === 'manager' ? 'devotion' : 'testimony';
+    const itemName = activeTab === 'manager' ? 'devotion' : activeTab === 'testimonies' ? 'testimony' : 'program';
     if (window.confirm(`Are you sure you want to delete this ${itemName}? This cannot be undone.`)) {
       setIsSaving(true);
       try {
@@ -503,7 +615,7 @@ export default function AdminDevotions() {
             setDevotions(prev => prev.filter(d => d.id !== id));
             setStatus({ type: 'success', message: 'Devotion deleted.' });
           }
-        } else {
+        } else if (activeTab === 'testimonies') {
           const response = await fetch(`/api/admin/testimonies/${id}`, {
             method: 'DELETE',
             headers: { 'x-admin-password': password }
@@ -514,6 +626,17 @@ export default function AdminDevotions() {
             setStatus({ type: 'success', message: 'Testimony deleted.' });
           } else {
             throw new Error('Failed to delete testimony');
+          }
+        } else if (activeTab === 'programs') {
+          const response = await fetch(`/api/admin/programs/${id}`, {
+            method: 'DELETE',
+            headers: { 'x-admin-password': password }
+          });
+          if (response.ok) {
+            setPrograms(prev => prev.filter(p => p.id !== id));
+            setStatus({ type: 'success', message: 'Program deleted.' });
+          } else {
+            throw new Error('Failed to delete program');
           }
         }
       } catch (e) {
@@ -642,6 +765,12 @@ export default function AdminDevotions() {
               Testimonies
             </button>
             <button 
+              onClick={() => setActiveTab('programs')}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${activeTab === 'programs' ? 'bg-white text-royal-blue shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+              Programs
+            </button>
+            <button 
               onClick={() => setActiveTab('backup')}
               className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${activeTab === 'backup' ? 'bg-white text-royal-blue shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
             >
@@ -661,10 +790,10 @@ export default function AdminDevotions() {
             )}
             <div className="hidden md:flex">
               <button 
-                onClick={activeTab === 'testimonies' ? startNewTestimony : startNew}
+                onClick={() => { activeTab === 'testimonies' ? startNewTestimony() : activeTab === 'programs' ? startNewProgram() : startNew(); }}
                 className="bg-royal-blue text-white px-5 py-2.5 rounded-full font-bold flex items-center gap-2 hover:bg-royal-gold hover:text-royal-blue transition-all shadow-md text-sm"
               >
-                <Plus className="w-4 h-4" /> New {activeTab === 'testimonies' ? 'Testimony' : 'Devotion'}
+                <Plus className="w-4 h-4" /> New {activeTab === 'testimonies' ? 'Testimony' : activeTab === 'programs' ? 'Program' : 'Devotion'}
               </button>
             </div>
             
@@ -713,6 +842,14 @@ export default function AdminDevotions() {
                   </div>
                 </button>
                 <button 
+                  onClick={() => { setActiveTab('programs'); setIsMenuOpen(false); }}
+                  className={`w-full px-4 py-3 rounded-xl text-sm font-bold text-left transition-all ${activeTab === 'programs' ? 'bg-royal-blue text-white' : 'bg-slate-50 text-slate-500'}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Calendar className="w-4 h-4" /> Programs
+                  </div>
+                </button>
+                <button 
                   onClick={() => { setActiveTab('backup'); setIsMenuOpen(false); }}
                   className={`w-full px-4 py-3 rounded-xl text-sm font-bold text-left transition-all ${activeTab === 'backup' ? 'bg-royal-blue text-white' : 'bg-slate-50 text-slate-500'}`}
                 >
@@ -722,10 +859,10 @@ export default function AdminDevotions() {
                 </button>
                 <div className="pt-2">
                   <button 
-                    onClick={() => { activeTab === 'testimonies' ? startNewTestimony() : startNew(); setIsMenuOpen(false); }}
+                    onClick={() => { activeTab === 'testimonies' ? startNewTestimony() : activeTab === 'programs' ? startNewProgram() : startNew(); setIsMenuOpen(false); }}
                     className="w-full bg-royal-gold text-royal-blue px-4 py-3 rounded-xl font-bold flex items-center gap-3 shadow-sm text-sm"
                   >
-                    <Plus className="w-4 h-4" /> New {activeTab === 'testimonies' ? 'Testimony' : 'Devotion'}
+                    <Plus className="w-4 h-4" /> New {activeTab === 'testimonies' ? 'Testimony' : activeTab === 'programs' ? 'Program' : 'Devotion'}
                   </button>
                 </div>
 
@@ -975,6 +1112,87 @@ export default function AdminDevotions() {
                   </motion.div>
                 )}
               </AnimatePresence>
+            </div>
+          </div>
+        ) : activeTab === 'programs' ? (
+          <div className="grid lg:grid-cols-12 gap-10">
+            {/* Programs List Column */}
+            <div className="lg:col-span-5 space-y-4 h-fit sticky top-32">
+              <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6">Programs ({programs.length})</h2>
+              <div className="space-y-3">
+                {programs.map((program) => (
+                  <div 
+                    key={program.id}
+                    className={`bg-white p-5 rounded-2xl border transition-all cursor-pointer group ${editingProgramId === program.id ? 'border-royal-gold shadow-lg ring-1 ring-royal-gold' : 'border-slate-100 hover:shadow-md'}`}
+                    onClick={() => startEditProgram(program)}
+                  >
+                    <div className="flex justify-between items-start gap-4">
+                      <div className="flex-1">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{program.time}</p>
+                        <h3 className="font-bold text-royal-blue group-hover:text-royal-gold transition-colors">{program.title}</h3>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button onClick={(e) => { e.stopPropagation(); handleDelete(program.id); }} className="p-2 text-slate-300 hover:text-red-500 transition-colors">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Programs Editor Column */}
+            <div className="lg:col-span-7">
+              <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden p-8 md:p-12">
+                {editingProgramId ? (
+                  <div>
+                    <div className="grid md:grid-cols-2 gap-6 mb-6">
+                      <div>
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Title</label>
+                        <input type="text" value={programFormData.title} onChange={(e) => setProgramFormData({ ...programFormData, title: e.target.value })} className="w-full px-5 py-4 rounded-xl border border-slate-200" />
+                      </div>
+                      <div>
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Time</label>
+                        <input type="text" value={programFormData.time} onChange={(e) => setProgramFormData({ ...programFormData, time: e.target.value })} className="w-full px-5 py-4 rounded-xl border border-slate-200" />
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <label className="text-xs font-black uppercase tracking-widest text-slate-400">Description</label>
+                      <textarea rows={6} value={programFormData.description} onChange={(e) => setProgramFormData({ ...programFormData, description: e.target.value })} className="w-full px-5 py-4 rounded-xl border border-slate-200" />
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4 mt-4">
+                      <div>
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Stats</label>
+                        <input type="text" value={programFormData.stats} onChange={(e) => setProgramFormData({ ...programFormData, stats: e.target.value })} className="w-full px-5 py-4 rounded-xl border border-slate-200" />
+                      </div>
+                      <div>
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Color (tailwind classes)</label>
+                        <input type="text" value={programFormData.color} onChange={(e) => setProgramFormData({ ...programFormData, color: e.target.value })} className="w-full px-5 py-4 rounded-xl border border-slate-200" />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 mt-4">
+                      <label className="flex items-center gap-2"><input type="checkbox" checked={!!programFormData.highlight} onChange={(e) => setProgramFormData({ ...programFormData, highlight: e.target.checked })} /> <span className="text-xs font-black uppercase tracking-widest text-slate-400">Highlight</span></label>
+                      <label className="flex items-center gap-2"><input type="checkbox" checked={!!programFormData.visible} onChange={(e) => setProgramFormData({ ...programFormData, visible: e.target.checked })} /> <span className="text-xs font-black uppercase tracking-widest text-slate-400">Visible</span></label>
+                    </div>
+
+                    <div className="pt-8 flex items-center gap-4">
+                      <button onClick={handleSave} className="bg-royal-blue text-white px-8 py-3 rounded-full font-bold">{isSaving ? 'Saving...' : 'Save Program'}</button>
+                      <button onClick={() => { setEditingProgramId(null); setProgramFormData({ title: '', time: '', description: '', stats: '', color: '', highlight: false, visible: true, icon: '' }); }} className="text-sm text-slate-500">Cancel</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="h-[400px] flex items-center justify-center text-center py-12">
+                    <div>
+                      <p className="text-slate-500 mb-4">Select a program to edit or create a new one.</p>
+                      <button onClick={startNewProgram} className="bg-royal-blue/5 text-royal-blue px-6 py-3 rounded-full font-bold hover:bg-royal-blue hover:text-white transition-all">Create a new Program</button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         ) : activeTab === 'testimonies' ? (

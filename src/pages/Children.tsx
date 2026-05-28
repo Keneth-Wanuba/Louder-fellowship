@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { 
   Heart, 
@@ -19,41 +19,57 @@ import {
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 
-const PROGRAMS = [
+const DEFAULT_PROGRAMS = [
   {
     title: "Children's Church",
     time: "Every Sunday at 9:00 AM",
     description: "A fun and faith-filled service designed specifically for kids to encounter God's love through storytelling, worship, and interactive lessons.",
-    icon: <Church className="w-8 h-8" />,
+    icon: 'Church',
     stats: "3 Services",
-    color: "bg-blue-50 text-blue-600 border-blue-100"
+    color: "bg-blue-50 text-blue-600 border-blue-100",
+    highlight: false,
+    visible: true
   },
   {
     title: "The Children's Mega Cell",
     time: "Every Saturday at 1:00 PM",
     description: "Our flagship weekend program for deep discipleship. In holidays we meet every Saturday, and during school terms, we gather on the last Saturday of the month.",
-    icon: <Zap className="w-8 h-8" />,
+    icon: 'Zap',
     stats: "Holidays & Term-ly",
     color: "bg-amber-50 text-amber-600 border-amber-100",
-    highlight: true
+    highlight: true,
+    visible: true
   },
   {
     title: "School Ministry",
     time: "Community Partnership",
     description: "Taking the gospel to the classroom. We partner with local schools to provide spiritual guidance, counseling, and biblical coaching to students.",
-    icon: <BookOpen className="w-8 h-8" />,
+    icon: 'BookOpen',
     stats: "5+ Schools",
-    color: "bg-emerald-50 text-emerald-600 border-emerald-100"
+    color: "bg-emerald-50 text-emerald-600 border-emerald-100",
+    highlight: false,
+    visible: true
   },
   {
     title: "Educational Drives",
     time: "Annual Events",
     description: "Supporting academic journeys through our annual Candidate Dedication services and Back-to-School provision drives for those in need.",
-    icon: <Award className="w-8 h-8" />,
+    icon: 'Award',
     stats: "Annual",
-    color: "bg-purple-50 text-purple-600 border-purple-100"
+    color: "bg-purple-50 text-purple-600 border-purple-100",
+    highlight: false,
+    visible: true
   }
 ];
+
+
+
+const ICON_MAP: Record<string, React.ReactElement> = {
+  Church: <Church className="w-8 h-8" />,
+  Zap: <Zap className="w-8 h-8" />,
+  BookOpen: <BookOpen className="w-8 h-8" />,
+  Award: <Award className="w-8 h-8" />
+};
 
 const VALUES = [
   { name: "Spirit Filled", icon: <Sparkles className="w-6 h-6" />, text: "Teaching children to yield to the Holy Spirit and hear God's voice early." },
@@ -71,6 +87,27 @@ const ACTIVITIES = [
 ];
 
 export default function Children() {
+  const [programs, setPrograms] = useState<any[]>(DEFAULT_PROGRAMS);
+
+  useEffect(() => {
+    let mounted = true;
+    const controller = new AbortController();
+
+    fetch('/api/programs', { signal: controller.signal })
+      .then(res => res.ok ? res.json() : Promise.reject('Failed'))
+      .then((data) => {
+        if (!mounted) return;
+        if (Array.isArray(data) && data.length > 0) {
+          setPrograms(data.filter((p: any) => p.visible !== false));
+        }
+      })
+      .catch(() => {
+        // keep defaults on failure
+      });
+
+    return () => { mounted = false; controller.abort(); };
+  }, []);
+
   return (
     <div className="bg-white selection:bg-royal-gold selection:text-royal-blue">
       <SEO 
@@ -223,7 +260,7 @@ export default function Children() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            {PROGRAMS.map((program, idx) => (
+            {programs.map((program, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
@@ -232,8 +269,8 @@ export default function Children() {
                 transition={{ delay: idx * 0.1 }}
                 className={`group p-10 rounded-[3rem] border transition-all duration-500 flex flex-col md:flex-row gap-8 items-start hover:shadow-2xl hover:-translate-y-2 ${program.highlight ? 'bg-royal-gold/5 border-royal-gold/20' : 'bg-white border-slate-100'}`}
               >
-                <div className={`w-20 h-20 rounded-3xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:rotate-12 ${program.color}`}>
-                  {program.icon}
+                <div className={`w-20 h-20 rounded-3xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:rotate-12 ${program.color || 'bg-royal-gold/10 text-royal-gold border-royal-gold/20'}`}>
+                  {ICON_MAP[program.icon] || <Sparkles className="w-8 h-8" />}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-2">

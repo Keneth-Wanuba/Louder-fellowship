@@ -6,7 +6,7 @@ import {
   ShieldCheck, Quote, Star, Activity, Image as ImageIcon
 } from 'lucide-react';
 import SEO from '../components/SEO';
-import { projects } from '../data/projects';
+import { Project, normalizeProjectList, projects } from '../data/projects';
 import { TESTIMONIES, Testimony } from '../data/content';
 import { Skeleton } from '../components/ui/Skeleton';
 
@@ -66,6 +66,7 @@ export default function ProjectDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const [project, setProject] = useState<Project | null>(null);
   const [likes, setLikes] = useState<Record<string, number>>(() => {
     const initial: Record<string, number> = {};
     TESTIMONIES.forEach(t => initial[t.id] = t.likes);
@@ -82,15 +83,34 @@ export default function ProjectDetails() {
       [id]: prev[id] + 1
     }));
   };
-  
-  const project = projects.find(p => p.id === Number(id));
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
-    return () => clearTimeout(timer);
+    let mounted = true;
+    const controller = new AbortController();
+
+    setIsLoading(true);
+
+    fetch('/api/projects', { signal: controller.signal })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error('Failed to fetch projects')))
+      .then((data) => {
+        if (!mounted) return;
+        const dynamicProject = normalizeProjectList(data).find((item) => String(item.id) === String(id));
+        const fallbackProject = projects.find((item) => String(item.id) === String(id)) ?? null;
+        setProject(dynamicProject ?? fallbackProject);
+      })
+      .catch((error) => {
+        if (!mounted || error?.name === 'AbortError') return;
+        setProject(projects.find((item) => String(item.id) === String(id)) ?? null);
+      })
+      .finally(() => {
+        if (mounted) setIsLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+      controller.abort();
+    };
   }, [id]);
 
   if (isLoading) {
@@ -111,7 +131,7 @@ export default function ProjectDetails() {
     );
   }
 
-  const badgeColors = {
+  const badgeColors: Record<Project['type'], string> = {
     'Evangelism': 'bg-royal-gold text-royal-blue',
     'Humanitarian Aid': 'bg-teal-500 text-white',
     'Youth': 'bg-purple-500 text-white',
@@ -225,7 +245,7 @@ export default function ProjectDetails() {
             )}
 
             {/* Project-specific Testimonies */}
-            {TESTIMONIES.filter(t => t.projectId === project.id).length > 0 && (
+            {TESTIMONIES.filter(t => String(t.projectId) === String(project.id)).length > 0 && (
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -234,7 +254,7 @@ export default function ProjectDetails() {
               >
                 <h2 className="text-3xl font-serif font-bold text-royal-blue mb-6">Member Testimonies</h2>
                 <div className="grid gap-6">
-                  {TESTIMONIES.filter(t => t.projectId === project.id).map((testimony) => (
+                  {TESTIMONIES.filter(t => String(t.projectId) === String(project.id)).map((testimony) => (
                     <div key={testimony.id} className="bg-white p-8 rounded-[2rem] shadow-xl border border-slate-100 flex flex-col md:flex-row gap-8 items-start">
                       <div className="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 shadow-lg border-2 border-royal-gold/20">
                         <img src={testimony.image} alt={testimony.author} className="w-full h-full object-cover" />
@@ -259,7 +279,7 @@ export default function ProjectDetails() {
                               <Heart className={`w-3.5 h-3.5 ${blessed.has(testimony.id) ? 'fill-current' : ''}`} />
                             </motion.div>
                             <span>
-                              {likes[testimony.id]} Blessed
+                              {likes[testimony.id] ?? testimony.likes} Blessed
                               {blessed.has(testimony.id) && " ✓"}
                             </span>
                           </button>

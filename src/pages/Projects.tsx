@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
-import { Project, projects } from '../data/projects';
+import { PROJECT_TYPES, Project, normalizeProjectList, projects } from '../data/projects';
 import { Skeleton } from '../components/ui/Skeleton';
 
 const Counter = ({ value, label, icon }: { value: string; label: string; icon: React.ReactNode }) => {
@@ -69,12 +69,13 @@ const ProjectCardSkeleton = () => (
 );
 
 const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
-  const badgeColors = {
+  const badgeColors: Record<Project['type'], string> = {
     Evangelism: 'bg-royal-gold text-royal-blue',
     'Humanitarian Aid': 'bg-teal-500 text-white',
     Youth: 'bg-purple-500 text-white',
     Health: 'bg-pink-500 text-white',
-    Education: 'bg-blue-500 text-white'
+    Education: 'bg-blue-500 text-white',
+    'Ministry Training': 'bg-indigo-500 text-white'
   };
 
   return (
@@ -141,10 +142,10 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
         </div>
 
         <Link 
-          to={project.id === 8 ? "/mission-kasubi" : `/projects/${project.id}`} 
+          to={String(project.id) === '8' ? "/mission-kasubi" : `/projects/${project.id}`} 
           className="w-full flex items-center justify-center gap-2 py-4 bg-royal-blue text-white rounded-xl font-bold hover:bg-royal-gold transition-all group/btn"
         >
-          <span>{project.id === 8 ? "Join the Mission" : "Read More Impact"}</span>
+          <span>{String(project.id) === '8' ? "Join the Mission" : "Read More Impact"}</span>
           <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
         </Link>
       </div>
@@ -155,13 +156,31 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
 export default function Projects() {
   const [filter, setFilter] = useState('All');
   const [isLoading, setIsLoading] = useState(true);
-  const filteredProjects = filter === 'All' ? projects : projects.filter((p) => p.type === filter);
+  const [projectList, setProjectList] = useState<Project[]>([]);
+  const filteredProjects = filter === 'All' ? projectList : projectList.filter((p) => p.type === filter);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1200);
-    return () => clearTimeout(timer);
+    let mounted = true;
+    const controller = new AbortController();
+
+    fetch('/api/projects', { signal: controller.signal })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error('Failed to fetch projects')))
+      .then((data) => {
+        if (!mounted) return;
+        setProjectList(normalizeProjectList(data));
+      })
+      .catch((error) => {
+        if (!mounted || error?.name === 'AbortError') return;
+        setProjectList(projects);
+      })
+      .finally(() => {
+        if (mounted) setIsLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+      controller.abort();
+    };
   }, []);
 
   const { scrollYProgress } = useScroll();
@@ -243,7 +262,7 @@ export default function Projects() {
             <div className="flex justify-start md:justify-center min-w-full">
               <div className="flex gap-1 md:gap-2 bg-white p-2 rounded-full shadow-md border border-slate-100 w-max">
                 <div className="p-2 md:p-3 text-royal-gold hidden sm:flex items-center"><Filter className="w-4 h-4 md:w-5 md:h-5" /></div>
-                {['All', 'Evangelism', 'Humanitarian Aid', 'Youth', 'Health', 'Education'].map((cat) => (
+                {['All', ...PROJECT_TYPES].map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setFilter(cat)}
@@ -271,9 +290,13 @@ export default function Projects() {
                   <ProjectCardSkeleton key={`skeleton-${i}`} />
                 ))
               ) : (
-                filteredProjects.map((project) => (
+                filteredProjects.length > 0 ? filteredProjects.map((project) => (
                   <ProjectCard key={project.id} project={project} />
-                ))
+                )) : (
+                  <div className="lg:col-span-3 text-center text-slate-500 py-16">
+                    No projects available.
+                  </div>
+                )
               )}
             </AnimatePresence>
           </motion.div>

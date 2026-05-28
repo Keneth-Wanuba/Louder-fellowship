@@ -1,7 +1,11 @@
+export const PROJECT_TYPES = ['Evangelism', 'Humanitarian Aid', 'Youth', 'Health', 'Education', 'Ministry Training'] as const;
+
+export type ProjectType = typeof PROJECT_TYPES[number];
+
 export interface Project {
-  id: number;
+  id: number | string;
   title: string;
-  type: 'Evangelism' | 'Humanitarian Aid' | 'Youth' | 'Health' | 'Education' | 'Ministry Training';
+  type: ProjectType;
   location: string;
   timeframe: string;
   description: string;
@@ -206,3 +210,67 @@ export const projects: Project[] = [
     stories: []
   }
 ];
+
+const isProjectType = (value: unknown): value is ProjectType => (
+  typeof value === 'string' && (PROJECT_TYPES as readonly string[]).includes(value)
+);
+
+const toStringArray = (value: unknown, fallback: string[]) => (
+  Array.isArray(value) ? value.filter(Boolean).map(String) : fallback
+);
+
+const toImpactStats = (
+  value: unknown,
+  fallback: { label: string; value: string }[]
+) => {
+  if (!Array.isArray(value)) return fallback;
+
+  return value
+    .map((item) => ({
+      label: String(item?.label ?? ''),
+      value: String(item?.value ?? '')
+    }))
+    .filter((item) => item.label && item.value);
+};
+
+const toStories = (
+  value: unknown,
+  fallback?: { quote: string; name: string }[]
+) => {
+  if (!Array.isArray(value)) return fallback;
+
+  return value
+    .map((item) => ({
+      quote: String(item?.quote ?? ''),
+      name: String(item?.name ?? '')
+    }))
+    .filter((item) => item.quote && item.name);
+};
+
+export function normalizeProject(raw: any): Project {
+  const rawId = raw?.id ?? raw?.documentId;
+  const fallback = projects.find((project) => String(project.id) === String(rawId));
+
+  return {
+    id: rawId ?? fallback?.id ?? '',
+    title: String(raw?.title ?? fallback?.title ?? 'Untitled Project'),
+    type: isProjectType(raw?.type) ? raw.type : fallback?.type ?? 'Evangelism',
+    location: String(raw?.location ?? fallback?.location ?? ''),
+    timeframe: String(raw?.timeframe ?? fallback?.timeframe ?? ''),
+    description: String(raw?.description ?? fallback?.description ?? ''),
+    funded: Number(raw?.funded ?? fallback?.funded ?? 0),
+    image: String(raw?.image ?? fallback?.image ?? ''),
+    fullDescription: String(raw?.fullDescription ?? fallback?.fullDescription ?? raw?.description ?? ''),
+    gallery: toStringArray(raw?.gallery, fallback?.gallery ?? []),
+    impactStats: toImpactStats(raw?.impactStats, fallback?.impactStats ?? []),
+    stories: toStories(raw?.stories, fallback?.stories)
+  };
+}
+
+export function normalizeProjectList(raw: unknown): Project[] {
+  if (!Array.isArray(raw)) return [];
+
+  return raw
+    .map(normalizeProject)
+    .filter((project) => project.id !== '' && project.title.trim().length > 0);
+}
