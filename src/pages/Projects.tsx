@@ -167,7 +167,8 @@ export default function Projects() {
       .then((response) => response.ok ? response.json() : Promise.reject(new Error('Failed to fetch projects')))
       .then((data) => {
         if (!mounted) return;
-        setProjectList(normalizeProjectList(data));
+        const dynamicProjects = normalizeProjectList(data);
+        setProjectList(dynamicProjects.length > 0 ? dynamicProjects : projects);
       })
       .catch((error) => {
         if (!mounted || error?.name === 'AbortError') return;

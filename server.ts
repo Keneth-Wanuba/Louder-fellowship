@@ -59,8 +59,9 @@ const upload = multer({
   }
 });
 
-export function createApiApp() {
+export function createApiApp(options: { includeUnprefixedRoutes?: boolean } = {}) {
   const app = express();
+  const { includeUnprefixedRoutes = process.env.VERCEL === '1' } = options;
 
   app.use((req, _res, next) => {
     if (process.env.VERCEL === '1' && req.url && !req.url.startsWith('/api')) {
@@ -73,7 +74,9 @@ export function createApiApp() {
   app.use(bodyParser.json({ limit: '10mb' }));
   app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
-  const apiRoute = (routePath: string): [string, string] => [`/api${routePath}`, routePath];
+  const apiRoute = (routePath: string): string | [string, string] => (
+    includeUnprefixedRoutes ? [`/api${routePath}`, routePath] : `/api${routePath}`
+  );
 
   const getAdminPassword = () => process.env.ADMIN_PASSWORD;
 
@@ -783,7 +786,7 @@ ${message}
 
 export async function createApp(options: { includeFrontend?: boolean } = {}) {
   const { includeFrontend = process.env.VERCEL !== '1' } = options;
-  const app = createApiApp();
+  const app = createApiApp({ includeUnprefixedRoutes: !includeFrontend });
 
   if (!includeFrontend) {
     return app;
@@ -819,8 +822,9 @@ async function startServer() {
 
 const entrypoint = process.argv[1]?.replace(/\\/g, '/');
 const isDirectServerRun = entrypoint?.endsWith('/server.ts') || entrypoint?.endsWith('/server.cjs');
+const isNpmDevRun = process.env.npm_lifecycle_event === 'dev';
 
-if (process.env.VERCEL !== '1' && isDirectServerRun) {
+if (process.env.VERCEL !== '1' && (isDirectServerRun || isNpmDevRun)) {
   startServer().catch((err) => {
     console.error("Failed to start server:", err);
   });

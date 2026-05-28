@@ -1,101 +1,62 @@
-# Seeding and Testing Instructions
+# Seeding And Testing
 
-## Files Created/Modified
+## Current Data Flow
 
-### 1. **seed-programs.ts** (root directory)
-- Connects to your Firebase database
-- Seeds 8 weekly programs based on the original Programs page schedule
-- Clears existing programs before seeding (safe)
-- Shows progress in console
+- Public pages call `/api/projects` and `/api/programs`.
+- Those API routes use the Firebase Client SDK, so Firestore security rules still apply.
+- `firestore.rules` must be published before public reads for `projects` and `programs` will work in production.
 
-### 2. **package.json** (scripts added)
-```json
-"seed:programs": "tsx seed-programs.ts"
-```
+## Required Before Dynamic Reads Work
 
-## Quick Start
+Publish the Firestore rules that include:
 
-Open Command Prompt (cmd.exe) or PowerShell and run:
+```js
+match /projects/{projectId} {
+  allow read: if true;
+  allow write: if isAdmin();
+}
 
-```bash
-cd "C:\Users\user\OneDrive\Dokument\Louder Fellowship.worktrees\copilot-worktree-2026-05-28T13-18-45"
-
-# Step 1: Seed the programs to Firestore
-npm run seed:programs
-
-# Step 2: Start the dev server
-npm run dev
-```
-
-## What Gets Seeded
-
-8 programs matching your church's weekly schedule:
-- **Sunday**: The Lord's Day (main service)
-- **Monday**: Zoom Fellowship (8pm-10pm)
-- **Tuesday**: One-on-One Prophetic Prayers (8pm-10pm)
-- **Wednesday**: Mid-week Gathering (6pm-9pm)
-- **Thursday**: Cell Gatherings & Dream Interpretation
-- **Friday**: Prayer Nights & Upper Room
-- **Saturday AM**: Children's Mega Cell (1:00 PM) ⭐ HIGHLIGHTED
-- **Saturday PM**: Choir Practice & Church Setup
-
-## Preview URLs After Dev Server Starts
-
-1. **Programs Page (public)** — http://localhost:3000/programs
-   - Shows: all visible programs from DB
-   - Fallback: original static schedule if DB fails
-
-2. **Admin Portal** — http://localhost:3000/admin-portal-secret
-   - Login with your ADMIN_PASSWORD
-   - "Programs" tab to manage programs
-   - Add, edit, hide/show, delete programs in real-time
-
-3. **Children's Ministry** — http://localhost:3000/children
-   - Shows: programs from the programs DB (filtered)
-   - Currently displays children's programs (customizable)
-
-## Testing Checklist
-
-After starting dev:
-- [ ] Check /programs — should show all 8 programs
-- [ ] Check /children — may show fewer (filtered by DB)
-- [ ] Check /admin-portal-secret → Programs tab
-- [ ] Try creating a new program in admin
-- [ ] Hide one program in admin, refresh /programs
-- [ ] Verify fallback works if you disconnect from DB
-
-## Database Structure (Firestore 'programs' collection)
-
-Each document has:
-```javascript
-{
-  title: string,
-  time: string,
-  description: string,
-  stats: string,
-  color: string (tailwind classes),
-  highlight: boolean,
-  visible: boolean,
-  icon: string (e.g., "Church", "Zap"),
-  createdAt: timestamp
+match /programs/{programId} {
+  allow read: if true;
+  allow write: if isAdmin();
 }
 ```
 
-## Troubleshooting
+Until those rules are live, the API returns:
 
-**seed:programs fails?**
-- Check .env has correct FIREBASE_* variables
-- Verify Firebase project ID is correct
+```json
+{"error":"Failed to fetch projects.","details":"Missing or insufficient permissions."}
+```
 
-**Dev server won't start?**
-- Check Node version: `node --version` (should be 18+)
-- Clear node_modules: `rm -r node_modules && npm install`
+## Program Seeding Script
 
-**Programs not showing?**
-- Check browser console for fetch errors
-- Verify /api/programs returns data (open http://localhost:3000/api/programs)
-- Ensure admin password is set in env: `ADMIN_PASSWORD=...`
+`npm run seed:programs` seeds default weekly programs from `seed-programs.ts`.
 
----
+Run:
 
-✅ **All code is ready to deploy. Just run the npm commands above!**
+```bash
+npm run seed:programs
+```
+
+If programs already exist, the script stops without deleting anything. To replace existing programs:
+
+```bash
+npm run seed:programs -- --replace
+```
+
+Because the project intentionally uses no service account key, this script can only write if your Firebase Client SDK permissions/auth setup allows the write. If it returns `permission-denied`, add the data through the Firebase console or configure Firebase Auth based admin writes.
+
+## Pre-Deploy Checks
+
+```bash
+npm run lint
+npm run build
+npm audit --audit-level=moderate
+```
+
+Then verify:
+
+- `/api/projects` returns JSON, not HTML.
+- `/api/programs` returns JSON, not HTML.
+- `/projects` renders either database projects or the static fallback.
+- `/programs` renders either database programs or the static fallback schedule.

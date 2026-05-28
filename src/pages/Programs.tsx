@@ -79,7 +79,7 @@ export default function Programs() {
         if (Array.isArray(data) && data.length > 0) {
           setPrograms(data.filter((p: any) => p.visible !== false));
         } else {
-          setPrograms([]);
+          setPrograms(null);
         }
       })
       .catch(() => {
