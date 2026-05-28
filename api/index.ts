@@ -1,20 +1,23 @@
 import type { Express, Request, Response } from 'express';
+import { createRequire } from 'node:module';
 
-let appPromise: Promise<Express> | undefined;
+const require = createRequire(import.meta.url);
+let app: Express | undefined;
 
-async function getApiApp() {
-  if (!appPromise) {
-    appPromise = import('../server').then(({ createApiApp }) => createApiApp());
+function getApiApp() {
+  if (!app) {
+    const server = require('../dist/server.cjs') as { createApiApp: () => Express };
+    app = server.createApiApp();
   }
 
-  return appPromise;
+  return app;
 }
 
 export default async function handler(req: Request, res: Response) {
   try {
     console.log('[api] incoming request', req.method, req.url);
-    const app = await getApiApp();
-    return app(req, res);
+    const apiApp = getApiApp();
+    return apiApp(req, res);
   } catch (error: any) {
     console.error('[api] failed before Express handled request', {
       message: error?.message,
