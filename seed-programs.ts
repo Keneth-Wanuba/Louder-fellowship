@@ -1,17 +1,9 @@
 import { initializeApp } from 'firebase/app';
-import { addDoc, collection, deleteDoc, getDocs, getFirestore } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, getFirestore, setDoc } from 'firebase/firestore';
 import 'dotenv/config';
+import { explainSeedPermissionError, getSeedFirebaseConfig, signInSeedAdmin } from './seed-firebase-config';
 
-const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID || 'kennyboa-b3902',
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
-};
-
-const firebaseApp = initializeApp(firebaseConfig);
+const firebaseApp = initializeApp(getSeedFirebaseConfig());
 const db = getFirestore(firebaseApp, '(default)');
 
 const DEFAULT_PROGRAMS = [
@@ -97,20 +89,42 @@ const DEFAULT_PROGRAMS = [
   },
 ];
 
+function toDocId(title: string, fallback: number) {
+  const slug = title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  return slug || `program-${fallback}`;
+}
+
 async function seedPrograms() {
   console.log('Starting programs seeding...');
 
   try {
     const shouldReplace = process.argv.includes('--replace');
+    const shouldUpsert = process.argv.includes('--upsert');
+    const isDryRun = process.argv.includes('--dry-run');
     const programsRef = collection(db, 'programs');
+
+    if (isDryRun) {
+      DEFAULT_PROGRAMS.forEach((program, index) => {
+        console.log(`Would seed ${index + 1}: ${program.title}`);
+      });
+      console.log(`Dry run complete. ${DEFAULT_PROGRAMS.length} programs are ready to seed.`);
+      return;
+    }
+
+    await signInSeedAdmin(firebaseApp);
+
     const snapshot = await getDocs(programsRef);
 
-    if (snapshot.size > 0) {
-      if (!shouldReplace) {
-        console.log(`Found ${snapshot.size} existing programs. Run "npm run seed:programs -- --replace" to replace them.`);
-        return;
-      }
+    if (snapshot.size > 0 && !shouldReplace && !shouldUpsert) {
+      console.log(`Found ${snapshot.size} existing programs. Run "npm run seed:programs -- --upsert" to update matching defaults or "npm run seed:programs -- --replace" to replace them.`);
+      return;
+    }
 
+    if (snapshot.size > 0 && shouldReplace) {
       console.log(`Found ${snapshot.size} existing programs. Clearing them first...`);
       await Promise.all(snapshot.docs.map((programDoc) => deleteDoc(programDoc.ref)));
       console.log('Existing programs cleared.');
@@ -118,10 +132,19 @@ async function seedPrograms() {
 
     let count = 0;
     for (const program of DEFAULT_PROGRAMS) {
-      await addDoc(programsRef, {
+      const now = new Date().toISOString();
+      const payload = {
         ...program,
-        createdAt: new Date().toISOString(),
-      });
+        order: count + 1,
+        createdAt: now,
+        updatedAt: now,
+      };
+      const programRef = doc(programsRef, toDocId(program.title, count + 1));
+      if (shouldUpsert) {
+        await setDoc(programRef, payload, { merge: true });
+      } else {
+        await setDoc(programRef, payload);
+      }
       count++;
       console.log(`Added: ${program.title}`);
     }
@@ -129,6 +152,7 @@ async function seedPrograms() {
     console.log(`Successfully seeded ${count} programs to Firestore.`);
   } catch (error) {
     console.error('Error seeding programs:', error);
+    explainSeedPermissionError(error);
     process.exit(1);
   }
 }

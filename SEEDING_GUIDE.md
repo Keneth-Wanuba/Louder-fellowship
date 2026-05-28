@@ -36,23 +36,73 @@ firebase deploy --only firestore
 
 If the Firebase CLI is not installed, publish the same `firestore.rules` content from Firebase Console > Firestore Database > Rules > Publish. Vercel deploys do not publish Firestore rules.
 
-## Program Seeding Script
+## Seed Scripts
 
 `npm run seed:programs` seeds default weekly programs from `seed-programs.ts`.
+`npm run seed:projects` transfers the existing static project data from `src/data/projects.ts`.
+`npm run seed:all` runs both scripts.
 
 Run:
 
 ```bash
+npm run seed:programs -- --dry-run
+npm run seed:projects -- --dry-run
 npm run seed:programs
+npm run seed:projects
 ```
 
-If programs already exist, the script stops without deleting anything. To replace existing programs:
+If data already exists, the scripts stop without deleting anything. To update matching default document IDs:
+
+```bash
+npm run seed:programs -- --upsert
+npm run seed:projects -- --upsert
+```
+
+To replace existing data:
 
 ```bash
 npm run seed:programs -- --replace
+npm run seed:projects -- --replace
 ```
 
-Because the project intentionally uses no service account key, this script can only write if your Firebase Client SDK permissions/auth setup allows the write. If it returns `permission-denied`, add the data through the Firebase console or configure Firebase Auth based admin writes.
+Because the project intentionally uses no service account key, these scripts use the Firebase Client SDK and Firestore rules still apply. If writes require admin auth, set a Firebase Auth user before running:
+
+```bash
+export FIREBASE_ADMIN_EMAIL="kennymeico@gmail.com"
+export FIREBASE_ADMIN_PASSWORD="your-password"
+npm run seed:all
+```
+
+On Windows PowerShell:
+
+```powershell
+$env:FIREBASE_ADMIN_EMAIL="kennymeico@gmail.com"
+$env:FIREBASE_ADMIN_PASSWORD="your-password"
+npm run seed:all
+```
+
+From Firebase Cloud Shell, run the script inside the website repo, not from `/home/kennymeico`:
+
+```bash
+git clone https://github.com/Keneth-Wanuba/Louder-fellowship.git
+cd Louder-fellowship
+npm install
+npm run seed:projects -- --dry-run
+npm run seed:programs -- --dry-run
+npm run seed:projects
+npm run seed:programs
+```
+
+If the repo is already cloned:
+
+```bash
+cd Louder-fellowship
+git pull
+npm install
+npm run seed:all
+```
+
+If the script returns `permission-denied`, either sign in with a Firebase Auth account allowed by `isAdmin()` or temporarily allow writes in Firestore rules, run the seed, then restore the safer rules.
 
 ## Pre-Deploy Checks
 
