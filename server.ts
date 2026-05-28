@@ -5,52 +5,38 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import { google } from "googleapis";
 import multer from "multer";
-import { applicationDefault, cert, getApps, initializeApp } from 'firebase-admin/app';
-import { FieldValue, Firestore, getFirestore } from 'firebase-admin/firestore';
+import { initializeApp } from 'firebase/app';
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  query,
+  where,
+  orderBy,
+  writeBatch,
+  serverTimestamp,
+  limit,
+  increment,
+} from 'firebase/firestore';
 import "dotenv/config";
 
 import firebaseConfigJson from "./firebase-applet-config.json";
 
-const firebaseProjectId = process.env.FIREBASE_PROJECT_ID || firebaseConfigJson.projectId;
-const firestoreDatabaseId = process.env.FIRESTORE_DATABASE_ID || firebaseConfigJson.firestoreDatabaseId || '(default)';
-
-const getFirebaseCredential = () => {
-  const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
-  if (serviceAccountJson) {
-    return cert(JSON.parse(serviceAccountJson));
-  }
-
-  if (process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY) {
-    return cert({
-      projectId: firebaseProjectId,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-    });
-  }
-
-  if (process.env.VERCEL === '1') {
-    throw new Error(
-      'Missing Firebase Admin credentials. Set FIREBASE_SERVICE_ACCOUNT_KEY or FIREBASE_CLIENT_EMAIL plus FIREBASE_PRIVATE_KEY in Vercel.'
-    );
-  }
-
-  return applicationDefault();
+const firebaseConfig = {
+  apiKey: process.env.FIREBASE_API_KEY || firebaseConfigJson.apiKey,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN || firebaseConfigJson.authDomain,
+  projectId: process.env.FIREBASE_PROJECT_ID || 'kennyboa-b3902',
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET || firebaseConfigJson.storageBucket,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || firebaseConfigJson.messagingSenderId,
+  appId: process.env.FIREBASE_APP_ID || firebaseConfigJson.appId,
 };
 
-let firestoreDb: Firestore | undefined;
-
-const getDb = () => {
-  if (!getApps().length) {
-    initializeApp({
-      credential: getFirebaseCredential(),
-      projectId: firebaseProjectId,
-      storageBucket: process.env.FIREBASE_STORAGE_BUCKET || firebaseConfigJson.storageBucket,
-    });
-  }
-
-  firestoreDb ??= getFirestore(firestoreDatabaseId);
-  return firestoreDb;
-};
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp, '(default)');
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -117,7 +103,7 @@ export async function createApp(options: { includeFrontend?: boolean } = {}) {
   app.get("/api/test-firebase", async (req, res) => {
     try {
       console.log("Attempting to test Firebase connection...");
-      const snapshot = await getDb().collection('testimonies').limit(1).get();
+      const snapshot = await getDocs(query(collection(db, 'testimonies'), limit(1)));
       console.log("Firebase snapshot received:", snapshot.empty ? "Empty" : "Contains Docs");
       if (snapshot.empty) {
         return res.status(200).json({ status: "success", message: "Connected! Collection 'testimonies' is empty." });
@@ -139,7 +125,7 @@ export async function createApp(options: { includeFrontend?: boolean } = {}) {
     console.log("GET /api/testimonies/approved called");
     try {
       console.log("Starting getDocs for approved testimonies...");
-      const snapshot = await getDb().collection('testimonies').where('status', '==', 'APPROVED').get();
+      const snapshot = await getDocs(query(collection(db, 'testimonies'), where('status', '==', 'APPROVED')));
       console.log(`Snapshot received. Docs count: ${snapshot.docs.length}`);
       
       const testimonies = snapshot.docs.map(d => {
@@ -163,7 +149,7 @@ export async function createApp(options: { includeFrontend?: boolean } = {}) {
   app.get("/api/devotions", async (req, res) => {
     try {
       console.log("Fetching devotions from Firestore...");
-      const snapshot = await getDb().collection('devotions').get();
+      const snapshot = await getDocs(collection(db, 'devotions'));
       
       const devotions = snapshot.docs.map(d => ({
         ...d.data(),
@@ -195,11 +181,11 @@ export async function createApp(options: { includeFrontend?: boolean } = {}) {
     try {
       if (id) {
         // Update
-        await getDb().collection('devotions').doc(id).update({ title, scripture, content, nuggets, date, author });
+        await updateDoc(doc(db, 'devotions', id), { title, scripture, content, nuggets, date, author });
         res.status(200).json({ success: true, id });
       } else {
         // Create
-        const docRef = await getDb().collection('devotions').add({
+        const docRef = await addDoc(collection(db, 'devotions'), {
           title, scripture, content, nuggets, date, author
         });
         res.status(200).json({ success: true, id: docRef.id });
@@ -215,7 +201,7 @@ export async function createApp(options: { includeFrontend?: boolean } = {}) {
     const { id } = req.params;
 
     try {
-      await getDb().collection('devotions').doc(id).delete();
+      await deleteDoc(doc(db, 'devotions', id));
       res.status(200).json({ success: true });
     } catch (error: any) {
       console.error("Error deleting devotion:", error);
@@ -237,8 +223,8 @@ export async function createApp(options: { includeFrontend?: boolean } = {}) {
     }
 
     try {
-      await getDb().collection('devotions').doc(id).update({
-        [`reactions.${reactionType}`]: FieldValue.increment(1)
+      await updateDoc(doc(db, 'devotions', id), {
+        [`reactions.${reactionType}`]: increment(1)
       });
       res.status(200).json({ success: true });
     } catch (error: any) {
@@ -413,7 +399,7 @@ ${message}
         return res.status(400).json({ error: "Name, location, contact, and testimony content are required." });
       }
 
-      await getDb().collection('testimonies').add({
+      await addDoc(collection(db, 'testimonies'), {
         id: Date.now().toString(),
         author,
         location,
@@ -440,7 +426,7 @@ ${message}
   // API Route for Admin to get Pending Testimonies
   app.get("/api/admin/pending-testimonies", verifyAdmin, async (req, res) => {
     try {
-      const snapshot = await getDb().collection('testimonies').where('status', '==', 'PENDING').get();
+      const snapshot = await getDocs(query(collection(db, 'testimonies'), where('status', '==', 'PENDING')));
       
       const pendingTestimonies = snapshot.docs.map(d => {
         const data = d.data();
@@ -464,7 +450,7 @@ ${message}
     try {
       if (id) {
         // Update
-        await getDb().collection('testimonies').doc(id).update({ 
+        await updateDoc(doc(db, 'testimonies', id), { 
           author, 
           location, 
           content, 
@@ -477,7 +463,7 @@ ${message}
         res.status(200).json({ success: true, id });
       } else {
         // Create
-        const docRef = await getDb().collection('testimonies').add({
+        const docRef = await addDoc(collection(db, 'testimonies'), {
           author, 
           location, 
           content, 
@@ -501,7 +487,7 @@ ${message}
     const { id } = req.params;
 
     try {
-      await getDb().collection('testimonies').doc(id).delete();
+      await deleteDoc(doc(db, 'testimonies', id));
       res.status(200).json({ success: true });
     } catch (error: any) {
       console.error("Error deleting testimony:", error);
@@ -515,7 +501,7 @@ ${message}
 
     try {
       // Use the provided Firestore document ID directly
-      await getDb().collection('testimonies').doc(id).update({ status });
+      await updateDoc(doc(db, 'testimonies', id), { status });
       res.status(200).json({ success: true });
     } catch (error: any) {
       console.error("Failed to update pending testimony:", error);
@@ -532,9 +518,9 @@ ${message}
     }
 
     try {
-      const batch = getDb().batch();
+      const batch = writeBatch(db);
       for (const id of ids) {
-        const docRef = getDb().collection('testimonies').doc(id);
+        const docRef = doc(db, 'testimonies', id);
         batch.update(docRef, { status });
       }
       
@@ -550,10 +536,11 @@ ${message}
   app.get("/api/comments/:testimonyId", async (req, res) => {
     const { testimonyId } = req.params;
     try {
-      const snapshot = await getDb().collection('comments')
-        .where('testimonyId', '==', testimonyId)
-        .orderBy('createdAt', 'desc')
-        .get();
+      const snapshot = await getDocs(query(
+        collection(db, 'comments'),
+        where('testimonyId', '==', testimonyId),
+        orderBy('createdAt', 'desc')
+      ));
       
       const comments = snapshot.docs.map(d => {
         const data = d.data();
@@ -582,11 +569,11 @@ ${message}
     }
 
     try {
-      const commentRef = await getDb().collection('comments').add({
+      const commentRef = await addDoc(collection(db, 'comments'), {
         testimonyId,
         author,
         content,
-        createdAt: FieldValue.serverTimestamp()
+        createdAt: serverTimestamp()
       });
       
       res.status(200).json({
@@ -664,9 +651,9 @@ ${message}
     }
 
     try {
-      await getDb().collection('subscribers').add({
+      await addDoc(collection(db, 'subscribers'), {
         email,
-        createdAt: FieldValue.serverTimestamp()
+        createdAt: serverTimestamp()
       });
       
       res.status(200).json({ success: true, message: "Subscribed successfully!" });
