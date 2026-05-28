@@ -73,6 +73,8 @@ export function createApiApp() {
   app.use(bodyParser.json({ limit: '10mb' }));
   app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
+  const apiRoute = (routePath: string): [string, string] => [`/api${routePath}`, routePath];
+
   const getAdminPassword = () => process.env.ADMIN_PASSWORD;
 
   const verifyAdmin = (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -89,7 +91,7 @@ export function createApiApp() {
   };
 
   // API Route for Admin Login/Verify
-  app.post("/api/admin/verify", (req, res) => {
+  app.post(apiRoute("/admin/verify"), (req, res) => {
     const { password } = req.body;
     const configuredAdminPassword = getAdminPassword();
     if (!configuredAdminPassword) {
@@ -104,7 +106,7 @@ export function createApiApp() {
   });
 
   // Test Route for Firebase Connectivity
-  app.get("/api/test-firebase", async (req, res) => {
+  app.get(apiRoute("/test-firebase"), async (req, res) => {
     try {
       console.log("Attempting to test Firebase connection...");
       const snapshot = await getDocs(query(collection(db, 'testimonies'), limit(1)));
@@ -125,7 +127,7 @@ export function createApiApp() {
   });
 
   // API Route for Public to get Approved Testimonies
-  app.get("/api/testimonies/approved", async (req, res) => {
+  app.get(apiRoute("/testimonies/approved"), async (req, res) => {
     console.log("GET /api/testimonies/approved called");
     try {
       console.log("Starting getDocs for approved testimonies...");
@@ -150,7 +152,7 @@ export function createApiApp() {
   });
 
   // API Route for Fetching Devotions
-  app.get("/api/devotions", async (req, res) => {
+  app.get(apiRoute("/devotions"), async (req, res) => {
     try {
       console.log("Fetching devotions from Firestore...");
       const snapshot = await getDocs(collection(db, 'devotions'));
@@ -179,7 +181,7 @@ export function createApiApp() {
   });
 
   // API Route for Admin to manage Devotions (Create/Update)
-  app.post("/api/admin/devotions", verifyAdmin, async (req, res) => {
+  app.post(apiRoute("/admin/devotions"), verifyAdmin, async (req, res) => {
     const { id, title, scripture, content, nuggets, date, author } = req.body;
 
     try {
@@ -201,7 +203,7 @@ export function createApiApp() {
   });
 
   // API Route for Admin to delete Devotion
-  app.delete("/api/admin/devotions/:id", verifyAdmin, async (req, res) => {
+  app.delete(apiRoute("/admin/devotions/:id"), verifyAdmin, async (req, res) => {
     const { id } = req.params;
 
     try {
@@ -214,7 +216,7 @@ export function createApiApp() {
   });
 
   // API Route for Devotion Reactions
-  app.post("/api/devotions/:id/react", async (req, res) => {
+  app.post(apiRoute("/devotions/:id/react"), async (req, res) => {
     const { id } = req.params;
     const { reactionType } = req.body;
 
@@ -238,7 +240,7 @@ export function createApiApp() {
   });
   
   // API Route for Admin to upload image
-  app.post("/api/admin/upload-image", verifyAdmin, (req, res) => {
+  app.post(apiRoute("/admin/upload-image"), verifyAdmin, (req, res) => {
     if (process.env.VERCEL === '1') {
       return res.status(501).json({
         error: "Image uploads need persistent storage and are disabled on Vercel. Use an external image URL or storage provider."
@@ -265,7 +267,7 @@ export function createApiApp() {
   });
 
   // API Route for Public to upload testimony pictures
-  app.post("/api/testimony/upload-image", verifyAdmin, (req, res) => {
+  app.post(apiRoute("/testimony/upload-image"), verifyAdmin, (req, res) => {
     if (process.env.VERCEL === '1') {
       return res.status(501).json({
         error: "Image uploads need persistent storage and are disabled on Vercel. Use an external image URL or storage provider."
@@ -292,7 +294,7 @@ export function createApiApp() {
   });
 
   // Helper route to get Auth URL (for developer use)
-  app.get("/api/auth/google", (req, res) => {
+  app.get(apiRoute("/auth/google"), (req, res) => {
     const clientId = process.env.GMAIL_CLIENT_ID;
     const clientSecret = process.env.GMAIL_CLIENT_SECRET;
     
@@ -316,7 +318,7 @@ export function createApiApp() {
   });
 
   // Callback route to get the Refresh Token
-  app.get("/api/auth/google/callback", async (req, res) => {
+  app.get(apiRoute("/auth/google/callback"), async (req, res) => {
     const code = req.query.code as string;
     const clientId = process.env.GMAIL_CLIENT_ID;
     const clientSecret = process.env.GMAIL_CLIENT_SECRET;
@@ -339,7 +341,7 @@ export function createApiApp() {
   });
 
   // API Route for sending email
-  app.post("/api/send-email", async (req, res) => {
+  app.post(apiRoute("/send-email"), async (req, res) => {
     const { firstName, lastName, phone, message } = req.body;
     const churchEmail = process.env.CHURCH_EMAIL || "rehobothdgul@gmail.com";
     
@@ -407,7 +409,7 @@ ${message}
   });
 
   // API Route for Public Testimony Submission
-  app.post("/api/testimony/submit", async (req, res) => {
+  app.post(apiRoute("/testimony/submit"), async (req, res) => {
     try {
       const { author, content, contact, location } = req.body;
       
@@ -440,7 +442,7 @@ ${message}
   });
 
   // API Route for Admin to get Pending Testimonies
-  app.get("/api/admin/pending-testimonies", verifyAdmin, async (req, res) => {
+  app.get(apiRoute("/admin/pending-testimonies"), verifyAdmin, async (req, res) => {
     try {
       const snapshot = await getDocs(query(collection(db, 'testimonies'), where('status', '==', 'PENDING')));
       
@@ -460,7 +462,7 @@ ${message}
   });
 
   // API Route for Admin to manage Testimonies (Create/Update)
-  app.post("/api/admin/testimonies", verifyAdmin, async (req, res) => {
+  app.post(apiRoute("/admin/testimonies"), verifyAdmin, async (req, res) => {
     const { id, author, location, content, contact, date, status, likes, projectId } = req.body;
 
     try {
@@ -499,7 +501,7 @@ ${message}
   });
 
   // API Route for Admin to delete Testimony
-  app.delete("/api/admin/testimonies/:id", verifyAdmin, async (req, res) => {
+  app.delete(apiRoute("/admin/testimonies/:id"), verifyAdmin, async (req, res) => {
     const { id } = req.params;
 
     try {
@@ -512,7 +514,7 @@ ${message}
   });
 
   // API Route for Admin to update a pending testimony (Status only)
-  app.post("/api/admin/update-pending", verifyAdmin, async (req, res) => {
+  app.post(apiRoute("/admin/update-pending"), verifyAdmin, async (req, res) => {
     const { id, status } = req.body; // 'APPROVED' or 'REJECTED'
 
     try {
@@ -526,7 +528,7 @@ ${message}
   });
 
   // API Route for Admin to bulk update pending testimonies
-  app.post("/api/admin/bulk-update-pending", verifyAdmin, async (req, res) => {
+  app.post(apiRoute("/admin/bulk-update-pending"), verifyAdmin, async (req, res) => {
     const { ids, status } = req.body; // 'APPROVED' or 'REJECTED'
 
     if (!Array.isArray(ids) || ids.length === 0) {
@@ -549,7 +551,7 @@ ${message}
   });
 
   // API Route for Fetching Comments
-  app.get("/api/comments/:testimonyId", async (req, res) => {
+  app.get(apiRoute("/comments/:testimonyId"), async (req, res) => {
     const { testimonyId } = req.params;
     try {
       const snapshot = await getDocs(query(
@@ -576,7 +578,7 @@ ${message}
   });
 
   // API Route for Adding a Comment
-  app.post("/api/comments/:testimonyId", async (req, res) => {
+  app.post(apiRoute("/comments/:testimonyId"), async (req, res) => {
     const { testimonyId } = req.params;
     const { author, content } = req.body;
     
@@ -659,7 +661,7 @@ ${message}
   */
 
   // API Route for Mailing List Subscription
-  app.post("/api/subscribe", async (req, res) => {
+  app.post(apiRoute("/subscribe"), async (req, res) => {
     const { email } = req.body;
     
     if (!email || !email.includes('@')) {
