@@ -4,22 +4,19 @@
 
 - Public pages call `/api/projects` and `/api/programs`.
 - Those API routes use the Firebase Client SDK, so Firestore security rules still apply.
-- `firestore.rules` must be published before public reads for `projects` and `programs` will work in production.
+- The site collections are intentionally open in `firestore.rules` so public submissions and password-protected admin API writes can work without a service account.
 
 ## Required Before Dynamic Reads Work
 
-Publish the Firestore rules that include:
+Publish the full `firestore.rules` file from this repo. It opens these site collections:
 
 ```js
-match /projects/{projectId} {
-  allow read: if true;
-  allow write: if isAdmin();
-}
-
-match /programs/{programId} {
-  allow read: if true;
-  allow write: if isAdmin();
-}
+testimonies
+comments
+devotions
+programs
+projects
+subscribers
 ```
 
 Until those rules are live, the API returns:
@@ -65,21 +62,7 @@ npm run seed:programs -- --replace
 npm run seed:projects -- --replace
 ```
 
-Because the project intentionally uses no service account key, these scripts use the Firebase Client SDK and Firestore rules still apply. If writes require admin auth, set a Firebase Auth user before running:
-
-```bash
-export FIREBASE_ADMIN_EMAIL="kennymeico@gmail.com"
-export FIREBASE_ADMIN_PASSWORD="your-password"
-npm run seed:all
-```
-
-On Windows PowerShell:
-
-```powershell
-$env:FIREBASE_ADMIN_EMAIL="kennymeico@gmail.com"
-$env:FIREBASE_ADMIN_PASSWORD="your-password"
-npm run seed:all
-```
+Because the project intentionally uses no service account key, these scripts use the Firebase Client SDK and Firestore rules still apply. Publish `firestore.rules` before running them.
 
 From Firebase Cloud Shell, run the script inside the website repo, not from `/home/kennymeico`:
 
@@ -102,7 +85,7 @@ npm install
 npm run seed:all
 ```
 
-If the script returns `permission-denied`, either sign in with a Firebase Auth account allowed by `isAdmin()` or temporarily allow writes in Firestore rules, run the seed, then restore the safer rules.
+If the script returns `permission-denied`, the published Firebase Console rules are not the same as the repo rules yet.
 
 ## Pre-Deploy Checks
 

@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { collection, deleteDoc, doc, getDocs, getFirestore, setDoc } from 'firebase/firestore';
 import 'dotenv/config';
-import { explainSeedPermissionError, getSeedFirebaseConfig, signInSeedAdmin } from './seed-firebase-config';
+import { explainSeedPermissionError, getSeedFirebaseConfig } from './seed-firebase-config';
 
 const firebaseApp = initializeApp(getSeedFirebaseConfig());
 const db = getFirestore(firebaseApp, '(default)');
@@ -114,8 +114,6 @@ async function seedPrograms() {
       console.log(`Dry run complete. ${DEFAULT_PROGRAMS.length} programs are ready to seed.`);
       return;
     }
-
-    await signInSeedAdmin(firebaseApp);
 
     const snapshot = await getDocs(programsRef);
 

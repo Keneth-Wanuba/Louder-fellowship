@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { collection, deleteDoc, doc, getDocs, getFirestore, setDoc } from 'firebase/firestore';
 import 'dotenv/config';
-import { explainSeedPermissionError, getSeedFirebaseConfig, signInSeedAdmin } from './seed-firebase-config';
+import { explainSeedPermissionError, getSeedFirebaseConfig } from './seed-firebase-config';
 import { projects } from './src/data/projects';
 
 const firebaseApp = initializeApp(getSeedFirebaseConfig());
@@ -46,8 +46,6 @@ async function seedProjects() {
       console.log(`Dry run complete. ${projects.length} projects are ready to seed.`);
       return;
     }
-
-    await signInSeedAdmin(firebaseApp);
 
     const snapshot = await getDocs(projectsRef);
 

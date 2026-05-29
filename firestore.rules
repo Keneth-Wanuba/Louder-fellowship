@@ -1,108 +1,36 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // -------------------------------------------------------------------------
-    // 1. GLOBAL SAFETY NET
-    // -------------------------------------------------------------------------
-    match /{document=**} {
+    match /testimonies/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /comments/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /devotions/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /programs/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /projects/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /subscribers/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /admins/{document=**} {
       allow read, write: if false;
     }
 
-    // -------------------------------------------------------------------------
-    // 2. GLOBAL HELPERS
-    // -------------------------------------------------------------------------
-    function isSignedIn() { return request.auth != null; }
-    function isAdmin() { 
-      return isSignedIn() && (
-        request.auth.token.email == 'kennymeico@gmail.com' ||
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
-      );
-    }
-    function incoming() { return request.resource.data; }
-    function existing() { return resource.data; }
-    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
-
-    // -------------------------------------------------------------------------
-    // 3. ENTITY VALIDATORS
-    // -------------------------------------------------------------------------
-    
-    function isValidTestimony(data) {
-      return data.keys().hasAll(['author', 'content', 'contact', 'status', 'id', 'date'])
-        && data.keys().hasOnly(['author', 'content', 'contact', 'status', 'id', 'image', 'date', 'location', 'likes', 'projectId'])
-        && data.author is string && data.author.size() >= 2 && data.author.size() <= 100
-        && data.content is string && data.content.size() >= 10 && data.content.size() <= 2000
-        && data.contact is string && data.contact.size() <= 100
-        && data.status in ['PENDING', 'APPROVED', 'REJECTED']
-        && data.id is string
-        && data.date is string;
-    }
-
-    function isValidComment(data) {
-      return data.keys().hasAll(['testimonyId', 'author', 'content', 'createdAt'])
-        && data.keys().size() == 4
-        && data.testimonyId is string
-        && data.author is string && data.author.size() >= 2 && data.author.size() <= 100
-        && data.content is string && data.content.size() >= 1 && data.content.size() <= 500
-        && data.createdAt == request.time;
-    }
-
-    // -------------------------------------------------------------------------
-    // 4. COLLECTION MATCHES
-    // -------------------------------------------------------------------------
-
-    match /testimonies/{testimonyDocId} {
-      // Public can read approved testimonies
-      allow list: if isAdmin() || existing().status == 'APPROVED';
-      // Admins can read everything
-      allow get: if existing().status == 'APPROVED' || isAdmin();
-
-      // Public can submit pending testimonies
-      allow create: if isAdmin() || (isValidTestimony(incoming()) && incoming().status == 'PENDING');
-
-      // Admin can manage published and pending testimonies
-      allow update: if isAdmin();
-
-      allow delete: if isAdmin();
-    }
-
-    match /comments/{commentId} {
-      // Public can read comments for a testimony
-      allow read: if resource.data.testimonyId != null;
-      
-      // Public can create comments
-      allow create: if isValidComment(incoming());
-      
-      allow update, delete: if isAdmin();
-    }
-
-    match /devotions/{devotionId} {
-      allow read: if true;
-      allow update: if 
-        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reactions']))
-        || isAdmin();
-      allow write: if isAdmin();
-    }
-
-    match /projects/{projectId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /programs/{programId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /admins/{adminId} {
-      allow read: if isAdmin();
-    }
-
-    match /subscribers/{subscriberId} {
-      allow create: if incoming().keys().hasOnly(['email', 'createdAt'])
-        && incoming().email is string
-        && incoming().email.matches('^[^@]+@[^@]+\\.[^@]+$')
-        && incoming().createdAt == request.time;
-      allow read, update, delete: if isAdmin();
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

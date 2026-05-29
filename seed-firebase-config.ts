@@ -1,8 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { FirebaseApp, FirebaseOptions } from 'firebase/app';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import type { FirebaseOptions } from 'firebase/app';
 
 type AppletConfig = {
   apiKey?: string;
@@ -36,19 +35,6 @@ export function getSeedFirebaseConfig(): FirebaseOptions {
   };
 }
 
-export async function signInSeedAdmin(firebaseApp: FirebaseApp) {
-  const email = process.env.FIREBASE_ADMIN_EMAIL;
-  const password = process.env.FIREBASE_ADMIN_PASSWORD;
-
-  if (!email || !password) {
-    console.log('No FIREBASE_ADMIN_EMAIL/FIREBASE_ADMIN_PASSWORD set; attempting writes without Firebase Auth.');
-    return;
-  }
-
-  const credential = await signInWithEmailAndPassword(getAuth(firebaseApp), email, password);
-  console.log(`Signed in to Firebase Auth as ${credential.user.email || email}.`);
-}
-
 export function explainSeedPermissionError(error: unknown) {
   const code = typeof error === 'object' && error !== null && 'code' in error
     ? String((error as { code?: unknown }).code)
@@ -59,6 +45,5 @@ export function explainSeedPermissionError(error: unknown) {
   console.error('');
   console.error('Firestore denied the write.');
   console.error('These seed scripts use the Firebase Client SDK, so Firestore security rules still apply.');
-  console.error('Set FIREBASE_ADMIN_EMAIL and FIREBASE_ADMIN_PASSWORD for a Firebase Auth user allowed by isAdmin(),');
-  console.error('or temporarily allow writes in Firestore rules, run the seed, then restore the safer rules.');
+  console.error('Publish firestore.rules from this repo, then run the seed again.');
 }
