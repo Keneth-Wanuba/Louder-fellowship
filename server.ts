@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import { google } from "googleapis";
 import multer from "multer";
 import { initializeApp } from 'firebase/app';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import {
   getFirestore,
   collection,
@@ -35,6 +36,35 @@ const firebaseConfig = {
 
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp, '(default)');
+const firebaseAuth = getAuth(firebaseApp);
+let firebaseAdminAuthPromise: Promise<void> | null = null;
+
+async function ensureFirebaseAdminAuth() {
+  const email = process.env.FIREBASE_ADMIN_EMAIL;
+  const password = process.env.FIREBASE_ADMIN_PASSWORD;
+
+  if (!email || !password) {
+    throw new Error("FIREBASE_ADMIN_EMAIL and FIREBASE_ADMIN_PASSWORD are required for admin Firestore writes.");
+  }
+
+  if (firebaseAuth.currentUser?.email === email) {
+    return;
+  }
+
+  if (!firebaseAdminAuthPromise) {
+    firebaseAdminAuthPromise = signInWithEmailAndPassword(firebaseAuth, email, password)
+      .then((credential) => {
+        console.log(`[api] Firebase admin auth ready for ${credential.user.email || email}`);
+      })
+      .then(() => undefined)
+      .catch((error) => {
+        firebaseAdminAuthPromise = null;
+        throw error;
+      });
+  }
+
+  await firebaseAdminAuthPromise;
+}
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -80,7 +110,7 @@ export function createApiApp(options: { includeUnprefixedRoutes?: boolean } = {}
 
   const getAdminPassword = () => process.env.ADMIN_PASSWORD;
 
-  const verifyAdmin = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  const verifyAdmin = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     const configuredAdminPassword = getAdminPassword();
     if (!configuredAdminPassword) {
       return res.status(500).json({ error: "Admin password is not configured." });
@@ -90,6 +120,20 @@ export function createApiApp(options: { includeUnprefixedRoutes?: boolean } = {}
     if (adminPassword !== configuredAdminPassword) {
       return res.status(401).json({ error: "Unauthorized access." });
     }
+
+    try {
+      await ensureFirebaseAdminAuth();
+    } catch (error: any) {
+      console.error("Firebase admin authentication failed:", {
+        code: error?.code,
+        message: error?.message,
+      });
+      return res.status(500).json({
+        error: "Firebase admin authentication is not configured or failed.",
+        details: "Set FIREBASE_ADMIN_EMAIL and FIREBASE_ADMIN_PASSWORD in Vercel to a Firebase Auth admin user.",
+      });
+    }
+
     next();
   };
 

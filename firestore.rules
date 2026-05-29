@@ -27,14 +27,13 @@ service cloud.firestore {
     // -------------------------------------------------------------------------
     
     function isValidTestimony(data) {
-      return data.keys().hasAll(['author', 'content', 'contact', 'status', 'id', 'image', 'date'])
-        && data.keys().size() == 7
+      return data.keys().hasAll(['author', 'content', 'contact', 'status', 'id', 'date'])
+        && data.keys().hasOnly(['author', 'content', 'contact', 'status', 'id', 'image', 'date', 'location', 'likes', 'projectId'])
         && data.author is string && data.author.size() >= 2 && data.author.size() <= 100
         && data.content is string && data.content.size() >= 10 && data.content.size() <= 2000
         && data.contact is string && data.contact.size() <= 100
         && data.status in ['PENDING', 'APPROVED', 'REJECTED']
         && data.id is string
-        && data.image is string
         && data.date is string;
     }
 
@@ -53,25 +52,22 @@ service cloud.firestore {
 
     match /testimonies/{testimonyDocId} {
       // Public can read approved testimonies
-      allow list: if existing().status == 'APPROVED';
+      allow list: if isAdmin() || existing().status == 'APPROVED';
       // Admins can read everything
       allow get: if existing().status == 'APPROVED' || isAdmin();
-      allow list: if isAdmin() && incoming() == null; // Multi-list for admin
 
       // Public can submit pending testimonies
-      allow create: if isValidTestimony(incoming()) && incoming().status == 'PENDING';
+      allow create: if isAdmin() || (isValidTestimony(incoming()) && incoming().status == 'PENDING');
 
-      // Admin can update status
-      allow update: if isAdmin() && isValidTestimony(incoming()) && (
-        incoming().diff(existing()).affectedKeys().hasOnly(['status'])
-      );
+      // Admin can manage published and pending testimonies
+      allow update: if isAdmin();
 
       allow delete: if isAdmin();
     }
 
     match /comments/{commentId} {
       // Public can read comments for a testimony
-      allow list: if resource.data.testimonyId != null; 
+      allow read: if resource.data.testimonyId != null;
       
       // Public can create comments
       allow create: if isValidComment(incoming());
@@ -99,6 +95,14 @@ service cloud.firestore {
 
     match /admins/{adminId} {
       allow read: if isAdmin();
+    }
+
+    match /subscribers/{subscriberId} {
+      allow create: if incoming().keys().hasOnly(['email', 'createdAt'])
+        && incoming().email is string
+        && incoming().email.matches('^[^@]+@[^@]+\\.[^@]+$')
+        && incoming().createdAt == request.time;
+      allow read, update, delete: if isAdmin();
     }
   }
 }
