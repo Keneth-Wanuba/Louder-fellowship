@@ -10,6 +10,7 @@ import {
   collection,
   getDocs,
   addDoc,
+  setDoc,
   updateDoc,
   deleteDoc,
   doc,
@@ -35,6 +36,48 @@ const firebaseConfig = {
 
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp, '(default)');
+
+const cleanObject = <T extends Record<string, any>>(data: T) => (
+  Object.fromEntries(Object.entries(data).filter(([, value]) => value !== undefined)) as Partial<T>
+);
+
+const normalizeProgramEvents = (events: any) => (
+  Array.isArray(events)
+    ? events
+        .map((event) => ({
+          time: String(event?.time ?? ''),
+          name: String(event?.name ?? ''),
+          desc: String(event?.desc ?? ''),
+        }))
+        .filter((event) => event.time || event.name || event.desc)
+    : []
+);
+
+const normalizeStringList = (value: any) => (
+  Array.isArray(value) ? value.filter(Boolean).map(String) : []
+);
+
+const normalizeImpactStats = (value: any) => (
+  Array.isArray(value)
+    ? value
+        .map((item) => ({
+          label: String(item?.label ?? ''),
+          value: String(item?.value ?? ''),
+        }))
+        .filter((item) => item.label || item.value)
+    : []
+);
+
+const normalizeStories = (value: any) => (
+  Array.isArray(value)
+    ? value
+        .map((item) => ({
+          quote: String(item?.quote ?? ''),
+          name: String(item?.name ?? ''),
+        }))
+        .filter((item) => item.quote || item.name)
+    : []
+);
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -580,6 +623,101 @@ ${message}
     }
   });
 
+  // Admin: fetch all projects
+  app.get(apiRoute("/admin/projects"), verifyAdmin, async (req, res) => {
+    try {
+      const snapshot = await getDocs(collection(db, 'projects'));
+      const projects = snapshot.docs
+        .map(d => {
+          const data = d.data();
+          return {
+            ...data,
+            id: data.id ?? d.id,
+            documentId: d.id
+          };
+        })
+        .sort((a: any, b: any) => {
+          const orderA = Number(a.order ?? a.id) || 0;
+          const orderB = Number(b.order ?? b.id) || 0;
+          return orderA - orderB;
+        });
+
+      res.status(200).json(projects);
+    } catch (error: any) {
+      console.error("Error fetching admin projects:", error);
+      res.status(500).json({ error: "Failed to fetch projects." });
+    }
+  });
+
+  // Admin: create or update a project
+  app.post(apiRoute("/admin/projects"), verifyAdmin, async (req, res) => {
+    const {
+      documentId,
+      id,
+      title,
+      type,
+      location,
+      timeframe,
+      description,
+      funded,
+      image,
+      fullDescription,
+      gallery,
+      impactStats,
+      stories,
+      visible,
+      order,
+    } = req.body;
+
+    if (!title || !type) {
+      return res.status(400).json({ error: "Project title and type are required." });
+    }
+
+    try {
+      const projectId = String(documentId || id || Date.now());
+      const payload = cleanObject({
+        id: id ?? projectId,
+        title,
+        type,
+        location: location || '',
+        timeframe: timeframe || '',
+        description: description || '',
+        funded: Number(funded ?? 0),
+        image: image || '',
+        fullDescription: fullDescription || description || '',
+        gallery: normalizeStringList(gallery),
+        impactStats: normalizeImpactStats(impactStats),
+        stories: normalizeStories(stories),
+        visible: typeof visible === 'boolean' ? visible : true,
+        order: Number(order ?? id ?? 0),
+        updatedAt: serverTimestamp(),
+      });
+
+      await setDoc(
+        doc(db, 'projects', projectId),
+        documentId ? payload : { ...payload, createdAt: serverTimestamp() },
+        { merge: true }
+      );
+
+      res.status(200).json({ success: true, id: projectId });
+    } catch (error: any) {
+      console.error("Error managing project:", error);
+      res.status(500).json({ error: "Failed to manage project." });
+    }
+  });
+
+  // Admin: delete a project
+  app.delete(apiRoute("/admin/projects/:id"), verifyAdmin, async (req, res) => {
+    const { id } = req.params;
+    try {
+      await deleteDoc(doc(db, 'projects', id));
+      res.status(200).json({ success: true });
+    } catch (error: any) {
+      console.error("Error deleting project:", error);
+      res.status(500).json({ error: "Failed to delete project." });
+    }
+  });
+
   // API Routes for Programs (Public + Admin)
   app.get(apiRoute("/programs"), async (req, res) => {
     try {
@@ -603,7 +741,13 @@ ${message}
   app.get(apiRoute("/admin/programs"), verifyAdmin, async (req, res) => {
     try {
       const snapshot = await getDocs(collection(db, 'programs'));
-      const programs = snapshot.docs.map(d => ({ ...d.data(), id: d.id }));
+      const programs = snapshot.docs
+        .map(d => ({ ...d.data(), id: d.id }))
+        .sort((a: any, b: any) => {
+          const orderA = Number(a.order ?? 0);
+          const orderB = Number(b.order ?? 0);
+          return orderA - orderB;
+        });
       res.status(200).json(programs);
     } catch (error: any) {
       console.error("Error fetching admin programs:", error);
@@ -613,21 +757,35 @@ ${message}
 
   // Admin: create or update a program
   app.post(apiRoute("/admin/programs"), verifyAdmin, async (req, res) => {
-    const { id, title, time, description, stats, color, highlight, visible, icon } = req.body;
+    const { id, day, title, subtitle, events, time, description, stats, color, highlight, visible, icon, order } = req.body;
+
+    if (!title || !day) {
+      return res.status(400).json({ error: "Program day and title are required." });
+    }
+
+    const payload = cleanObject({
+      day,
+      title,
+      subtitle: subtitle || '',
+      events: normalizeProgramEvents(events),
+      time: time || '',
+      description: description || '',
+      stats: stats || '',
+      color: color || '',
+      highlight: !!highlight,
+      visible: typeof visible === 'boolean' ? visible : true,
+      icon: icon || null,
+      order: Number(order ?? 0),
+      updatedAt: serverTimestamp()
+    });
+
     try {
       if (id) {
-        await updateDoc(doc(db, 'programs', id), { title, time, description, stats, color, highlight: !!highlight, visible: !!visible, icon: icon || null });
+        await updateDoc(doc(db, 'programs', id), payload);
         res.status(200).json({ success: true, id });
       } else {
         const docRef = await addDoc(collection(db, 'programs'), {
-          title,
-          time,
-          description,
-          stats: stats || '',
-          color: color || '',
-          highlight: !!highlight,
-          visible: typeof visible === 'boolean' ? visible : true,
-          icon: icon || null,
+          ...payload,
           createdAt: serverTimestamp()
         });
         res.status(200).json({ success: true, id: docRef.id });

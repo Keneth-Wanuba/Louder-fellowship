@@ -27,11 +27,61 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { projects } from '../data/projects';
+import { PROJECT_TYPES, Project, projects as staticProjects } from '../data/projects';
 import { Testimony } from './Testimonies';
 import { Devotion } from './Devotions';
 
 import ReactMarkdown from 'react-markdown';
+
+type ProgramEvent = {
+  time: string;
+  name: string;
+  desc: string;
+};
+
+type ProgramFormData = {
+  day: string;
+  title: string;
+  subtitle: string;
+  events: ProgramEvent[];
+  highlight: boolean;
+  visible: boolean;
+  order: number;
+};
+
+type ProjectFormData = Omit<Project, 'id'> & {
+  id: string;
+  documentId?: string;
+  visible: boolean;
+  order: number;
+};
+
+const emptyProgramForm = (): ProgramFormData => ({
+  day: '',
+  title: '',
+  subtitle: '',
+  events: [{ time: '', name: '', desc: '' }],
+  highlight: false,
+  visible: true,
+  order: 0,
+});
+
+const emptyProjectForm = (): ProjectFormData => ({
+  id: '',
+  title: '',
+  type: 'Evangelism',
+  location: '',
+  timeframe: '',
+  description: '',
+  funded: 0,
+  image: '',
+  fullDescription: '',
+  gallery: [''],
+  impactStats: [{ label: '', value: '' }],
+  stories: [{ quote: '', name: '' }],
+  visible: true,
+  order: 0,
+});
 
 export default function AdminDevotions() {
   const [devotions, setDevotions] = useState<Devotion[]>([]);
@@ -48,7 +98,7 @@ export default function AdminDevotions() {
   const [isSaving, setIsSaving] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [activeTab, setActiveTab] = useState<'manager' | 'testimonies' | 'backup' | 'programs'>('manager');
+  const [activeTab, setActiveTab] = useState<'manager' | 'testimonies' | 'backup' | 'programs' | 'projects'>('manager');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [imageSourceType, setImageSourceType] = useState<'url' | 'upload'>('url');
   const [isUploading, setIsUploading] = useState(false);
@@ -59,25 +109,13 @@ export default function AdminDevotions() {
   const [programs, setPrograms] = useState<any[]>([]);
   const [editingProgramId, setEditingProgramId] = useState<string | null>(null);
   const [isNewProgram, setIsNewProgram] = useState(false);
-  const [programFormData, setProgramFormData] = useState<{
-    title: string;
-    time: string;
-    description: string;
-    stats?: string;
-    color?: string;
-    highlight?: boolean;
-    visible?: boolean;
-    icon?: string;
-  }>({
-    title: '',
-    time: '',
-    description: '',
-    stats: '',
-    color: '',
-    highlight: false,
-    visible: true,
-    icon: ''
-  });
+  const [programFormData, setProgramFormData] = useState<ProgramFormData>(emptyProgramForm);
+
+  // Projects management state
+  const [managedProjects, setManagedProjects] = useState<ProjectFormData[]>([]);
+  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
+  const [isNewProject, setIsNewProject] = useState(false);
+  const [projectFormData, setProjectFormData] = useState<ProjectFormData>(emptyProjectForm);
 
   const handleBulkAction = async (status: 'APPROVED' | 'REJECTED') => {
     if (selectedPendingIds.length === 0) return;
@@ -110,6 +148,26 @@ export default function AdminDevotions() {
     setPassword('');
     setIsMenuOpen(false);
     navigate('/');
+  };
+
+  const activeItemName = activeTab === 'testimonies'
+    ? 'Testimony'
+    : activeTab === 'programs'
+      ? 'Program'
+      : activeTab === 'projects'
+        ? 'Project'
+        : 'Devotion';
+
+  const startNewActiveItem = () => {
+    if (activeTab === 'testimonies') {
+      startNewTestimony();
+    } else if (activeTab === 'programs') {
+      startNewProgram();
+    } else if (activeTab === 'projects') {
+      startNewProject();
+    } else {
+      startNew();
+    }
   };
 
   // Testimony Form State
@@ -271,14 +329,8 @@ export default function AdminDevotions() {
     setEditingProgramId('new');
     setIsNewProgram(true);
     setProgramFormData({
-      title: '',
-      time: '',
-      description: '',
-      stats: '',
-      color: '',
-      highlight: false,
-      visible: true,
-      icon: ''
+      ...emptyProgramForm(),
+      order: programs.length + 1,
     });
   };
 
@@ -286,14 +338,96 @@ export default function AdminDevotions() {
     setEditingProgramId(program.id);
     setIsNewProgram(false);
     setProgramFormData({
+      day: program.day || program.title || '',
       title: program.title || '',
-      time: program.time || '',
-      description: program.description || '',
-      stats: program.stats || '',
-      color: program.color || '',
+      subtitle: program.subtitle || '',
+      events: Array.isArray(program.events) && program.events.length > 0
+        ? program.events.map((event: any) => ({
+            time: String(event?.time || ''),
+            name: String(event?.name || ''),
+            desc: String(event?.desc || ''),
+          }))
+        : [{ time: program.time || '', name: program.title || '', desc: program.description || '' }],
       highlight: !!program.highlight,
       visible: program.visible !== false,
-      icon: program.icon || ''
+      order: Number(program.order || 0),
+    });
+  };
+
+  const startNewProject = () => {
+    const nextOrder = managedProjects.length + 1;
+    setEditingProjectId('new');
+    setIsNewProject(true);
+    setProjectFormData({
+      ...emptyProjectForm(),
+      id: String(nextOrder),
+      order: nextOrder,
+    });
+  };
+
+  const startEditProject = (project: ProjectFormData) => {
+    setEditingProjectId(project.documentId || String(project.id));
+    setIsNewProject(false);
+    setProjectFormData({
+      ...emptyProjectForm(),
+      ...project,
+      id: String(project.id || ''),
+      documentId: project.documentId || String(project.id || ''),
+      funded: Number(project.funded || 0),
+      gallery: project.gallery?.length ? project.gallery : [''],
+      impactStats: project.impactStats?.length ? project.impactStats : [{ label: '', value: '' }],
+      stories: project.stories?.length ? project.stories : [{ quote: '', name: '' }],
+      visible: project.visible !== false,
+      order: Number(project.order || project.id || 0),
+    });
+  };
+
+  const addProgramEvent = () => {
+    setProgramFormData({
+      ...programFormData,
+      events: [...programFormData.events, { time: '', name: '', desc: '' }],
+    });
+  };
+
+  const updateProgramEvent = (index: number, field: keyof ProgramEvent, value: string) => {
+    setProgramFormData({
+      ...programFormData,
+      events: programFormData.events.map((event, eventIndex) => (
+        eventIndex === index ? { ...event, [field]: value } : event
+      )),
+    });
+  };
+
+  const removeProgramEvent = (index: number) => {
+    const events = programFormData.events.filter((_, eventIndex) => eventIndex !== index);
+    setProgramFormData({
+      ...programFormData,
+      events: events.length ? events : [{ time: '', name: '', desc: '' }],
+    });
+  };
+
+  const updateGalleryItem = (index: number, value: string) => {
+    setProjectFormData({
+      ...projectFormData,
+      gallery: projectFormData.gallery.map((item, itemIndex) => itemIndex === index ? value : item),
+    });
+  };
+
+  const updateImpactStat = (index: number, field: 'label' | 'value', value: string) => {
+    setProjectFormData({
+      ...projectFormData,
+      impactStats: projectFormData.impactStats.map((item, itemIndex) => (
+        itemIndex === index ? { ...item, [field]: value } : item
+      )),
+    });
+  };
+
+  const updateStory = (index: number, field: 'quote' | 'name', value: string) => {
+    setProjectFormData({
+      ...projectFormData,
+      stories: (projectFormData.stories || []).map((item, itemIndex) => (
+        itemIndex === index ? { ...item, [field]: value } : item
+      )),
     });
   };
 
@@ -414,6 +548,21 @@ export default function AdminDevotions() {
     }
   };
 
+  const fetchProjects = async () => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    try {
+      const response = await fetch('/api/admin/projects', { headers: { 'x-admin-password': password }, signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (response.ok) {
+        const data = await response.json();
+        setManagedProjects(data);
+      }
+    } catch (e: any) {
+      console.error("Failed to fetch projects", e);
+    }
+  };
+
   React.useEffect(() => {
     if (isAuthenticated) {
       fetchDevotions();
@@ -423,6 +572,9 @@ export default function AdminDevotions() {
       }
       if (activeTab === 'programs') {
         fetchPrograms();
+      }
+      if (activeTab === 'projects' || activeTab === 'testimonies') {
+        fetchProjects();
       }
     }
   }, [isAuthenticated, activeTab]);
@@ -487,8 +639,8 @@ export default function AdminDevotions() {
   };
 
   const handleSave = async () => {
-    // For programs, we don't use validateForm which is tailored for devotions/testimonies
-    if (activeTab !== 'programs' && !validateForm()) {
+    // Programs and projects use nested forms, so they validate inside their own branches.
+    if (activeTab !== 'programs' && activeTab !== 'projects' && !validateForm()) {
       setStatus({ type: 'error', message: 'Please fix the errors in the form.' });
       return;
     }
@@ -557,8 +709,8 @@ export default function AdminDevotions() {
         }
       } else if (activeTab === 'programs') {
         // Basic validation
-        if (!programFormData.title || !programFormData.time) {
-          setStatus({ type: 'error', message: 'Title and time are required for a program.' });
+        if (!programFormData.day || !programFormData.title) {
+          setStatus({ type: 'error', message: 'Day and title are required for a program.' });
           setIsSaving(false);
           return;
         }
@@ -566,14 +718,19 @@ export default function AdminDevotions() {
         const data = {
           ...programFormData,
           id: isNewProgram ? null : editingProgramId,
+          day: sanitizeInput(programFormData.day),
           title: sanitizeInput(programFormData.title),
-          time: sanitizeInput(programFormData.time),
-          description: sanitizeInput(programFormData.description || ''),
-          stats: sanitizeInput(programFormData.stats || ''),
-          color: sanitizeInput(programFormData.color || ''),
+          subtitle: sanitizeInput(programFormData.subtitle || ''),
+          events: programFormData.events
+            .map((event) => ({
+              time: sanitizeInput(event.time),
+              name: sanitizeInput(event.name),
+              desc: sanitizeInput(event.desc),
+            }))
+            .filter((event) => event.time || event.name || event.desc),
           highlight: !!programFormData.highlight,
           visible: programFormData.visible !== false,
-          icon: programFormData.icon || null
+          order: Number(programFormData.order || 0),
         };
 
         const response = await fetch('/api/admin/programs', {
@@ -593,6 +750,59 @@ export default function AdminDevotions() {
         } else {
           throw new Error('Failed to save program');
         }
+      } else if (activeTab === 'projects') {
+        if (!projectFormData.title || !projectFormData.type) {
+          setStatus({ type: 'error', message: 'Project title and type are required.' });
+          setIsSaving(false);
+          return;
+        }
+
+        const data = {
+          ...projectFormData,
+          documentId: isNewProject ? null : editingProjectId,
+          id: sanitizeInput(String(projectFormData.id || '')),
+          title: sanitizeInput(projectFormData.title),
+          type: projectFormData.type,
+          location: sanitizeInput(projectFormData.location),
+          timeframe: sanitizeInput(projectFormData.timeframe),
+          description: sanitizeInput(projectFormData.description),
+          funded: Number(projectFormData.funded || 0),
+          image: sanitizeInput(projectFormData.image),
+          fullDescription: sanitizeInput(projectFormData.fullDescription),
+          gallery: projectFormData.gallery.map((item) => sanitizeInput(item)).filter(Boolean),
+          impactStats: projectFormData.impactStats
+            .map((item) => ({
+              label: sanitizeInput(item.label),
+              value: sanitizeInput(item.value),
+            }))
+            .filter((item) => item.label || item.value),
+          stories: (projectFormData.stories || [])
+            .map((item) => ({
+              quote: sanitizeInput(item.quote),
+              name: sanitizeInput(item.name),
+            }))
+            .filter((item) => item.quote || item.name),
+          visible: projectFormData.visible !== false,
+          order: Number(projectFormData.order || 0),
+        };
+
+        const response = await fetch('/api/admin/projects', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-password': password
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          await fetchProjects();
+          setEditingProjectId(null);
+          setIsNewProject(false);
+          setStatus({ type: 'success', message: 'Project saved successfully!' });
+        } else {
+          throw new Error('Failed to save project');
+        }
       }
     } catch (error: any) {
       setStatus({ type: 'error', message: error.message });
@@ -602,7 +812,7 @@ export default function AdminDevotions() {
   };
 
   const handleDelete = async (id: string) => {
-    const itemName = activeTab === 'manager' ? 'devotion' : activeTab === 'testimonies' ? 'testimony' : 'program';
+    const itemName = activeTab === 'manager' ? 'devotion' : activeTab === 'testimonies' ? 'testimony' : activeTab === 'projects' ? 'project' : 'program';
     if (window.confirm(`Are you sure you want to delete this ${itemName}? This cannot be undone.`)) {
       setIsSaving(true);
       try {
@@ -637,6 +847,17 @@ export default function AdminDevotions() {
             setStatus({ type: 'success', message: 'Program deleted.' });
           } else {
             throw new Error('Failed to delete program');
+          }
+        } else if (activeTab === 'projects') {
+          const response = await fetch(`/api/admin/projects/${id}`, {
+            method: 'DELETE',
+            headers: { 'x-admin-password': password }
+          });
+          if (response.ok) {
+            setManagedProjects(prev => prev.filter(p => (p.documentId || String(p.id)) !== id));
+            setStatus({ type: 'success', message: 'Project deleted.' });
+          } else {
+            throw new Error('Failed to delete project');
           }
         }
       } catch (e) {
@@ -736,6 +957,8 @@ export default function AdminDevotions() {
     );
   }
 
+  const testimonyProjectOptions = managedProjects.length > 0 ? managedProjects : staticProjects;
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col pt-20">
       <header className="bg-white border-b border-slate-200 px-6 md:px-8 py-4 sticky top-0 z-30">
@@ -764,11 +987,17 @@ export default function AdminDevotions() {
             >
               Testimonies
             </button>
-            <button 
+            <button
               onClick={() => setActiveTab('programs')}
               className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${activeTab === 'programs' ? 'bg-white text-royal-blue shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
             >
               Programs
+            </button>
+            <button
+              onClick={() => setActiveTab('projects')}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${activeTab === 'projects' ? 'bg-white text-royal-blue shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+              Projects
             </button>
             <button 
               onClick={() => setActiveTab('backup')}
@@ -790,10 +1019,10 @@ export default function AdminDevotions() {
             )}
             <div className="hidden md:flex">
               <button 
-                onClick={() => { activeTab === 'testimonies' ? startNewTestimony() : activeTab === 'programs' ? startNewProgram() : startNew(); }}
+                onClick={startNewActiveItem}
                 className="bg-royal-blue text-white px-5 py-2.5 rounded-full font-bold flex items-center gap-2 hover:bg-royal-gold hover:text-royal-blue transition-all shadow-md text-sm"
               >
-                <Plus className="w-4 h-4" /> New {activeTab === 'testimonies' ? 'Testimony' : activeTab === 'programs' ? 'Program' : 'Devotion'}
+                <Plus className="w-4 h-4" /> New {activeItemName}
               </button>
             </div>
             
@@ -841,12 +1070,20 @@ export default function AdminDevotions() {
                     <Share className="w-4 h-4" /> Testimonies
                   </div>
                 </button>
-                <button 
+                <button
                   onClick={() => { setActiveTab('programs'); setIsMenuOpen(false); }}
                   className={`w-full px-4 py-3 rounded-xl text-sm font-bold text-left transition-all ${activeTab === 'programs' ? 'bg-royal-blue text-white' : 'bg-slate-50 text-slate-500'}`}
                 >
                   <div className="flex items-center gap-3">
                     <Calendar className="w-4 h-4" /> Programs
+                  </div>
+                </button>
+                <button
+                  onClick={() => { setActiveTab('projects'); setIsMenuOpen(false); }}
+                  className={`w-full px-4 py-3 rounded-xl text-sm font-bold text-left transition-all ${activeTab === 'projects' ? 'bg-royal-blue text-white' : 'bg-slate-50 text-slate-500'}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <ImageIcon className="w-4 h-4" /> Projects
                   </div>
                 </button>
                 <button 
@@ -859,10 +1096,10 @@ export default function AdminDevotions() {
                 </button>
                 <div className="pt-2">
                   <button 
-                    onClick={() => { activeTab === 'testimonies' ? startNewTestimony() : activeTab === 'programs' ? startNewProgram() : startNew(); setIsMenuOpen(false); }}
+                    onClick={() => { startNewActiveItem(); setIsMenuOpen(false); }}
                     className="w-full bg-royal-gold text-royal-blue px-4 py-3 rounded-xl font-bold flex items-center gap-3 shadow-sm text-sm"
                   >
-                    <Plus className="w-4 h-4" /> New {activeTab === 'testimonies' ? 'Testimony' : activeTab === 'programs' ? 'Program' : 'Devotion'}
+                    <Plus className="w-4 h-4" /> New {activeItemName}
                   </button>
                 </div>
 
@@ -1128,8 +1365,11 @@ export default function AdminDevotions() {
                   >
                     <div className="flex justify-between items-start gap-4">
                       <div className="flex-1">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{program.time}</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{program.day || program.subtitle}</p>
                         <h3 className="font-bold text-royal-blue group-hover:text-royal-gold transition-colors">{program.title}</h3>
+                        {Array.isArray(program.events) && (
+                          <p className="text-[10px] text-slate-400 mt-1">{program.events.length} event{program.events.length === 1 ? '' : 's'}</p>
+                        )}
                       </div>
                       <div className="flex items-center gap-2">
                         <button onClick={(e) => { e.stopPropagation(); handleDelete(program.id); }} className="p-2 text-slate-300 hover:text-red-500 transition-colors">
@@ -1149,29 +1389,41 @@ export default function AdminDevotions() {
                   <div>
                     <div className="grid md:grid-cols-2 gap-6 mb-6">
                       <div>
-                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Title</label>
-                        <input type="text" value={programFormData.title} onChange={(e) => setProgramFormData({ ...programFormData, title: e.target.value })} className="w-full px-5 py-4 rounded-xl border border-slate-200" />
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Day</label>
+                        <input type="text" value={programFormData.day} onChange={(e) => setProgramFormData({ ...programFormData, day: e.target.value })} className="w-full px-5 py-4 rounded-xl border border-slate-200" placeholder="Monday" />
                       </div>
                       <div>
-                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Time</label>
-                        <input type="text" value={programFormData.time} onChange={(e) => setProgramFormData({ ...programFormData, time: e.target.value })} className="w-full px-5 py-4 rounded-xl border border-slate-200" />
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Title</label>
+                        <input type="text" value={programFormData.title} onChange={(e) => setProgramFormData({ ...programFormData, title: e.target.value })} className="w-full px-5 py-4 rounded-xl border border-slate-200" placeholder="Monday" />
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6 mb-6">
+                      <div>
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Subtitle</label>
+                        <input type="text" value={programFormData.subtitle} onChange={(e) => setProgramFormData({ ...programFormData, subtitle: e.target.value })} className="w-full px-5 py-4 rounded-xl border border-slate-200" placeholder="Online Connection" />
+                      </div>
+                      <div>
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Display Order</label>
+                        <input type="number" value={programFormData.order} onChange={(e) => setProgramFormData({ ...programFormData, order: parseInt(e.target.value) || 0 })} className="w-full px-5 py-4 rounded-xl border border-slate-200" />
                       </div>
                     </div>
 
                     <div className="space-y-4">
-                      <label className="text-xs font-black uppercase tracking-widest text-slate-400">Description</label>
-                      <textarea rows={6} value={programFormData.description} onChange={(e) => setProgramFormData({ ...programFormData, description: e.target.value })} className="w-full px-5 py-4 rounded-xl border border-slate-200" />
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-4 mt-4">
-                      <div>
-                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Stats</label>
-                        <input type="text" value={programFormData.stats} onChange={(e) => setProgramFormData({ ...programFormData, stats: e.target.value })} className="w-full px-5 py-4 rounded-xl border border-slate-200" />
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Events</label>
+                        <button onClick={addProgramEvent} className="text-xs font-black text-royal-gold uppercase hover:underline">+ Add Event</button>
                       </div>
-                      <div>
-                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Color (tailwind classes)</label>
-                        <input type="text" value={programFormData.color} onChange={(e) => setProgramFormData({ ...programFormData, color: e.target.value })} className="w-full px-5 py-4 rounded-xl border border-slate-200" />
-                      </div>
+                      {programFormData.events.map((event, index) => (
+                        <div key={index} className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4 space-y-3">
+                          <div className="grid md:grid-cols-2 gap-3">
+                            <input type="text" value={event.time} onChange={(e) => updateProgramEvent(index, 'time', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm" placeholder="8pm - 10pm" />
+                            <input type="text" value={event.name} onChange={(e) => updateProgramEvent(index, 'name', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm" placeholder="Zoom Fellowship" />
+                          </div>
+                          <textarea rows={3} value={event.desc} onChange={(e) => updateProgramEvent(index, 'desc', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm" placeholder="Event description" />
+                          <button onClick={() => removeProgramEvent(index)} className="text-xs font-bold text-red-500 hover:underline">Remove event</button>
+                        </div>
+                      ))}
                     </div>
 
                     <div className="flex items-center gap-4 mt-4">
@@ -1181,7 +1433,7 @@ export default function AdminDevotions() {
 
                     <div className="pt-8 flex items-center gap-4">
                       <button onClick={handleSave} className="bg-royal-blue text-white px-8 py-3 rounded-full font-bold">{isSaving ? 'Saving...' : 'Save Program'}</button>
-                      <button onClick={() => { setEditingProgramId(null); setProgramFormData({ title: '', time: '', description: '', stats: '', color: '', highlight: false, visible: true, icon: '' }); }} className="text-sm text-slate-500">Cancel</button>
+                      <button onClick={() => { setEditingProgramId(null); setProgramFormData(emptyProgramForm()); }} className="text-sm text-slate-500">Cancel</button>
                     </div>
                   </div>
                 ) : (
@@ -1189,6 +1441,159 @@ export default function AdminDevotions() {
                     <div>
                       <p className="text-slate-500 mb-4">Select a program to edit or create a new one.</p>
                       <button onClick={startNewProgram} className="bg-royal-blue/5 text-royal-blue px-6 py-3 rounded-full font-bold hover:bg-royal-blue hover:text-white transition-all">Create a new Program</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        ) : activeTab === 'projects' ? (
+          <div className="grid lg:grid-cols-12 gap-10">
+            <div className="lg:col-span-5 space-y-4 h-fit sticky top-32">
+              <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6">Projects ({managedProjects.length})</h2>
+              <div className="space-y-3">
+                {managedProjects.map((project) => {
+                  const projectDocId = project.documentId || String(project.id);
+                  return (
+                    <div
+                      key={projectDocId}
+                      className={`bg-white p-5 rounded-2xl border transition-all cursor-pointer group ${editingProjectId === projectDocId ? 'border-royal-gold shadow-lg ring-1 ring-royal-gold' : 'border-slate-100 hover:shadow-md'}`}
+                      onClick={() => startEditProject(project)}
+                    >
+                      <div className="flex justify-between items-start gap-4">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{project.type} | {project.location}</p>
+                          <h3 className="font-bold text-royal-blue group-hover:text-royal-gold transition-colors truncate">{project.title}</h3>
+                          <p className="text-[10px] text-slate-400 mt-1">{project.timeframe}</p>
+                        </div>
+                        <button onClick={(e) => { e.stopPropagation(); handleDelete(projectDocId); }} className="p-2 text-slate-300 hover:text-red-500 transition-colors">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="lg:col-span-7">
+              <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden p-8 md:p-12">
+                {editingProjectId ? (
+                  <div className="space-y-6">
+                    <div className="grid md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Project ID</label>
+                        <input type="text" value={projectFormData.id} onChange={(e) => setProjectFormData({ ...projectFormData, id: e.target.value })} className="w-full px-5 py-4 rounded-xl border border-slate-200" />
+                      </div>
+                      <div>
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Order</label>
+                        <input type="number" value={projectFormData.order} onChange={(e) => setProjectFormData({ ...projectFormData, order: parseInt(e.target.value) || 0 })} className="w-full px-5 py-4 rounded-xl border border-slate-200" />
+                      </div>
+                      <div>
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Funded %</label>
+                        <input type="number" min="0" max="100" value={projectFormData.funded} onChange={(e) => setProjectFormData({ ...projectFormData, funded: parseInt(e.target.value) || 0 })} className="w-full px-5 py-4 rounded-xl border border-slate-200" />
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Title</label>
+                        <input type="text" value={projectFormData.title} onChange={(e) => setProjectFormData({ ...projectFormData, title: e.target.value })} className="w-full px-5 py-4 rounded-xl border border-slate-200" />
+                      </div>
+                      <div>
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Type</label>
+                        <select value={projectFormData.type} onChange={(e) => setProjectFormData({ ...projectFormData, type: e.target.value as Project['type'] })} className="w-full px-5 py-4 rounded-xl border border-slate-200 bg-white">
+                          {PROJECT_TYPES.map((type) => (
+                            <option key={type} value={type}>{type}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Location</label>
+                        <input type="text" value={projectFormData.location} onChange={(e) => setProjectFormData({ ...projectFormData, location: e.target.value })} className="w-full px-5 py-4 rounded-xl border border-slate-200" />
+                      </div>
+                      <div>
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Timeframe</label>
+                        <input type="text" value={projectFormData.timeframe} onChange={(e) => setProjectFormData({ ...projectFormData, timeframe: e.target.value })} className="w-full px-5 py-4 rounded-xl border border-slate-200" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-black uppercase tracking-widest text-slate-400">Main Image URL</label>
+                      <input type="text" value={projectFormData.image} onChange={(e) => setProjectFormData({ ...projectFormData, image: e.target.value })} className="w-full px-5 py-4 rounded-xl border border-slate-200" placeholder="/journey/example.jpeg or https://..." />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-black uppercase tracking-widest text-slate-400">Short Description</label>
+                      <textarea rows={3} value={projectFormData.description} onChange={(e) => setProjectFormData({ ...projectFormData, description: e.target.value })} className="w-full px-5 py-4 rounded-xl border border-slate-200" />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-black uppercase tracking-widest text-slate-400">Full Description</label>
+                      <textarea rows={6} value={projectFormData.fullDescription} onChange={(e) => setProjectFormData({ ...projectFormData, fullDescription: e.target.value })} className="w-full px-5 py-4 rounded-xl border border-slate-200" />
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Gallery URLs</label>
+                        <button onClick={() => setProjectFormData({ ...projectFormData, gallery: [...projectFormData.gallery, ''] })} className="text-xs font-black text-royal-gold uppercase hover:underline">+ Add Image</button>
+                      </div>
+                      {projectFormData.gallery.map((item, index) => (
+                        <div key={index} className="flex gap-2">
+                          <input type="text" value={item} onChange={(e) => updateGalleryItem(index, e.target.value)} className="flex-1 px-5 py-3 rounded-xl border border-slate-200 text-sm" placeholder="Image URL" />
+                          <button onClick={() => setProjectFormData({ ...projectFormData, gallery: projectFormData.gallery.filter((_, itemIndex) => itemIndex !== index) || [''] })} className="p-3 text-slate-300 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Impact Stats</label>
+                        <button onClick={() => setProjectFormData({ ...projectFormData, impactStats: [...projectFormData.impactStats, { label: '', value: '' }] })} className="text-xs font-black text-royal-gold uppercase hover:underline">+ Add Stat</button>
+                      </div>
+                      {projectFormData.impactStats.map((item, index) => (
+                        <div key={index} className="grid grid-cols-[1fr_1fr_auto] gap-2">
+                          <input type="text" value={item.label} onChange={(e) => updateImpactStat(index, 'label', e.target.value)} className="px-5 py-3 rounded-xl border border-slate-200 text-sm" placeholder="Label" />
+                          <input type="text" value={item.value} onChange={(e) => updateImpactStat(index, 'value', e.target.value)} className="px-5 py-3 rounded-xl border border-slate-200 text-sm" placeholder="Value" />
+                          <button onClick={() => setProjectFormData({ ...projectFormData, impactStats: projectFormData.impactStats.filter((_, itemIndex) => itemIndex !== index) })} className="p-3 text-slate-300 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400">Stories</label>
+                        <button onClick={() => setProjectFormData({ ...projectFormData, stories: [...(projectFormData.stories || []), { quote: '', name: '' }] })} className="text-xs font-black text-royal-gold uppercase hover:underline">+ Add Story</button>
+                      </div>
+                      {(projectFormData.stories || []).map((item, index) => (
+                        <div key={index} className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4 space-y-3">
+                          <textarea rows={3} value={item.quote} onChange={(e) => updateStory(index, 'quote', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm" placeholder="Quote" />
+                          <div className="flex gap-2">
+                            <input type="text" value={item.name} onChange={(e) => updateStory(index, 'name', e.target.value)} className="flex-1 px-4 py-3 rounded-xl border border-slate-200 text-sm" placeholder="Name" />
+                            <button onClick={() => setProjectFormData({ ...projectFormData, stories: (projectFormData.stories || []).filter((_, itemIndex) => itemIndex !== index) })} className="p-3 text-slate-300 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <label className="flex items-center gap-2">
+                      <input type="checkbox" checked={projectFormData.visible !== false} onChange={(e) => setProjectFormData({ ...projectFormData, visible: e.target.checked })} />
+                      <span className="text-xs font-black uppercase tracking-widest text-slate-400">Visible on site</span>
+                    </label>
+
+                    <div className="pt-8 flex items-center gap-4 border-t border-slate-50">
+                      <button onClick={handleSave} disabled={isSaving} className="bg-royal-blue text-white px-8 py-3 rounded-full font-bold disabled:opacity-50">{isSaving ? 'Saving...' : 'Save Project'}</button>
+                      <button onClick={() => { setEditingProjectId(null); setProjectFormData(emptyProjectForm()); }} className="text-sm text-slate-500">Cancel</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="h-[400px] flex items-center justify-center text-center py-12">
+                    <div>
+                      <p className="text-slate-500 mb-4">Select a project to edit or create a new outreach project.</p>
+                      <button onClick={startNewProject} className="bg-royal-blue/5 text-royal-blue px-6 py-3 rounded-full font-bold hover:bg-royal-blue hover:text-white transition-all">Create a new Project</button>
                     </div>
                   </div>
                 )}
@@ -1444,7 +1849,7 @@ export default function AdminDevotions() {
                             className="w-full px-5 py-4 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-royal-gold outline-none transition-all"
                           >
                             <option value="">No Project (Home Page Only)</option>
-                            {projects.map(p => (
+                            {testimonyProjectOptions.map(p => (
                               <option key={p.id} value={p.id}>{p.title}</option>
                             ))}
                           </select>
