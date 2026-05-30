@@ -274,7 +274,7 @@ export default function AdminDevotions() {
       content: '',
       nuggets: [''],
       date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-      author: 'Alesi Adroa'
+      author: ' Papa Ezekiel Kayondo'
     });
   };
 
