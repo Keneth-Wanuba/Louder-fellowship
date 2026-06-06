@@ -64,7 +64,7 @@ const DEFAULT_PROGRAMS = [
     subtitle: 'Preparations and Children ministry',
     events: [
       { time: '1:00pm', name: "Children's mega cell", desc: 'Last Saturday of every month during school time, and every Saturday during holidays.' },
-      { time: '4:00pm', name: 'Choir practice', desc: 'Practical rehearsals, prayer meetings and preparations for Sunday service for the choir department' },
+      { time: '4:00pm', name: 'Choir practice', desc: 'Practical rehearsals, prayer meetings and preparations for Sunday service for the choir department.' },
       { time: '5:00pm', name: 'Church set-up', desc: 'Ushering department meets to clean, organize and prepare for service. Departmental prayer meeting happens here.' },
     ],
     highlight: true,
