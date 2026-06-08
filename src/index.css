@@ -71,3 +71,14 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+.devotion-markdown,
+.devotion-markdown * {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.devotion-markdown p {
+  margin-bottom: 1.25rem;
+}

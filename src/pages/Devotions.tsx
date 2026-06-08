@@ -308,7 +308,7 @@ export default function Devotions() {
         description="Daily spiritual nourishment and words of encouragement from Louder Fellowship. Equip your spirit for the day ahead."
       />
       
-      <header className="bg-royal-blue py-24 text-center relative overflow-hidden">
+      <header className="bg-royal-blue py-16 md:py-24 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-20">
           <img 
             src="https://images.unsplash.com/photo-1504052434139-0147980ff636?auto=format&fit=crop&q=80&w=2000" 
@@ -316,70 +316,70 @@ export default function Devotions() {
             className="w-full h-full object-cover" 
           />
         </div>
-        <div className="relative z-10 px-6">
+        <div className="relative z-10 px-4 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-4xl md:text-6xl font-serif font-bold text-white mb-4">Daily Devotion</h1>
-            <p className="text-royal-gold uppercase tracking-[0.3em] font-bold italic underline decoration-white/30 underline-offset-8">Divine Nourishment</p>
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-serif font-bold text-white mb-4">Daily Devotion</h1>
+            <p className="text-royal-gold uppercase tracking-[0.18em] sm:tracking-[0.3em] font-bold italic underline decoration-white/30 underline-offset-8 text-xs sm:text-base">Divine Nourishment</p>
           </motion.div>
         </div>
       </header>
 
-      <section className="py-20 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid lg:grid-cols-3 gap-12">
+      <section className="py-10 sm:py-14 lg:py-20 bg-slate-50 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid min-w-0 lg:grid-cols-3 gap-8 lg:gap-12">
             
             {/* Latest Devotion */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-2 min-w-0">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-slate-100"
+                className="w-full min-w-0 max-w-full bg-white rounded-3xl sm:rounded-[3rem] shadow-2xl overflow-hidden border border-slate-100"
               >
-                <div className="p-10 md:p-16">
-                  <div className="flex items-center gap-4 mb-8">
-                    <div className="px-5 py-2 bg-royal-gold text-royal-blue rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-royal-gold/20">
+                <div className="min-w-0 p-5 sm:p-8 md:p-16">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-8">
+                    <div className="self-start px-4 sm:px-5 py-2 bg-royal-gold text-royal-blue rounded-full text-[10px] font-black uppercase tracking-[0.16em] sm:tracking-[0.2em] shadow-lg shadow-royal-gold/20">
                       Latest Word
                     </div>
-                    <div className="flex items-center gap-2 text-slate-400">
+                    <div className="flex min-w-0 items-center gap-2 text-slate-400">
                       <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center border border-slate-100">
                         <Calendar className="w-4 h-4 text-royal-gold" />
                       </div>
-                      <span className="text-xs font-black uppercase tracking-widest">{latestDevotion.date}</span>
+                      <span className="min-w-0 break-words text-xs font-black uppercase tracking-wider sm:tracking-widest">{latestDevotion.date}</span>
                     </div>
                   </div>
                   
-                  <h2 className="text-4xl md:text-5xl font-serif font-black text-royal-blue mb-8 leading-tight">
+                  <h2 className="max-w-full text-2xl sm:text-4xl md:text-5xl font-serif font-black text-royal-blue mb-8 leading-tight break-words">
                     {latestDevotion.title}
                   </h2>
                   
-                  <div className="bg-royal-blue/5 p-8 rounded-3xl border-l-[6px] border-royal-gold mb-10">
-                    <p className="text-royal-blue font-serif italic text-xl leading-relaxed">
+                  <div className="max-w-full bg-royal-blue/5 p-5 sm:p-8 rounded-2xl sm:rounded-3xl border-l-4 sm:border-l-[6px] border-royal-gold mb-10 overflow-hidden">
+                    <p className="max-w-full text-royal-blue font-serif italic text-base sm:text-xl leading-relaxed break-words">
                       {latestDevotion.scripture}
                     </p>
                   </div>
                   
-                  <div className="prose prose-lg text-slate-600 max-w-none">
-                    <div className="leading-loose markdown-body">
+                  <div className="prose prose-base sm:prose-lg text-slate-600 max-w-none overflow-hidden">
+                    <div className="devotion-markdown leading-loose markdown-body break-words">
                       <ReactMarkdown>{latestDevotion.content}</ReactMarkdown>
                     </div>
                   </div>
 
                   {latestDevotion.nuggets && latestDevotion.nuggets.length > 0 && (
-                    <div className="mt-12 bg-slate-50 p-8 rounded-3xl border-t-4 border-royal-blue">
-                      <h3 className="text-xl font-serif font-black text-royal-blue mb-6 flex items-center gap-2">
+                    <div className="mt-12 bg-slate-50 p-5 sm:p-8 rounded-2xl sm:rounded-3xl border-t-4 border-royal-blue">
+                      <h3 className="text-lg sm:text-xl font-serif font-black text-royal-blue mb-6 flex items-center gap-2">
                         <Lightbulb className="w-5 h-5 text-royal-gold" /> Spiritual Nuggets
                       </h3>
                       <ul className="space-y-4">
                         {latestDevotion.nuggets.map((nugget, index) => (
-                          <li key={index} className="flex gap-4">
+                          <li key={index} className="flex gap-3 sm:gap-4 min-w-0">
                             <span className="w-6 h-6 rounded-full bg-royal-blue text-white flex-shrink-0 flex items-center justify-center text-[10px] font-black">
                               {index + 1}
                             </span>
-                            <p className="text-slate-600 font-medium">{nugget}</p>
+                            <p className="min-w-0 text-slate-600 font-medium break-words">{nugget}</p>
                           </li>
                         ))}
                       </ul>
@@ -389,7 +389,7 @@ export default function Devotions() {
                   {/* Reactions Section */}
                   <div className="mt-12 py-8 border-t border-b border-slate-100">
                     <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-6 text-center">How did this word bless you today?</h3>
-                    <div className="flex flex-wrap justify-center gap-3">
+                    <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
                       {REACTION_OPTIONS.map((option) => {
                         const count = latestDevotion.reactions?.[option.type] || 0;
                         const hasReacted = userReactions[latestDevotion.id]?.has(option.type);
@@ -398,7 +398,7 @@ export default function Devotions() {
                           <button
                             key={option.type}
                             onClick={() => handleReact(latestDevotion.id, option.type)}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all duration-300 active:scale-95 group/react ${
+                            className={`flex min-w-0 items-center gap-2 px-3 py-1.5 rounded-xl border transition-all duration-300 active:scale-95 group/react ${
                               hasReacted 
                                 ? `${option.color.split(' ')[0]} ${option.color.split(' ')[1]} border-current shadow-md` 
                                 : 'bg-white border-slate-100 text-slate-500 hover:border-royal-blue/30 hover:bg-slate-50 hover:shadow-sm'
@@ -408,7 +408,7 @@ export default function Devotions() {
                               {option.icon}
                             </div>
                             <div className="flex flex-col items-start leading-none gap-0.5">
-                              <span className="text-[10px] font-black uppercase tracking-widest">{option.type}</span>
+                              <span className="text-[10px] font-black uppercase tracking-wider sm:tracking-widest">{option.type}</span>
                               {count > 0 && (
                                 <span className={`text-[10px] font-bold ${hasReacted ? 'opacity-100' : 'opacity-40'}`}>{count}</span>
                               )}
@@ -420,19 +420,19 @@ export default function Devotions() {
                   </div>
 
                   {/* Today's Program Reminder */}
-                  <div className="mt-12 p-8 bg-royal-blue rounded-[2.5rem] text-white relative overflow-hidden group shadow-2xl">
+                  <div className="mt-12 p-5 sm:p-8 bg-royal-blue rounded-3xl sm:rounded-[2.5rem] text-white relative overflow-hidden group shadow-2xl">
                     <div className="absolute top-0 right-0 w-48 h-48 bg-royal-gold/10 rounded-full -mr-24 -mt-24 blur-3xl group-hover:scale-150 transition-transform duration-1000"></div>
-                    <div className="relative z-10 flex flex-col lg:flex-row items-center gap-8">
-                      <div className="w-20 h-20 rounded-3xl bg-royal-gold flex items-center justify-center text-royal-blue shadow-xl shadow-royal-gold/20 flex-shrink-0 animate-pulse-slow">
-                        <BellRing className="w-10 h-10" />
+                    <div className="relative z-10 flex flex-col lg:flex-row items-center gap-6 lg:gap-8">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-royal-gold flex items-center justify-center text-royal-blue shadow-xl shadow-royal-gold/20 flex-shrink-0 animate-pulse-slow">
+                        <BellRing className="w-8 h-8 sm:w-10 sm:h-10" />
                       </div>
-                      <div className="flex-1 text-center lg:text-left">
-                        <h4 className="text-royal-gold font-black uppercase tracking-[0.3em] text-[10px] mb-3">Divine Daily Reminder</h4>
-                        <p className="text-2xl font-serif font-black italic leading-tight group-hover:text-royal-gold transition-colors duration-500">
+                      <div className="min-w-0 flex-1 text-center lg:text-left">
+                        <h4 className="text-royal-gold font-black uppercase tracking-[0.18em] sm:tracking-[0.3em] text-[10px] mb-3">Divine Daily Reminder</h4>
+                        <p className="text-xl sm:text-2xl font-serif font-black italic leading-tight group-hover:text-royal-gold transition-colors duration-500 break-words">
                           {getTodayReminder()}
                         </p>
                       </div>
-                      <Link to="/programs" className="px-8 py-4 bg-white/10 hover:bg-white text-white hover:text-royal-blue border border-white/20 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all whitespace-nowrap shadow-xl">
+                      <Link to="/programs" className="w-full sm:w-auto px-6 sm:px-8 py-4 bg-white/10 hover:bg-white text-white hover:text-royal-blue border border-white/20 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all text-center shadow-xl">
                         Full Schedule
                       </Link>
                     </div>
@@ -441,7 +441,7 @@ export default function Devotions() {
                   <div className="mt-12 pt-10 border-t border-slate-100 flex flex-col gap-8">
                     <div className="flex flex-wrap items-center gap-4">
                       <p className="text-xs font-black uppercase tracking-widest text-slate-400">Share Word:</p>
-                      <div className="flex gap-3">
+                      <div className="flex flex-wrap gap-3">
                         <button 
                           onClick={() => { setSharingDevotion(latestDevotion); setIsShareMenuOpen(true); }}
                           className="px-6 py-2 bg-royal-blue text-white rounded-full font-black uppercase tracking-widest text-[10px] hover:bg-royal-gold hover:text-royal-blue transition-all shadow-lg flex items-center gap-2 group"
@@ -452,21 +452,21 @@ export default function Devotions() {
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap items-center justify-between gap-6">
-                      <div className="flex items-center gap-4">
+                    <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-6">
+                      <div className="flex min-w-0 items-center gap-4">
                         <div className="w-12 h-12 rounded-full bg-royal-gold flex items-center justify-center text-royal-blue font-black uppercase shadow-inner">
                           {latestDevotion.author.substring(0, 2)}
                         </div>
-                        <div>
+                        <div className="min-w-0">
                           <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-0.5">Written By</p>
-                          <p className="text-royal-blue font-black">{latestDevotion.author}</p>
+                          <p className="text-royal-blue font-black break-words">{latestDevotion.author}</p>
                         </div>
                       </div>
                       
-                      <div className="flex gap-4">
+                      <div className="flex flex-wrap gap-3 sm:gap-4">
                         <button 
                           onClick={() => { setSharingDevotion(latestDevotion); setIsShareMenuOpen(true); }}
-                          className="h-12 rounded-full bg-slate-50 text-slate-400 hover:text-royal-gold transition-all border border-slate-100 flex items-center gap-2 px-6 hover:bg-white hover:shadow-md"
+                          className="min-h-12 rounded-full bg-slate-50 text-slate-400 hover:text-royal-gold transition-all border border-slate-100 flex items-center gap-2 px-5 sm:px-6 py-3 hover:bg-white hover:shadow-md"
                         >
                           <Share2 className="w-5 h-5" />
                           <span className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
@@ -484,18 +484,18 @@ export default function Devotions() {
             </div>
             
             {/* Sidebar: Past Devotions */}
-            <div className="space-y-8">
-              <div className="bg-royal-blue p-10 rounded-[2rem] text-white">
+            <div className="space-y-8 min-w-0">
+              <div className="bg-royal-blue p-6 sm:p-10 rounded-3xl sm:rounded-[2rem] text-white">
                 <h3 className="text-2xl font-serif font-bold text-royal-gold mb-6">Archive</h3>
                 <div className="space-y-6">
                   {olderDevotions.length === 0 ? (
                     <p className="text-white/40 text-sm italic">No older devotions available.</p>
                   ) : (
                     olderDevotions.map((devotion) => (
-                      <div key={devotion.id} className="group cursor-pointer">
+                      <div key={devotion.id} className="group cursor-pointer min-w-0">
                         <div className="flex justify-between items-start gap-2">
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between mb-1">
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
                               <p className="text-white/40 text-xs font-bold">{devotion.date}</p>
                               {devotion.reactions && Object.values(devotion.reactions).reduce((a, b) => a + b, 0) > 0 && (
                                 <div className="flex items-center gap-1.5 text-[9px] font-black text-royal-gold bg-white/10 px-2.5 py-1 rounded-full border border-royal-gold/20">
@@ -503,7 +503,7 @@ export default function Devotions() {
                                 </div>
                               )}
                             </div>
-                            <h4 className="font-bold group-hover:text-royal-gold transition-colors line-clamp-2">
+                            <h4 className="font-bold group-hover:text-royal-gold transition-colors line-clamp-2 break-words">
                               {devotion.title}
                             </h4>
                           </div>
@@ -523,7 +523,7 @@ export default function Devotions() {
                 </div>
               </div>
               
-              <div className="bg-royal-gold/10 p-10 rounded-[3rem] border-2 border-royal-gold/20 shadow-xl shadow-royal-gold/5">
+              <div className="bg-royal-gold/10 p-6 sm:p-10 rounded-3xl sm:rounded-[3rem] border-2 border-royal-gold/20 shadow-xl shadow-royal-gold/5 overflow-hidden">
                 <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-royal-blue mb-8 shadow-md border border-royal-gold/20">
                   <BookOpen className="w-8 h-8" />
                 </div>
