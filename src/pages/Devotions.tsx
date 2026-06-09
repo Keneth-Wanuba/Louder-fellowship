@@ -500,16 +500,7 @@ export default function Devotions() {
                     archiveDevotions.map((devotion) => (
                       <div
                         key={devotion.id}
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => handleSelectDevotion(devotion.id)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            handleSelectDevotion(devotion.id);
-                          }
-                        }}
-                        className="group cursor-pointer min-w-0 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-gold focus-visible:ring-offset-2 focus-visible:ring-offset-royal-blue"
+                        className="group min-w-0 rounded-xl"
                       >
                         <div className="flex justify-between items-start gap-2">
                           <div className="min-w-0 flex-1">
@@ -532,9 +523,13 @@ export default function Devotions() {
                             <Share2 className="w-4 h-4" />
                           </button>
                         </div>
-                        <div className="inline-flex items-center gap-1 text-royal-gold text-xs font-bold mt-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                        <button
+                          type="button"
+                          onClick={() => handleSelectDevotion(devotion.id)}
+                          className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-royal-gold px-4 py-2.5 text-xs font-black uppercase tracking-widest text-royal-blue shadow-lg shadow-black/10 transition-all active:scale-95 sm:mt-2 sm:min-h-0 sm:w-auto sm:bg-transparent sm:px-0 sm:py-0 sm:text-royal-gold sm:shadow-none sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100"
+                        >
                           Read Now <ArrowRight className="w-3 h-3" />
-                        </div>
+                        </button>
                       </div>
                     ))
                   )}
