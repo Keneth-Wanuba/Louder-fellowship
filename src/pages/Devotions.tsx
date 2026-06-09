@@ -39,6 +39,7 @@ export default function Devotions() {
   const [isSharing, setIsSharing] = useState(false);
   const [sharingDevotion, setSharingDevotion] = useState<Devotion | null>(null);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
+  const [selectedDevotionId, setSelectedDevotionId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchDevotions();
@@ -136,8 +137,8 @@ export default function Devotions() {
     }
   };
 
-  const latestDevotion = devotions[0];
-  const olderDevotions = devotions.slice(1);
+  const activeDevotion = devotions.find(devotion => devotion.id === selectedDevotionId) || devotions[0];
+  const archiveDevotions = devotions.filter(devotion => devotion.id !== activeDevotion?.id);
 
   if (isLoading) {
     return (
@@ -182,7 +183,7 @@ export default function Devotions() {
     );
   }
 
-  if (!latestDevotion) {
+  if (!activeDevotion) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 gap-4">
         <BookOpen className="w-16 h-16 text-slate-200" />
@@ -272,6 +273,11 @@ export default function Devotions() {
       );
   };
 
+  const handleSelectDevotion = (devotionId: string) => {
+    setSelectedDevotionId(devotionId);
+    document.getElementById('devotion-reader')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateEmail(email)) return;
@@ -333,7 +339,7 @@ export default function Devotions() {
           <div className="grid min-w-0 lg:grid-cols-3 gap-8 lg:gap-12">
             
             {/* Latest Devotion */}
-            <div className="lg:col-span-2 min-w-0">
+            <div id="devotion-reader" className="lg:col-span-2 min-w-0 scroll-mt-24">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -342,39 +348,39 @@ export default function Devotions() {
                 <div className="min-w-0 p-5 sm:p-8 md:p-16">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-8">
                     <div className="self-start px-4 sm:px-5 py-2 bg-royal-gold text-royal-blue rounded-full text-[10px] font-black uppercase tracking-[0.16em] sm:tracking-[0.2em] shadow-lg shadow-royal-gold/20">
-                      Latest Word
+                      {activeDevotion.id === devotions[0].id ? 'Latest Word' : 'Archive Word'}
                     </div>
                     <div className="flex min-w-0 items-center gap-2 text-slate-400">
                       <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center border border-slate-100">
                         <Calendar className="w-4 h-4 text-royal-gold" />
                       </div>
-                      <span className="min-w-0 break-words text-xs font-black uppercase tracking-wider sm:tracking-widest">{latestDevotion.date}</span>
+                      <span className="min-w-0 break-words text-xs font-black uppercase tracking-wider sm:tracking-widest">{activeDevotion.date}</span>
                     </div>
                   </div>
                   
                   <h2 className="max-w-full text-2xl sm:text-4xl md:text-5xl font-serif font-black text-royal-blue mb-8 leading-tight break-words">
-                    {latestDevotion.title}
+                    {activeDevotion.title}
                   </h2>
                   
                   <div className="max-w-full bg-royal-blue/5 p-5 sm:p-8 rounded-2xl sm:rounded-3xl border-l-4 sm:border-l-[6px] border-royal-gold mb-10 overflow-hidden">
                     <p className="max-w-full text-royal-blue font-serif italic text-base sm:text-xl leading-relaxed break-words">
-                      {latestDevotion.scripture}
+                      {activeDevotion.scripture}
                     </p>
                   </div>
                   
                   <div className="prose prose-base sm:prose-lg text-slate-600 max-w-none overflow-hidden">
                     <div className="devotion-markdown leading-loose markdown-body break-words">
-                      <ReactMarkdown>{latestDevotion.content}</ReactMarkdown>
+                      <ReactMarkdown>{activeDevotion.content}</ReactMarkdown>
                     </div>
                   </div>
 
-                  {latestDevotion.nuggets && latestDevotion.nuggets.length > 0 && (
+                  {activeDevotion.nuggets && activeDevotion.nuggets.length > 0 && (
                     <div className="mt-12 bg-slate-50 p-5 sm:p-8 rounded-2xl sm:rounded-3xl border-t-4 border-royal-blue">
                       <h3 className="text-lg sm:text-xl font-serif font-black text-royal-blue mb-6 flex items-center gap-2">
                         <Lightbulb className="w-5 h-5 text-royal-gold" /> Spiritual Nuggets
                       </h3>
                       <ul className="space-y-4">
-                        {latestDevotion.nuggets.map((nugget, index) => (
+                        {activeDevotion.nuggets.map((nugget, index) => (
                           <li key={index} className="flex gap-3 sm:gap-4 min-w-0">
                             <span className="w-6 h-6 rounded-full bg-royal-blue text-white flex-shrink-0 flex items-center justify-center text-[10px] font-black">
                               {index + 1}
@@ -391,13 +397,13 @@ export default function Devotions() {
                     <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-6 text-center">How did this word bless you today?</h3>
                     <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
                       {REACTION_OPTIONS.map((option) => {
-                        const count = latestDevotion.reactions?.[option.type] || 0;
-                        const hasReacted = userReactions[latestDevotion.id]?.has(option.type);
+                        const count = activeDevotion.reactions?.[option.type] || 0;
+                        const hasReacted = userReactions[activeDevotion.id]?.has(option.type);
                         
                         return (
                           <button
                             key={option.type}
-                            onClick={() => handleReact(latestDevotion.id, option.type)}
+                            onClick={() => handleReact(activeDevotion.id, option.type)}
                             className={`flex min-w-0 items-center gap-2 px-3 py-1.5 rounded-xl border transition-all duration-300 active:scale-95 group/react ${
                               hasReacted 
                                 ? `${option.color.split(' ')[0]} ${option.color.split(' ')[1]} border-current shadow-md` 
@@ -443,7 +449,7 @@ export default function Devotions() {
                       <p className="text-xs font-black uppercase tracking-widest text-slate-400">Share Word:</p>
                       <div className="flex flex-wrap gap-3">
                         <button 
-                          onClick={() => { setSharingDevotion(latestDevotion); setIsShareMenuOpen(true); }}
+                          onClick={() => { setSharingDevotion(activeDevotion); setIsShareMenuOpen(true); }}
                           className="px-6 py-2 bg-royal-blue text-white rounded-full font-black uppercase tracking-widest text-[10px] hover:bg-royal-gold hover:text-royal-blue transition-all shadow-lg flex items-center gap-2 group"
                         >
                           <Share2 className="w-4 h-4 group-hover:scale-110 transition-transform" />
@@ -455,17 +461,17 @@ export default function Devotions() {
                     <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-6">
                       <div className="flex min-w-0 items-center gap-4">
                         <div className="w-12 h-12 rounded-full bg-royal-gold flex items-center justify-center text-royal-blue font-black uppercase shadow-inner">
-                          {latestDevotion.author.substring(0, 2)}
+                          {activeDevotion.author.substring(0, 2)}
                         </div>
                         <div className="min-w-0">
                           <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-0.5">Written By</p>
-                          <p className="text-royal-blue font-black break-words">{latestDevotion.author}</p>
+                          <p className="text-royal-blue font-black break-words">{activeDevotion.author}</p>
                         </div>
                       </div>
                       
                       <div className="flex flex-wrap gap-3 sm:gap-4">
                         <button 
-                          onClick={() => { setSharingDevotion(latestDevotion); setIsShareMenuOpen(true); }}
+                          onClick={() => { setSharingDevotion(activeDevotion); setIsShareMenuOpen(true); }}
                           className="min-h-12 rounded-full bg-slate-50 text-slate-400 hover:text-royal-gold transition-all border border-slate-100 flex items-center gap-2 px-5 sm:px-6 py-3 hover:bg-white hover:shadow-md"
                         >
                           <Share2 className="w-5 h-5" />
@@ -488,11 +494,23 @@ export default function Devotions() {
               <div className="bg-royal-blue p-6 sm:p-10 rounded-3xl sm:rounded-[2rem] text-white">
                 <h3 className="text-2xl font-serif font-bold text-royal-gold mb-6">Archive</h3>
                 <div className="space-y-6">
-                  {olderDevotions.length === 0 ? (
+                  {archiveDevotions.length === 0 ? (
                     <p className="text-white/40 text-sm italic">No older devotions available.</p>
                   ) : (
-                    olderDevotions.map((devotion) => (
-                      <div key={devotion.id} className="group cursor-pointer min-w-0">
+                    archiveDevotions.map((devotion) => (
+                      <div
+                        key={devotion.id}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => handleSelectDevotion(devotion.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            handleSelectDevotion(devotion.id);
+                          }
+                        }}
+                        className="group cursor-pointer min-w-0 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-gold focus-visible:ring-offset-2 focus-visible:ring-offset-royal-blue"
+                      >
                         <div className="flex justify-between items-start gap-2">
                           <div className="min-w-0 flex-1">
                             <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
@@ -514,7 +532,7 @@ export default function Devotions() {
                             <Share2 className="w-4 h-4" />
                           </button>
                         </div>
-                        <div className="inline-flex items-center gap-1 text-royal-gold text-xs font-bold mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="inline-flex items-center gap-1 text-royal-gold text-xs font-bold mt-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                           Read Now <ArrowRight className="w-3 h-3" />
                         </div>
                       </div>
@@ -574,4 +592,5 @@ export default function Devotions() {
     </>
   );
 }
+
 
