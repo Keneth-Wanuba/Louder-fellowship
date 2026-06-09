@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, Calendar, ArrowRight, Share2, Bookmark, Lightbulb, CheckCircle2, BellRing, Loader2, Facebook, Twitter, MessageCircle, Send, AlertCircle, Heart, Zap, Flame, Sparkles, ThumbsUp } from 'lucide-react';
+import { BookOpen, Calendar, ArrowRight, ArrowLeft, Share2, Bookmark, Lightbulb, CheckCircle2, BellRing, Loader2, Facebook, Twitter, MessageCircle, Send, AlertCircle, Heart, Zap, Flame, Sparkles, ThumbsUp } from 'lucide-react';
 import SEO from '../components/SEO';
 import { motion } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
@@ -28,6 +28,8 @@ const REACTION_OPTIONS = [
   { type: 'Like', icon: <ThumbsUp className="w-4 h-4" />, color: 'bg-indigo-50 text-indigo-600 border-indigo-200' },
 ];
 
+const ARCHIVE_PAGE_SIZE = 5;
+
 export default function Devotions() {
   const [devotions, setDevotions] = useState<Devotion[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -40,6 +42,7 @@ export default function Devotions() {
   const [sharingDevotion, setSharingDevotion] = useState<Devotion | null>(null);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const [selectedDevotionId, setSelectedDevotionId] = useState<string | null>(null);
+  const [archivePage, setArchivePage] = useState(0);
 
   useEffect(() => {
     fetchDevotions();
@@ -139,6 +142,15 @@ export default function Devotions() {
 
   const activeDevotion = devotions.find(devotion => devotion.id === selectedDevotionId) || devotions[0];
   const archiveDevotions = devotions.filter(devotion => devotion.id !== activeDevotion?.id);
+  const archivePageCount = Math.max(1, Math.ceil(archiveDevotions.length / ARCHIVE_PAGE_SIZE));
+  const archiveStart = archivePage * ARCHIVE_PAGE_SIZE;
+  const visibleArchiveDevotions = archiveDevotions.slice(archiveStart, archiveStart + ARCHIVE_PAGE_SIZE);
+  const canGoToPreviousArchivePage = archivePage > 0;
+  const canGoToNextArchivePage = archivePage < archivePageCount - 1;
+
+  useEffect(() => {
+    setArchivePage(prev => Math.min(prev, archivePageCount - 1));
+  }, [archivePageCount]);
 
   if (isLoading) {
     return (
@@ -497,41 +509,67 @@ export default function Devotions() {
                   {archiveDevotions.length === 0 ? (
                     <p className="text-white/40 text-sm italic">No older devotions available.</p>
                   ) : (
-                    archiveDevotions.map((devotion) => (
-                      <div
-                        key={devotion.id}
-                        className="group min-w-0 rounded-xl"
-                      >
-                        <div className="flex justify-between items-start gap-2">
-                          <div className="min-w-0 flex-1">
-                            <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-                              <p className="text-white/40 text-xs font-bold">{devotion.date}</p>
-                              {devotion.reactions && Object.values(devotion.reactions).reduce((a, b) => a + b, 0) > 0 && (
-                                <div className="flex items-center gap-1.5 text-[9px] font-black text-royal-gold bg-white/10 px-2.5 py-1 rounded-full border border-royal-gold/20">
-                                  <Sparkles className="w-3 h-3" /> {Object.values(devotion.reactions).reduce((a, b) => a + b, 0)}
-                                </div>
-                              )}
+                    <>
+                      {visibleArchiveDevotions.map((devotion) => (
+                        <div
+                          key={devotion.id}
+                          className="group min-w-0 rounded-xl"
+                        >
+                          <div className="flex justify-between items-start gap-2">
+                            <div className="min-w-0 flex-1">
+                              <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
+                                <p className="text-white/40 text-xs font-bold">{devotion.date}</p>
+                                {devotion.reactions && Object.values(devotion.reactions).reduce((a, b) => a + b, 0) > 0 && (
+                                  <div className="flex items-center gap-1.5 text-[9px] font-black text-royal-gold bg-white/10 px-2.5 py-1 rounded-full border border-royal-gold/20">
+                                    <Sparkles className="w-3 h-3" /> {Object.values(devotion.reactions).reduce((a, b) => a + b, 0)}
+                                  </div>
+                                )}
+                              </div>
+                              <h4 className="font-bold group-hover:text-royal-gold transition-colors line-clamp-2 break-words">
+                                {devotion.title}
+                              </h4>
                             </div>
-                            <h4 className="font-bold group-hover:text-royal-gold transition-colors line-clamp-2 break-words">
-                              {devotion.title}
-                            </h4>
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); setSharingDevotion(devotion); setIsShareMenuOpen(true); }}
+                              className="p-2 text-white/20 hover:text-royal-gold transition-colors"
+                            >
+                              <Share2 className="w-4 h-4" />
+                            </button>
                           </div>
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); setSharingDevotion(devotion); setIsShareMenuOpen(true); }}
-                            className="p-2 text-white/20 hover:text-royal-gold transition-colors"
+                          <button
+                            type="button"
+                            onClick={() => handleSelectDevotion(devotion.id)}
+                            className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-royal-gold px-4 py-2.5 text-xs font-black uppercase tracking-widest text-royal-blue shadow-lg shadow-black/10 transition-all active:scale-95 sm:mt-2 sm:min-h-0 sm:w-auto sm:bg-transparent sm:px-0 sm:py-0 sm:text-royal-gold sm:shadow-none sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100"
                           >
-                            <Share2 className="w-4 h-4" />
+                            Read Now <ArrowRight className="w-3 h-3" />
                           </button>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => handleSelectDevotion(devotion.id)}
-                          className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-royal-gold px-4 py-2.5 text-xs font-black uppercase tracking-widest text-royal-blue shadow-lg shadow-black/10 transition-all active:scale-95 sm:mt-2 sm:min-h-0 sm:w-auto sm:bg-transparent sm:px-0 sm:py-0 sm:text-royal-gold sm:shadow-none sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100"
-                        >
-                          Read Now <ArrowRight className="w-3 h-3" />
-                        </button>
+                      ))}
+
+                      <div className="border-t border-white/10 pt-5">
+                        <p className="mb-3 text-center text-[10px] font-black uppercase tracking-widest text-white/40">
+                          Showing {archiveStart + 1}-{Math.min(archiveStart + ARCHIVE_PAGE_SIZE, archiveDevotions.length)} of {archiveDevotions.length}
+                        </p>
+                        <div className="grid grid-cols-2 gap-3">
+                          <button
+                            type="button"
+                            disabled={!canGoToPreviousArchivePage}
+                            onClick={() => setArchivePage(page => Math.max(0, page - 1))}
+                            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/10 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white transition-all hover:border-royal-gold hover:text-royal-gold disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-white/10 disabled:hover:text-white"
+                          >
+                            <ArrowLeft className="w-3 h-3" /> Previous
+                          </button>
+                          <button
+                            type="button"
+                            disabled={!canGoToNextArchivePage}
+                            onClick={() => setArchivePage(page => Math.min(archivePageCount - 1, page + 1))}
+                            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-white/10 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white transition-all hover:bg-royal-gold hover:text-royal-blue disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white/10 disabled:hover:text-white"
+                          >
+                            Next <ArrowRight className="w-3 h-3" />
+                          </button>
+                        </div>
                       </div>
-                    ))
+                    </>
                   )}
                 </div>
               </div>
