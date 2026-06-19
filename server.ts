@@ -36,6 +36,7 @@ const firebaseConfig = {
 
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp, '(default)');
+const analyticsEventsCollection = () => collection(db, 'subscribers', '_analytics', 'events');
 
 const cleanObject = <T extends Record<string, any>>(data: T) => (
   Object.fromEntries(Object.entries(data).filter(([, value]) => value !== undefined)) as Partial<T>
@@ -205,7 +206,7 @@ export function createApiApp(options: { includeUnprefixedRoutes?: boolean } = {}
         createdAtServer: serverTimestamp(),
       };
 
-      await addDoc(collection(db, 'analyticsEvents'), event);
+      await addDoc(analyticsEventsCollection(), event);
       res.status(204).send();
     } catch (error: any) {
       console.error("Error recording analytics event:", error);
@@ -216,7 +217,7 @@ export function createApiApp(options: { includeUnprefixedRoutes?: boolean } = {}
   app.get(apiRoute("/admin/analytics"), verifyAdmin, async (req, res) => {
     try {
       const snapshot = await getDocs(query(
-        collection(db, 'analyticsEvents'),
+        analyticsEventsCollection(),
         orderBy('createdAt', 'desc'),
         limit(1000)
       ));
