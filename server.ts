@@ -79,6 +79,18 @@ const normalizeStories = (value: any) => (
     : []
 );
 
+const toSafeString = (value: any, maxLength = 500) => (
+  String(value ?? '').replace(/\s+/g, ' ').trim().slice(0, maxLength)
+);
+
+const getClientIp = (req: express.Request) => {
+  const forwardedFor = req.headers['x-forwarded-for'];
+  const firstForwardedIp = Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor?.split(',')[0];
+  return toSafeString(firstForwardedIp || req.socket.remoteAddress || 'unknown', 80);
+};
+
+const getDateKey = (date: Date) => date.toISOString().slice(0, 10);
+
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -169,6 +181,135 @@ export function createApiApp(options: { includeUnprefixedRoutes?: boolean } = {}
         message: error.message,
         code: error.code
       });
+    }
+  });
+
+  app.post(apiRoute("/analytics/pageview"), async (req, res) => {
+    try {
+      const pathValue = toSafeString(req.body?.path || '/', 240);
+      if (!pathValue || pathValue.startsWith('/admin-portal-secret')) {
+        return res.status(204).send();
+      }
+
+      const now = new Date();
+      const event = {
+        type: 'pageview',
+        path: pathValue,
+        title: toSafeString(req.body?.title, 180),
+        referrer: toSafeString(req.body?.referrer, 300),
+        sessionId: toSafeString(req.body?.sessionId || 'anonymous', 120),
+        userAgent: toSafeString(req.headers['user-agent'], 300),
+        ip: getClientIp(req),
+        day: getDateKey(now),
+        createdAt: Timestamp.fromDate(now),
+        createdAtServer: serverTimestamp(),
+      };
+
+      await addDoc(collection(db, 'analyticsEvents'), event);
+      res.status(204).send();
+    } catch (error: any) {
+      console.error("Error recording analytics event:", error);
+      res.status(204).send();
+    }
+  });
+
+  app.get(apiRoute("/admin/analytics"), verifyAdmin, async (req, res) => {
+    try {
+      const snapshot = await getDocs(query(
+        collection(db, 'analyticsEvents'),
+        orderBy('createdAt', 'desc'),
+        limit(1000)
+      ));
+
+      const now = new Date();
+      const todayKey = getDateKey(now);
+      const sevenDaysAgo = new Date(now);
+      sevenDaysAgo.setDate(now.getDate() - 6);
+      sevenDaysAgo.setHours(0, 0, 0, 0);
+      const thirtyDaysAgo = new Date(now);
+      thirtyDaysAgo.setDate(now.getDate() - 29);
+      thirtyDaysAgo.setHours(0, 0, 0, 0);
+
+      const events = snapshot.docs
+        .map((d) => {
+          const data = d.data();
+          const createdAtDate = data.createdAt?.toDate?.() || new Date(0);
+          return {
+            id: d.id,
+            path: String(data.path || '/'),
+            title: String(data.title || ''),
+            referrer: String(data.referrer || ''),
+            sessionId: String(data.sessionId || 'anonymous'),
+            userAgent: String(data.userAgent || ''),
+            day: String(data.day || getDateKey(createdAtDate)),
+            createdAt: createdAtDate,
+          };
+        })
+        .filter((event) => event.createdAt >= thirtyDaysAgo);
+
+      const uniqueSessions = new Set(events.map((event) => event.sessionId).filter(Boolean));
+      const todayEvents = events.filter((event) => event.day === todayKey);
+      const last7Events = events.filter((event) => event.createdAt >= sevenDaysAgo);
+      const pageCounts = new Map<string, number>();
+      const referrerCounts = new Map<string, number>();
+      const dailyCounts = new Map<string, number>();
+
+      for (let i = 29; i >= 0; i -= 1) {
+        const day = new Date(now);
+        day.setDate(now.getDate() - i);
+        dailyCounts.set(getDateKey(day), 0);
+      }
+
+      events.forEach((event) => {
+        pageCounts.set(event.path, (pageCounts.get(event.path) || 0) + 1);
+        if (event.referrer) {
+          let referrerLabel = event.referrer;
+          try {
+            const url = new URL(event.referrer);
+            referrerLabel = url.hostname;
+          } catch {
+            referrerLabel = event.referrer;
+          }
+          referrerCounts.set(referrerLabel, (referrerCounts.get(referrerLabel) || 0) + 1);
+        }
+        dailyCounts.set(event.day, (dailyCounts.get(event.day) || 0) + 1);
+      });
+
+      const topPages = [...pageCounts.entries()]
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 8)
+        .map(([path, views]) => ({ path, views }));
+
+      const topReferrers = [...referrerCounts.entries()]
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 6)
+        .map(([source, views]) => ({ source, views }));
+
+      const daily = [...dailyCounts.entries()].map(([day, views]) => ({ day, views }));
+
+      const recent = events.slice(0, 12).map((event) => ({
+        id: event.id,
+        path: event.path,
+        referrer: event.referrer,
+        createdAt: event.createdAt.toISOString(),
+        userAgent: event.userAgent,
+      }));
+
+      res.status(200).json({
+        totals: {
+          pageViews: events.length,
+          visitors: uniqueSessions.size,
+          today: todayEvents.length,
+          last7Days: last7Events.length,
+        },
+        topPages,
+        topReferrers,
+        daily,
+        recent,
+      });
+    } catch (error: any) {
+      console.error("Error fetching analytics summary:", error);
+      res.status(500).json({ error: "Failed to fetch analytics summary.", details: error.message });
     }
   });
 

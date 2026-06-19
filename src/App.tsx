@@ -17,11 +17,13 @@ import Children from './pages/Children';
 import Leadership from './pages/Leadership';
 import MissionKasubi from './pages/MissionKasubi';
 import ScrollToTop from './components/ScrollToTop';
+import AnalyticsTracker from './components/AnalyticsTracker';
 
 export default function App() {
   return (
     <>
       <ScrollToTop />
+      <AnalyticsTracker />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />

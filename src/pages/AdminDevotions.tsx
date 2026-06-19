@@ -23,7 +23,12 @@ import {
   LogOut,
   Image as ImageIcon,
   Heart,
-  Link as LinkIcon
+  Link as LinkIcon,
+  BarChart3,
+  Eye,
+  Users,
+  TrendingUp,
+  Clock
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
@@ -54,6 +59,25 @@ type ProjectFormData = Omit<Project, 'id'> & {
   documentId?: string;
   visible: boolean;
   order: number;
+};
+
+type AnalyticsSummary = {
+  totals: {
+    pageViews: number;
+    visitors: number;
+    today: number;
+    last7Days: number;
+  };
+  topPages: { path: string; views: number }[];
+  topReferrers: { source: string; views: number }[];
+  daily: { day: string; views: number }[];
+  recent: {
+    id: string;
+    path: string;
+    referrer: string;
+    createdAt: string;
+    userAgent: string;
+  }[];
 };
 
 const emptyProgramForm = (): ProgramFormData => ({
@@ -98,7 +122,7 @@ export default function AdminDevotions() {
   const [isSaving, setIsSaving] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [activeTab, setActiveTab] = useState<'manager' | 'testimonies' | 'backup' | 'programs' | 'projects'>('manager');
+  const [activeTab, setActiveTab] = useState<'manager' | 'testimonies' | 'backup' | 'programs' | 'projects' | 'statistics'>('manager');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [imageSourceType, setImageSourceType] = useState<'url' | 'upload'>('url');
   const [isUploading, setIsUploading] = useState(false);
@@ -116,6 +140,10 @@ export default function AdminDevotions() {
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [isNewProject, setIsNewProject] = useState(false);
   const [projectFormData, setProjectFormData] = useState<ProjectFormData>(emptyProjectForm);
+
+  // Statistics state
+  const [analyticsSummary, setAnalyticsSummary] = useState<AnalyticsSummary | null>(null);
+  const [isStatsLoading, setIsStatsLoading] = useState(false);
 
   const handleBulkAction = async (status: 'APPROVED' | 'REJECTED') => {
     if (selectedPendingIds.length === 0) return;
@@ -157,6 +185,7 @@ export default function AdminDevotions() {
       : activeTab === 'projects'
         ? 'Project'
         : 'Devotion';
+  const canCreateActiveItem = ['manager', 'testimonies', 'programs', 'projects'].includes(activeTab);
 
   const startNewActiveItem = () => {
     if (activeTab === 'testimonies') {
@@ -563,6 +592,30 @@ export default function AdminDevotions() {
     }
   };
 
+  const fetchAnalytics = async () => {
+    setIsStatsLoading(true);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    try {
+      const response = await fetch('/api/admin/analytics', {
+        headers: { 'x-admin-password': password },
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      if (response.ok) {
+        const data = await response.json();
+        setAnalyticsSummary(data);
+      } else {
+        throw new Error('Failed to fetch analytics');
+      }
+    } catch (e: any) {
+      console.error("Failed to fetch analytics", e);
+      setStatus({ type: 'error', message: 'Failed to load statistics.' });
+    } finally {
+      setIsStatsLoading(false);
+    }
+  };
+
   React.useEffect(() => {
     if (isAuthenticated) {
       fetchDevotions();
@@ -575,6 +628,9 @@ export default function AdminDevotions() {
       }
       if (activeTab === 'projects' || activeTab === 'testimonies') {
         fetchProjects();
+      }
+      if (activeTab === 'statistics') {
+        fetchAnalytics();
       }
     }
   }, [isAuthenticated, activeTab]);
@@ -999,6 +1055,12 @@ export default function AdminDevotions() {
             >
               Projects
             </button>
+            <button
+              onClick={() => setActiveTab('statistics')}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${activeTab === 'statistics' ? 'bg-white text-royal-blue shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+              Statistics
+            </button>
             <button 
               onClick={() => setActiveTab('backup')}
               className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${activeTab === 'backup' ? 'bg-white text-royal-blue shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
@@ -1017,6 +1079,7 @@ export default function AdminDevotions() {
                 {status.message}
               </motion.div>
             )}
+            {canCreateActiveItem && (
             <div className="hidden md:flex">
               <button 
                 onClick={startNewActiveItem}
@@ -1025,6 +1088,7 @@ export default function AdminDevotions() {
                 <Plus className="w-4 h-4" /> New {activeItemName}
               </button>
             </div>
+            )}
             
             <button 
               onClick={handleLogout}
@@ -1087,6 +1151,14 @@ export default function AdminDevotions() {
                   </div>
                 </button>
                 <button 
+                  onClick={() => { setActiveTab('statistics'); setIsMenuOpen(false); }}
+                  className={`w-full px-4 py-3 rounded-xl text-sm font-bold text-left transition-all ${activeTab === 'statistics' ? 'bg-royal-blue text-white' : 'bg-slate-50 text-slate-500'}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <BarChart3 className="w-4 h-4" /> Statistics
+                  </div>
+                </button>
+                <button 
                   onClick={() => { setActiveTab('backup'); setIsMenuOpen(false); }}
                   className={`w-full px-4 py-3 rounded-xl text-sm font-bold text-left transition-all ${activeTab === 'backup' ? 'bg-royal-blue text-white' : 'bg-slate-50 text-slate-500'}`}
                 >
@@ -1094,6 +1166,7 @@ export default function AdminDevotions() {
                     <Database className="w-4 h-4" /> System Backup
                   </div>
                 </button>
+                {canCreateActiveItem && (
                 <div className="pt-2">
                   <button 
                     onClick={() => { startNewActiveItem(); setIsMenuOpen(false); }}
@@ -1102,6 +1175,7 @@ export default function AdminDevotions() {
                     <Plus className="w-4 h-4" /> New {activeItemName}
                   </button>
                 </div>
+                )}
 
                 <div className="pt-2 border-t border-slate-100 mt-2">
                   <button 
@@ -1907,6 +1981,136 @@ export default function AdminDevotions() {
               </AnimatePresence>
             </div>
           </div>
+        ) : activeTab === 'statistics' ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-8"
+          >
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-royal-gold">Site Statistics</span>
+                <h2 className="text-3xl md:text-5xl font-serif font-black text-royal-blue mt-2">Analytics Dashboard</h2>
+                <p className="text-slate-500 mt-3 max-w-2xl">
+                  First-party pageview tracking for Louder Fellowship. This is the foundation for a fuller ministry dashboard.
+                </p>
+              </div>
+              <button
+                onClick={fetchAnalytics}
+                disabled={isStatsLoading}
+                className="px-6 py-3 rounded-full bg-royal-blue text-white text-xs font-black uppercase tracking-widest hover:bg-royal-gold hover:text-royal-blue transition-all disabled:opacity-60"
+              >
+                {isStatsLoading ? 'Refreshing...' : 'Refresh Stats'}
+              </button>
+            </div>
+
+            {isStatsLoading && !analyticsSummary ? (
+              <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl p-12 text-center">
+                <BarChart3 className="w-10 h-10 mx-auto text-royal-gold mb-4 animate-pulse" />
+                <p className="text-sm font-bold text-slate-500">Loading analytics...</p>
+              </div>
+            ) : analyticsSummary ? (
+              <>
+                <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-5">
+                  {[
+                    { label: 'Page Views', value: analyticsSummary.totals.pageViews, icon: <Eye className="w-5 h-5" /> },
+                    { label: 'Visitors', value: analyticsSummary.totals.visitors, icon: <Users className="w-5 h-5" /> },
+                    { label: 'Today', value: analyticsSummary.totals.today, icon: <Clock className="w-5 h-5" /> },
+                    { label: 'Last 7 Days', value: analyticsSummary.totals.last7Days, icon: <TrendingUp className="w-5 h-5" /> },
+                  ].map((item) => (
+                    <div key={item.label} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+                      <div className="w-11 h-11 rounded-xl bg-royal-gold/10 text-royal-gold flex items-center justify-center mb-5">
+                        {item.icon}
+                      </div>
+                      <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">{item.label}</p>
+                      <p className="text-4xl font-black text-royal-blue mt-2">{item.value}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl p-6 md:p-8">
+                  <div className="flex items-center justify-between mb-8">
+                    <div>
+                      <h3 className="text-xl font-serif font-black text-royal-blue">Last 30 Days</h3>
+                      <p className="text-sm text-slate-400">Daily page views from tracked visits.</p>
+                    </div>
+                    <BarChart3 className="w-5 h-5 text-royal-gold" />
+                  </div>
+                  <div className="flex items-end gap-1 h-44 border-b border-slate-100">
+                    {analyticsSummary.daily.map((day) => {
+                      const maxViews = Math.max(...analyticsSummary.daily.map((item) => item.views), 1);
+                      const height = Math.max((day.views / maxViews) * 100, day.views > 0 ? 8 : 2);
+                      return (
+                        <div key={day.day} className="flex-1 h-full flex items-end group relative">
+                          <div
+                            className="w-full rounded-t bg-royal-blue/80 group-hover:bg-royal-gold transition-colors"
+                            style={{ height: `${height}%` }}
+                          />
+                          <div className="hidden group-hover:block absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 rounded bg-royal-blue text-white text-[10px] font-bold whitespace-nowrap">
+                            {day.day}: {day.views}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="grid lg:grid-cols-2 gap-8">
+                  <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl p-6 md:p-8">
+                    <h3 className="text-xl font-serif font-black text-royal-blue mb-6">Top Pages</h3>
+                    <div className="space-y-4">
+                      {analyticsSummary.topPages.length > 0 ? analyticsSummary.topPages.map((page) => (
+                        <div key={page.path} className="flex items-center justify-between gap-4">
+                          <span className="text-sm font-bold text-slate-600 truncate">{page.path}</span>
+                          <span className="px-3 py-1 rounded-full bg-royal-gold/10 text-royal-blue text-xs font-black">{page.views}</span>
+                        </div>
+                      )) : (
+                        <p className="text-sm text-slate-400">No page views recorded yet.</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl p-6 md:p-8">
+                    <h3 className="text-xl font-serif font-black text-royal-blue mb-6">Top Referrers</h3>
+                    <div className="space-y-4">
+                      {analyticsSummary.topReferrers.length > 0 ? analyticsSummary.topReferrers.map((referrer) => (
+                        <div key={referrer.source} className="flex items-center justify-between gap-4">
+                          <span className="text-sm font-bold text-slate-600 truncate">{referrer.source}</span>
+                          <span className="px-3 py-1 rounded-full bg-royal-blue/5 text-royal-blue text-xs font-black">{referrer.views}</span>
+                        </div>
+                      )) : (
+                        <p className="text-sm text-slate-400">Direct visits and unknown sources only so far.</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl p-6 md:p-8">
+                  <h3 className="text-xl font-serif font-black text-royal-blue mb-6">Recent Visits</h3>
+                  <div className="space-y-3">
+                    {analyticsSummary.recent.length > 0 ? analyticsSummary.recent.map((visit) => (
+                      <div key={visit.id} className="p-4 rounded-2xl bg-slate-50 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                        <div>
+                          <p className="text-sm font-black text-royal-blue">{visit.path}</p>
+                          <p className="text-xs text-slate-400 truncate max-w-xl">{visit.userAgent || 'Unknown browser'}</p>
+                        </div>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                          {new Date(visit.createdAt).toLocaleString()}
+                        </span>
+                      </div>
+                    )) : (
+                      <p className="text-sm text-slate-400">No recent visits recorded yet.</p>
+                    )}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl p-12 text-center">
+                <BarChart3 className="w-10 h-10 mx-auto text-slate-300 mb-4" />
+                <p className="text-sm font-bold text-slate-500">Statistics are not available yet.</p>
+              </div>
+            )}
+          </motion.div>
         ) : (
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
