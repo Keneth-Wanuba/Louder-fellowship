@@ -90,7 +90,198 @@ const getClientIp = (req: express.Request) => {
   return toSafeString(firstForwardedIp || req.socket.remoteAddress || 'unknown', 80);
 };
 
-const getDateKey = (date: Date) => date.toISOString().slice(0, 10);
+const padDatePart = (value: number) => String(value).padStart(2, '0');
+
+const getDateKey = (date: Date) => (
+  `${date.getFullYear()}-${padDatePart(date.getMonth() + 1)}-${padDatePart(date.getDate())}`
+);
+
+const startOfDay = (date: Date) => {
+  const value = new Date(date);
+  value.setHours(0, 0, 0, 0);
+  return value;
+};
+
+const addDays = (date: Date, days: number) => {
+  const value = new Date(date);
+  value.setDate(value.getDate() + days);
+  return value;
+};
+
+const startOfWeek = (date: Date) => {
+  const value = startOfDay(date);
+  const day = value.getDay();
+  const mondayOffset = day === 0 ? -6 : 1 - day;
+  return addDays(value, mondayOffset);
+};
+
+const startOfMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth(), 1);
+
+const startOfYear = (date: Date) => new Date(date.getFullYear(), 0, 1);
+
+const getMonthKey = (date: Date) => `${date.getFullYear()}-${padDatePart(date.getMonth() + 1)}`;
+
+const formatShortDate = (date: Date) => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+const formatMonthLabel = (date: Date) => date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+
+type BibleVersionManifestEntry = {
+  id: string;
+  label: string;
+  name: string;
+  language: string;
+  year?: string;
+  assetUrl: string;
+  copyright?: string;
+};
+
+type BibleVerse = {
+  book: string;
+  chapter: number;
+  verse: number;
+  ref: string;
+  text: string;
+};
+
+const canonicalBibleBooks = [
+  'Genesis', 'Exodus', 'Leviticus', 'Numbers', 'Deuteronomy', 'Joshua', 'Judges', 'Ruth',
+  '1 Samuel', '2 Samuel', '1 Kings', '2 Kings', '1 Chronicles', '2 Chronicles', 'Ezra',
+  'Nehemiah', 'Esther', 'Job', 'Psalms', 'Proverbs', 'Ecclesiastes', 'Song of Solomon',
+  'Isaiah', 'Jeremiah', 'Lamentations', 'Ezekiel', 'Daniel', 'Hosea', 'Joel', 'Amos',
+  'Obadiah', 'Jonah', 'Micah', 'Nahum', 'Habakkuk', 'Zephaniah', 'Haggai', 'Zechariah',
+  'Malachi', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', '1 Corinthians',
+  '2 Corinthians', 'Galatians', 'Ephesians', 'Philippians', 'Colossians', '1 Thessalonians',
+  '2 Thessalonians', '1 Timothy', '2 Timothy', 'Titus', 'Philemon', 'Hebrews', 'James',
+  '1 Peter', '2 Peter', '1 John', '2 John', '3 John', 'Jude', 'Revelation',
+];
+
+const normalizeBibleBook = (value: any) => {
+  const rawBook = toSafeString(value, 80);
+  if (!/^\d+$/.test(rawBook)) return rawBook;
+  const numericBook = Number(rawBook);
+  return canonicalBibleBooks[numericBook - 1] || rawBook;
+};
+
+const bibleManifestUrl = process.env.VITE_BIBLE_MANIFEST_URL
+  || 'https://xtnaajnhydwzhgbkzscv.supabase.co/storage/v1/object/public/bibles/bible-versions-manifest.json';
+const supabaseBibleBaseUrl = process.env.VITE_SUPABASE_URL || 'https://xtnaajnhydwzhgbkzscv.supabase.co';
+const supabaseBibleBucket = process.env.SUPABASE_BIBLE_BUCKET || 'bibles';
+const bibleCacheTtlMs = 60 * 60 * 1000;
+const bibleVersionCacheLimit = 3;
+let bibleManifestCache: { expiresAt: number; versions: BibleVersionManifestEntry[] } | null = null;
+const bibleVersionCache = new Map<string, { expiresAt: number; verses: BibleVerse[] }>();
+
+const fetchJson = async (url: string) => {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Bible asset request failed with status ${response.status}`);
+  }
+  return response.json();
+};
+
+const getBibleManifest = async () => {
+  if (bibleManifestCache && bibleManifestCache.expiresAt > Date.now()) {
+    return bibleManifestCache.versions;
+  }
+
+  const manifest = await fetchJson(bibleManifestUrl);
+  if (!Array.isArray(manifest)) {
+    throw new Error('Bible manifest is not an array.');
+  }
+
+  const trustedOrigin = new URL(supabaseBibleBaseUrl).origin;
+  const trustedPathPrefix = `/storage/v1/object/public/${supabaseBibleBucket}/`;
+  const versions = manifest
+    .map((entry: any) => ({
+      id: toSafeString(entry?.id, 120),
+      label: toSafeString(entry?.label, 120),
+      name: toSafeString(entry?.name, 160),
+      language: toSafeString(entry?.language, 120),
+      year: toSafeString(entry?.year, 20),
+      assetUrl: toSafeString(entry?.assetUrl, 500),
+      copyright: toSafeString(entry?.copyright, 1000),
+    }))
+    .filter((entry) => {
+      if (!entry.id || !entry.assetUrl) return false;
+      try {
+        const assetUrl = new URL(entry.assetUrl);
+        return assetUrl.origin === trustedOrigin && assetUrl.pathname.startsWith(trustedPathPrefix);
+      } catch {
+        return false;
+      }
+    });
+
+  bibleManifestCache = {
+    expiresAt: Date.now() + bibleCacheTtlMs,
+    versions,
+  };
+  return versions;
+};
+
+const getBibleVersion = async (versionId: string) => {
+  const cached = bibleVersionCache.get(versionId);
+  if (cached && cached.expiresAt > Date.now()) {
+    bibleVersionCache.delete(versionId);
+    bibleVersionCache.set(versionId, cached);
+    return cached.verses;
+  }
+
+  const versions = await getBibleManifest();
+  const version = versions.find((entry) => entry.id === versionId);
+  if (!version) {
+    throw new Error('Bible version was not found.');
+  }
+
+  const source = await fetchJson(version.assetUrl);
+  const sourceVerses = Array.isArray(source)
+    ? source
+    : Array.isArray(source?.verses)
+      ? source.verses
+      : Array.isArray(source?.data)
+        ? source.data
+        : Array.isArray(source?.data?.verses)
+          ? source.data.verses
+          : null;
+  if (!sourceVerses) {
+    throw new Error('Bible version is not a verse array.');
+  }
+
+  const verses = sourceVerses
+    .map((entry: any) => {
+      const book = normalizeBibleBook(entry?.book);
+      const chapter = Number(entry?.chapter);
+      const verse = Number(entry?.verse);
+      return {
+        book,
+        chapter,
+        verse,
+        ref: book && Number.isInteger(chapter) && Number.isInteger(verse)
+          ? `${book} ${chapter}:${verse}`
+          : toSafeString(entry?.ref, 120),
+        text: String(entry?.text ?? '').trim(),
+      };
+    })
+    .filter((entry) => (
+      entry.book
+      && Number.isInteger(entry.chapter)
+      && entry.chapter > 0
+      && Number.isInteger(entry.verse)
+      && entry.verse > 0
+      && entry.text
+    ));
+
+  bibleVersionCache.set(versionId, {
+    expiresAt: Date.now() + bibleCacheTtlMs,
+    verses,
+  });
+  while (bibleVersionCache.size > bibleVersionCacheLimit) {
+    const oldestVersionId = bibleVersionCache.keys().next().value;
+    if (!oldestVersionId) break;
+    bibleVersionCache.delete(oldestVersionId);
+  }
+
+  return verses;
+};
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -164,6 +355,66 @@ export function createApiApp(options: { includeUnprefixedRoutes?: boolean } = {}
     }
   });
 
+  app.get(apiRoute("/admin/bible/versions"), verifyAdmin, async (_req, res) => {
+    try {
+      const versions = await getBibleManifest();
+      res.json(versions.map(({ assetUrl: _assetUrl, ...version }) => version));
+    } catch (error: any) {
+      console.error('Failed to load Bible versions:', error);
+      res.status(502).json({ error: error.message || 'Failed to load Bible versions.' });
+    }
+  });
+
+  app.get(apiRoute("/admin/bible/books"), verifyAdmin, async (req, res) => {
+    try {
+      const versionId = toSafeString(req.query.version, 120);
+      if (!versionId) {
+        return res.status(400).json({ error: 'Bible version is required.' });
+      }
+
+      const verses = await getBibleVersion(versionId);
+      const books = new Map<string, Set<number>>();
+      verses.forEach((verse) => {
+        if (!books.has(verse.book)) books.set(verse.book, new Set());
+        books.get(verse.book)?.add(verse.chapter);
+      });
+
+      res.json(Array.from(books.entries()).map(([name, chapters]) => ({
+        name,
+        chapters: Array.from(chapters).sort((a, b) => a - b),
+      })));
+    } catch (error: any) {
+      console.error('Failed to load Bible books:', error);
+      const status = error.message === 'Bible version was not found.' ? 404 : 502;
+      res.status(status).json({ error: error.message || 'Failed to load Bible books.' });
+    }
+  });
+
+  app.get(apiRoute("/admin/bible/verses"), verifyAdmin, async (req, res) => {
+    try {
+      const versionId = toSafeString(req.query.version, 120);
+      const book = toSafeString(req.query.book, 80);
+      const chapter = Number(req.query.chapter);
+      if (!versionId || !book || !Number.isInteger(chapter) || chapter < 1) {
+        return res.status(400).json({ error: 'Version, book, and chapter are required.' });
+      }
+
+      const verses = await getBibleVersion(versionId);
+      const chapterVerses = verses
+        .filter((verse) => verse.book === book && verse.chapter === chapter)
+        .sort((a, b) => a.verse - b.verse);
+
+      if (chapterVerses.length === 0) {
+        return res.status(404).json({ error: 'That Bible chapter was not found.' });
+      }
+      res.json(chapterVerses);
+    } catch (error: any) {
+      console.error('Failed to load Bible verses:', error);
+      const status = error.message === 'Bible version was not found.' ? 404 : 502;
+      res.status(status).json({ error: error.message || 'Failed to load Bible verses.' });
+    }
+  });
+
   // Test Route for Firebase Connectivity
   app.get(apiRoute("/test-firebase"), async (req, res) => {
     try {
@@ -223,13 +474,12 @@ export function createApiApp(options: { includeUnprefixedRoutes?: boolean } = {}
       ));
 
       const now = new Date();
+      const todayStart = startOfDay(now);
       const todayKey = getDateKey(now);
-      const sevenDaysAgo = new Date(now);
-      sevenDaysAgo.setDate(now.getDate() - 6);
-      sevenDaysAgo.setHours(0, 0, 0, 0);
-      const thirtyDaysAgo = new Date(now);
-      thirtyDaysAgo.setDate(now.getDate() - 29);
-      thirtyDaysAgo.setHours(0, 0, 0, 0);
+      const sevenDaysAgo = addDays(todayStart, -6);
+      const thirtyDaysAgo = addDays(todayStart, -29);
+      const annualStart = startOfYear(now);
+      const analyticsStart = addDays(todayStart, -364);
 
       const events = snapshot.docs
         .map((d) => {
@@ -246,19 +496,46 @@ export function createApiApp(options: { includeUnprefixedRoutes?: boolean } = {}
             createdAt: createdAtDate,
           };
         })
-        .filter((event) => event.createdAt >= thirtyDaysAgo);
+        .filter((event) => event.createdAt >= analyticsStart);
 
       const uniqueSessions = new Set(events.map((event) => event.sessionId).filter(Boolean));
       const todayEvents = events.filter((event) => event.day === todayKey);
       const last7Events = events.filter((event) => event.createdAt >= sevenDaysAgo);
+      const last30Events = events.filter((event) => event.createdAt >= thirtyDaysAgo);
+      const annualEvents = events.filter((event) => event.createdAt >= annualStart);
       const pageCounts = new Map<string, number>();
       const referrerCounts = new Map<string, number>();
       const dailyCounts = new Map<string, number>();
+      const dailyVisitors = new Map<string, Set<string>>();
+      const weeklyBuckets = new Map<string, { label: string; pageViews: number; visitors: Set<string> }>();
+      const monthlyBuckets = new Map<string, { label: string; pageViews: number; visitors: Set<string> }>();
 
       for (let i = 29; i >= 0; i -= 1) {
         const day = new Date(now);
         day.setDate(now.getDate() - i);
-        dailyCounts.set(getDateKey(day), 0);
+        const key = getDateKey(day);
+        dailyCounts.set(key, 0);
+        dailyVisitors.set(key, new Set());
+      }
+
+      for (let i = 7; i >= 0; i -= 1) {
+        const weekStart = addDays(startOfWeek(now), i * -7);
+        const weekEnd = addDays(weekStart, 6);
+        const key = getDateKey(weekStart);
+        weeklyBuckets.set(key, {
+          label: `${formatShortDate(weekStart)}-${formatShortDate(weekEnd)}`,
+          pageViews: 0,
+          visitors: new Set(),
+        });
+      }
+
+      for (let i = 11; i >= 0; i -= 1) {
+        const month = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        monthlyBuckets.set(getMonthKey(month), {
+          label: formatMonthLabel(month),
+          pageViews: 0,
+          visitors: new Set(),
+        });
       }
 
       events.forEach((event) => {
@@ -273,7 +550,29 @@ export function createApiApp(options: { includeUnprefixedRoutes?: boolean } = {}
           }
           referrerCounts.set(referrerLabel, (referrerCounts.get(referrerLabel) || 0) + 1);
         }
-        dailyCounts.set(event.day, (dailyCounts.get(event.day) || 0) + 1);
+        if (dailyCounts.has(event.day)) {
+          dailyCounts.set(event.day, (dailyCounts.get(event.day) || 0) + 1);
+          if (event.sessionId) {
+            dailyVisitors.get(event.day)?.add(event.sessionId);
+          }
+        }
+
+        const weekKey = getDateKey(startOfWeek(event.createdAt));
+        const weekBucket = weeklyBuckets.get(weekKey);
+        if (weekBucket) {
+          weekBucket.pageViews += 1;
+          if (event.sessionId) {
+            weekBucket.visitors.add(event.sessionId);
+          }
+        }
+
+        const monthBucket = monthlyBuckets.get(getMonthKey(event.createdAt));
+        if (monthBucket) {
+          monthBucket.pageViews += 1;
+          if (event.sessionId) {
+            monthBucket.visitors.add(event.sessionId);
+          }
+        }
       });
 
       const topPages = [...pageCounts.entries()]
@@ -286,7 +585,29 @@ export function createApiApp(options: { includeUnprefixedRoutes?: boolean } = {}
         .slice(0, 6)
         .map(([source, views]) => ({ source, views }));
 
-      const daily = [...dailyCounts.entries()].map(([day, views]) => ({ day, views }));
+      const daily = [...dailyCounts.entries()].map(([day, views]) => ({
+        day,
+        label: formatShortDate(new Date(`${day}T00:00:00`)),
+        views,
+        pageViews: views,
+        visitors: dailyVisitors.get(day)?.size || 0,
+      }));
+
+      const weekly = [...weeklyBuckets.entries()].map(([weekStart, bucket]) => ({
+        weekStart,
+        label: bucket.label,
+        pageViews: bucket.pageViews,
+        visitors: bucket.visitors.size,
+      }));
+
+      const monthly = [...monthlyBuckets.entries()].map(([month, bucket]) => ({
+        month,
+        label: bucket.label,
+        pageViews: bucket.pageViews,
+        visitors: bucket.visitors.size,
+      }));
+
+      const annualVisitors = new Set(annualEvents.map((event) => event.sessionId).filter(Boolean));
 
       const recent = events.slice(0, 12).map((event) => ({
         id: event.id,
@@ -302,6 +623,20 @@ export function createApiApp(options: { includeUnprefixedRoutes?: boolean } = {}
           visitors: uniqueSessions.size,
           today: todayEvents.length,
           last7Days: last7Events.length,
+          last30Days: last30Events.length,
+          currentYear: annualEvents.length,
+          currentYearVisitors: annualVisitors.size,
+        },
+        rollups: {
+          daily,
+          weekly,
+          monthly,
+          annual: {
+            year: now.getFullYear(),
+            label: String(now.getFullYear()),
+            pageViews: annualEvents.length,
+            visitors: annualVisitors.size,
+          },
         },
         topPages,
         topReferrers,
@@ -370,18 +705,25 @@ export function createApiApp(options: { includeUnprefixedRoutes?: boolean } = {}
 
   // API Route for Admin to manage Devotions (Create/Update)
   app.post(apiRoute("/admin/devotions"), verifyAdmin, async (req, res) => {
-    const { id, title, scripture, content, nuggets, date, author } = req.body;
+    const { id, title, scripture, themeScripture, content, nuggets, date, author } = req.body;
+    const devotionPayload = cleanObject({
+      title,
+      scripture,
+      themeScripture,
+      content,
+      nuggets,
+      date,
+      author,
+    });
 
     try {
       if (id) {
         // Update
-        await updateDoc(doc(db, 'devotions', id), { title, scripture, content, nuggets, date, author });
+        await updateDoc(doc(db, 'devotions', id), devotionPayload);
         res.status(200).json({ success: true, id });
       } else {
         // Create
-        const docRef = await addDoc(collection(db, 'devotions'), {
-          title, scripture, content, nuggets, date, author
-        });
+        const docRef = await addDoc(collection(db, 'devotions'), devotionPayload);
         res.status(200).json({ success: true, id: docRef.id });
       }
     } catch (error: any) {

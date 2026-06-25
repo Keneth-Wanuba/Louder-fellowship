@@ -5,6 +5,7 @@ import {
   Trash2, 
   Edit3, 
   ChevronLeft, 
+  ChevronRight,
   BookOpen, 
   Type, 
   FileText, 
@@ -28,13 +29,15 @@ import {
   Eye,
   Users,
   TrendingUp,
-  Clock
+  Clock,
+  Loader2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { PROJECT_TYPES, Project, projects as staticProjects } from '../data/projects';
 import { Testimony } from './Testimonies';
 import { Devotion } from './Devotions';
+import { ThemeScripture, buildScriptureReference, formatThemeScripture, splitLegacyScripture } from '../utils/devotionScripture';
 
 import ReactMarkdown from 'react-markdown';
 
@@ -67,10 +70,19 @@ type AnalyticsSummary = {
     visitors: number;
     today: number;
     last7Days: number;
+    last30Days?: number;
+    currentYear?: number;
+    currentYearVisitors?: number;
+  };
+  rollups?: {
+    daily: { day: string; label: string; views: number; pageViews: number; visitors: number }[];
+    weekly: { weekStart: string; label: string; pageViews: number; visitors: number }[];
+    monthly: { month: string; label: string; pageViews: number; visitors: number }[];
+    annual: { year: number; label: string; pageViews: number; visitors: number };
   };
   topPages: { path: string; views: number }[];
   topReferrers: { source: string; views: number }[];
-  daily: { day: string; views: number }[];
+  daily: { day: string; label?: string; views: number; pageViews?: number; visitors?: number }[];
   recent: {
     id: string;
     path: string;
@@ -79,6 +91,35 @@ type AnalyticsSummary = {
     userAgent: string;
   }[];
 };
+
+type DevotionFormData = Omit<Devotion, 'id' | 'scripture' | 'themeScripture'> & {
+  scripture: string;
+  themeScripture: ThemeScripture;
+};
+
+type BibleVersionOption = {
+  id: string;
+  label: string;
+  name: string;
+  language: string;
+  year?: string;
+  copyright?: string;
+};
+
+type BibleBookOption = {
+  name: string;
+  chapters: number[];
+};
+
+type BibleVerseOption = {
+  book: string;
+  chapter: number;
+  verse: number;
+  ref: string;
+  text: string;
+};
+
+const ADMIN_DEVOTIONS_PAGE_SIZE = 5;
 
 const emptyProgramForm = (): ProgramFormData => ({
   day: '',
@@ -109,6 +150,7 @@ const emptyProjectForm = (): ProjectFormData => ({
 
 export default function AdminDevotions() {
   const [devotions, setDevotions] = useState<Devotion[]>([]);
+  const [devotionsPage, setDevotionsPage] = useState(0);
   const [testimonies, setTestimonies] = useState<Testimony[]>([]);
   const [pendingTestimonies, setPendingTestimonies] = useState<Testimony[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -144,6 +186,34 @@ export default function AdminDevotions() {
   // Statistics state
   const [analyticsSummary, setAnalyticsSummary] = useState<AnalyticsSummary | null>(null);
   const [isStatsLoading, setIsStatsLoading] = useState(false);
+  const dailyStats = analyticsSummary?.rollups?.daily ?? analyticsSummary?.daily.map((day) => ({
+    day: day.day,
+    label: day.label || day.day.slice(5),
+    views: day.views,
+    pageViews: day.pageViews ?? day.views,
+    visitors: day.visitors ?? 0,
+  })) ?? [];
+  const weeklyStats = analyticsSummary?.rollups?.weekly ?? [];
+  const monthlyStats = analyticsSummary?.rollups?.monthly ?? [];
+  const annualStats = analyticsSummary?.rollups?.annual ?? {
+    year: new Date().getFullYear(),
+    label: String(new Date().getFullYear()),
+    pageViews: analyticsSummary?.totals.currentYear ?? analyticsSummary?.totals.pageViews ?? 0,
+    visitors: analyticsSummary?.totals.currentYearVisitors ?? analyticsSummary?.totals.visitors ?? 0,
+  };
+  const formatStatNumber = (value: number) => value.toLocaleString();
+  const devotionsPageCount = Math.max(1, Math.ceil(devotions.length / ADMIN_DEVOTIONS_PAGE_SIZE));
+  const devotionsPageStart = devotionsPage * ADMIN_DEVOTIONS_PAGE_SIZE;
+  const visibleDevotions = devotions.slice(
+    devotionsPageStart,
+    devotionsPageStart + ADMIN_DEVOTIONS_PAGE_SIZE
+  );
+  const canGoToPreviousDevotionsPage = devotionsPage > 0;
+  const canGoToNextDevotionsPage = devotionsPage < devotionsPageCount - 1;
+
+  useEffect(() => {
+    setDevotionsPage((page) => Math.min(page, devotionsPageCount - 1));
+  }, [devotionsPageCount]);
 
   const handleBulkAction = async (status: 'APPROVED' | 'REJECTED') => {
     if (selectedPendingIds.length === 0) return;
@@ -212,14 +282,25 @@ export default function AdminDevotions() {
   });
 
   // Form State
-  const [formData, setFormData] = useState<Omit<Devotion, 'id'>>({
+  const [formData, setFormData] = useState<DevotionFormData>({
     title: '',
     scripture: '',
+    themeScripture: splitLegacyScripture(''),
     content: '',
     nuggets: [''],
     date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
     author: 'Ezekiel Kayondo'
   });
+  const [bibleVersions, setBibleVersions] = useState<BibleVersionOption[]>([]);
+  const [selectedBibleVersion, setSelectedBibleVersion] = useState('');
+  const [bibleBooks, setBibleBooks] = useState<BibleBookOption[]>([]);
+  const [selectedBibleBook, setSelectedBibleBook] = useState('');
+  const [selectedBibleChapter, setSelectedBibleChapter] = useState('');
+  const [bibleVerses, setBibleVerses] = useState<BibleVerseOption[]>([]);
+  const [selectedBibleVerseNumbers, setSelectedBibleVerseNumbers] = useState<number[]>([]);
+  const [isBibleLoading, setIsBibleLoading] = useState(false);
+  const [bibleError, setBibleError] = useState('');
+  const [scriptureEntryMode, setScriptureEntryMode] = useState<'bible' | 'manual'>('bible');
 
   const sanitizeInput = (str: string) => {
     // Simple sanitization: remove script tags and other dangerous patterns
@@ -227,6 +308,178 @@ export default function AdminDevotions() {
       .replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gim, "")
       .replace(/onclick=".*?"/gim, "")
       .replace(/onmouseover=".*?"/gim, "");
+  };
+
+  const updateThemeScripture = (updates: { text?: string; reference?: Partial<ThemeScripture['reference']> }) => {
+    setFormData(prev => ({
+      ...prev,
+      themeScripture: {
+        ...prev.themeScripture,
+        ...updates,
+        reference: {
+          ...prev.themeScripture.reference,
+          ...(updates.reference || {}),
+        },
+      },
+    }));
+  };
+
+  const fetchBibleData = async <T,>(url: string): Promise<T> => {
+    const response = await fetch(url, {
+      headers: { 'x-admin-password': password },
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to load Bible data.');
+    }
+    return data as T;
+  };
+
+  const loadBibleVerses = async (versionId: string, book: string, chapter: number) => {
+    setIsBibleLoading(true);
+    setBibleError('');
+    setSelectedBibleVerseNumbers([]);
+    try {
+      const params = new URLSearchParams({
+        version: versionId,
+        book,
+        chapter: String(chapter),
+      });
+      const verses = await fetchBibleData<BibleVerseOption[]>(`/api/admin/bible/verses?${params}`);
+      setBibleVerses(verses);
+    } catch (error: any) {
+      setBibleVerses([]);
+      setBibleError(error.message || 'Failed to load that Bible chapter.');
+    } finally {
+      setIsBibleLoading(false);
+    }
+  };
+
+  const loadBibleBooks = async (versionId: string) => {
+    setIsBibleLoading(true);
+    setBibleError('');
+    setBibleBooks([]);
+    setBibleVerses([]);
+    setSelectedBibleVerseNumbers([]);
+    try {
+      const books = await fetchBibleData<BibleBookOption[]>(
+        `/api/admin/bible/books?version=${encodeURIComponent(versionId)}`
+      );
+      setBibleBooks(books);
+      const preferredBook = books.find((book) => book.name === formData.themeScripture.reference.book)
+        || books[0];
+      if (!preferredBook) return;
+
+      const requestedChapter = Number(formData.themeScripture.reference.chapter);
+      const preferredChapter = preferredBook.chapters.includes(requestedChapter)
+        ? requestedChapter
+        : preferredBook.chapters[0];
+      setSelectedBibleBook(preferredBook.name);
+      setSelectedBibleChapter(String(preferredChapter));
+      await loadBibleVerses(versionId, preferredBook.name, preferredChapter);
+    } catch (error: any) {
+      setBibleError(error.message || 'Failed to load books for that Bible version.');
+    } finally {
+      setIsBibleLoading(false);
+    }
+  };
+
+  const loadBibleVersions = async () => {
+    if (bibleVersions.length > 0 || !isAuthenticated) return;
+    setIsBibleLoading(true);
+    setBibleError('');
+    try {
+      const versions = await fetchBibleData<BibleVersionOption[]>('/api/admin/bible/versions');
+      const sortedVersions = [...versions].sort((a, b) => {
+        if (a.language === 'English' && b.language !== 'English') return -1;
+        if (a.language !== 'English' && b.language === 'English') return 1;
+        return `${a.language} ${a.label}`.localeCompare(`${b.language} ${b.label}`);
+      });
+      setBibleVersions(sortedVersions);
+      const defaultVersion = sortedVersions.find((version) => version.id === 'en-english-kjv')
+        || sortedVersions[0];
+      if (defaultVersion) {
+        setSelectedBibleVersion(defaultVersion.id);
+        await loadBibleBooks(defaultVersion.id);
+      }
+    } catch (error: any) {
+      setBibleError(error.message || 'Failed to connect to the Bible library.');
+    } finally {
+      setIsBibleLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated && activeTab === 'manager') {
+      void loadBibleVersions();
+    }
+  }, [isAuthenticated, activeTab]);
+
+  const formatSelectedVerseNumbers = (verseNumbers: number[]) => {
+    const sorted = [...new Set(verseNumbers)].sort((a, b) => a - b);
+    const groups: string[] = [];
+    let rangeStart = sorted[0];
+    let previous = sorted[0];
+
+    for (let index = 1; index <= sorted.length; index += 1) {
+      const current = sorted[index];
+      if (current === previous + 1) {
+        previous = current;
+        continue;
+      }
+      if (rangeStart !== undefined) {
+        groups.push(rangeStart === previous ? String(rangeStart) : `${rangeStart}-${previous}`);
+      }
+      rangeStart = current;
+      previous = current;
+    }
+    return groups.join(', ');
+  };
+
+  const applyBibleSelection = (verseNumbers: number[]) => {
+    const selectedVerses = bibleVerses
+      .filter((verse) => verseNumbers.includes(verse.verse))
+      .sort((a, b) => a.verse - b.verse);
+    if (selectedVerses.length === 0) return;
+
+    const scriptureText = selectedVerses.length === 1
+      ? selectedVerses[0].text
+      : selectedVerses.map((verse) => `${verse.verse}. ${verse.text}`).join('\n');
+    updateThemeScripture({
+      reference: {
+        book: selectedBibleBook,
+        chapter: selectedBibleChapter,
+        verses: formatSelectedVerseNumbers(verseNumbers),
+      },
+      text: scriptureText,
+    });
+    setErrors((current) => {
+      const next = { ...current };
+      delete next.scriptureBook;
+      delete next.scriptureChapter;
+      delete next.scriptureVerses;
+      delete next.scriptureText;
+      return next;
+    });
+  };
+
+  const toggleBibleVerse = (verseNumber: number) => {
+    const nextSelection = selectedBibleVerseNumbers.includes(verseNumber)
+      ? selectedBibleVerseNumbers.filter((number) => number !== verseNumber)
+      : [...selectedBibleVerseNumbers, verseNumber];
+    setSelectedBibleVerseNumbers(nextSelection);
+    if (nextSelection.length > 0) {
+      applyBibleSelection(nextSelection);
+    } else {
+      updateThemeScripture({
+        reference: {
+          book: selectedBibleBook,
+          chapter: selectedBibleChapter,
+          verses: '',
+        },
+        text: '',
+      });
+    }
   };
 
   const validateForm = () => {
@@ -243,7 +496,10 @@ export default function AdminDevotions() {
         newErrors.date = 'Invalid format. Use "Month Day, Year" (e.g., May 13, 2024)';
       }
 
-      if (!formData.scripture.trim()) newErrors.scripture = 'Theme Scripture is required';
+      if (!formData.themeScripture.reference.book.trim()) newErrors.scriptureBook = 'Book is required';
+      if (!formData.themeScripture.reference.chapter.trim()) newErrors.scriptureChapter = 'Chapter is required';
+      if (!formData.themeScripture.reference.verses.trim()) newErrors.scriptureVerses = 'Verse or range is required';
+      if (!formData.themeScripture.text.trim()) newErrors.scriptureText = 'Scripture text is required';
       if (!formData.content.trim()) newErrors.content = 'Content is required';
       if (!formData.author.trim()) newErrors.author = 'Author is required';
     } else if (activeTab === 'testimonies') {
@@ -282,11 +538,14 @@ export default function AdminDevotions() {
   };
 
   const startEdit = (devotion: Devotion) => {
+    const themeScripture = devotion.themeScripture || splitLegacyScripture(devotion.scripture);
     setEditingId(devotion.id);
     setIsNew(false);
+    setScriptureEntryMode('manual');
     setFormData({
       title: devotion.title,
-      scripture: devotion.scripture,
+      scripture: formatThemeScripture({ ...devotion, themeScripture }),
+      themeScripture,
       content: devotion.content,
       nuggets: devotion.nuggets || [''],
       date: devotion.date,
@@ -297,9 +556,11 @@ export default function AdminDevotions() {
   const startNew = () => {
     setEditingId('new');
     setIsNew(true);
+    setScriptureEntryMode('bible');
     setFormData({
       title: '',
       scripture: '',
+      themeScripture: splitLegacyScripture(''),
       content: '',
       nuggets: [''],
       date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
@@ -324,16 +585,23 @@ export default function AdminDevotions() {
 
   const saveLocal = () => {
     let updatedDevotions: Devotion[];
+    const localFormData = {
+      ...formData,
+      scripture: formatThemeScripture(formData),
+    };
     if (isNew) {
       const newDevotion: Devotion = {
-        ...formData,
+        ...localFormData,
         id: Date.now().toString()
       };
       updatedDevotions = [newDevotion, ...devotions];
     } else {
-      updatedDevotions = devotions.map(d => d.id === editingId ? { ...formData, id: editingId } : d);
+      updatedDevotions = devotions.map(d => d.id === editingId ? { ...localFormData, id: editingId } : d);
     }
     setDevotions(updatedDevotions);
+    if (isNew) {
+      setDevotionsPage(0);
+    }
     setEditingId(null);
     return updatedDevotions;
   };
@@ -695,22 +963,41 @@ export default function AdminDevotions() {
   };
 
   const handleSave = async () => {
+    setStatus({ type: 'success', message: 'Checking devotion details...' });
+
     // Programs and projects use nested forms, so they validate inside their own branches.
     if (activeTab !== 'programs' && activeTab !== 'projects' && !validateForm()) {
+      setShowPreview(false);
       setStatus({ type: 'error', message: 'Please fix the errors in the form.' });
       return;
     }
 
     setIsSaving(true);
-    setStatus(null);
+    setStatus({ type: 'success', message: 'Saving changes...' });
 
     try {
       if (activeTab === 'manager') {
+        const wasNewDevotion = isNew;
+        const sanitizedThemeScripture: ThemeScripture = {
+          reference: {
+            book: sanitizeInput(formData.themeScripture.reference.book),
+            chapter: sanitizeInput(formData.themeScripture.reference.chapter),
+            verses: sanitizeInput(formData.themeScripture.reference.verses),
+            display: buildScriptureReference({
+              book: sanitizeInput(formData.themeScripture.reference.book),
+              chapter: sanitizeInput(formData.themeScripture.reference.chapter),
+              verses: sanitizeInput(formData.themeScripture.reference.verses),
+            }),
+          },
+          text: sanitizeInput(formData.themeScripture.text),
+        };
+        const formattedScripture = formatThemeScripture({ themeScripture: sanitizedThemeScripture });
         const data = {
           ...formData,
           id: isNew ? null : editingId,
           title: sanitizeInput(formData.title),
-          scripture: sanitizeInput(formData.scripture),
+          scripture: formattedScripture,
+          themeScripture: sanitizedThemeScripture,
           content: sanitizeInput(formData.content),
           author: sanitizeInput(formData.author),
           nuggets: formData.nuggets?.map(n => sanitizeInput(n))
@@ -727,10 +1014,14 @@ export default function AdminDevotions() {
 
         if (response.ok) {
           await fetchDevotions();
+          if (wasNewDevotion) {
+            setDevotionsPage(0);
+          }
           setEditingId(null);
           setStatus({ type: 'success', message: 'Devotion saved successfully!' });
         } else {
-          throw new Error('Failed to save devotion');
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || errorData.details || 'Failed to save devotion');
         }
       } else if (activeTab === 'testimonies') {
         const isApproving = pendingTestimonies.some(p => p.id === editingTestimonyId);
@@ -997,6 +1288,7 @@ export default function AdminDevotions() {
             </div>
             <button 
               type="submit"
+              disabled={isSaving}
               className="w-full bg-royal-blue text-white py-4 rounded-xl font-black hover:bg-royal-gold hover:text-royal-blue transition-all shadow-lg"
             >
               Access Manager
@@ -1192,13 +1484,26 @@ export default function AdminDevotions() {
       </header>
 
       <main className="flex-1 max-w-7xl mx-auto w-full p-6 md:p-10">
+        {status && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`mb-6 rounded-2xl border px-5 py-4 text-sm font-bold ${
+              status.type === 'error'
+                ? 'border-red-100 bg-red-50 text-red-600'
+                : 'border-green-100 bg-green-50 text-green-700'
+            }`}
+          >
+            {status.message}
+          </motion.div>
+        )}
         {activeTab === 'manager' ? (
           <div className="grid lg:grid-cols-12 gap-10">
             {/* Devotions List Column */}
             <div className="lg:col-span-5 space-y-4 h-fit sticky top-32">
               <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6">Published Devotions ({devotions.length})</h2>
               <div className="space-y-3">
-                {devotions.map((devotion) => (
+                {visibleDevotions.map((devotion) => (
                   <div 
                     key={devotion.id}
                     className={`bg-white p-5 rounded-2xl border transition-all cursor-pointer group ${editingId === devotion.id ? 'border-royal-gold shadow-lg ring-1 ring-royal-gold' : 'border-slate-100 hover:shadow-md'}`}
@@ -1218,7 +1523,37 @@ export default function AdminDevotions() {
                     </div>
                   </div>
                 ))}
+                {devotions.length === 0 && (
+                  <div className="rounded-2xl border border-dashed border-slate-200 bg-white px-5 py-10 text-center text-sm text-slate-400">
+                    No devotions published yet.
+                  </div>
+                )}
               </div>
+              {devotions.length > 0 && (
+                <div className="border-t border-slate-100 pt-5">
+                  <p className="mb-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    Showing {devotionsPageStart + 1}-{Math.min(devotionsPageStart + ADMIN_DEVOTIONS_PAGE_SIZE, devotions.length)} of {devotions.length}
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      disabled={!canGoToPreviousDevotionsPage}
+                      onClick={() => setDevotionsPage((page) => Math.max(0, page - 1))}
+                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-royal-blue transition-all hover:border-royal-gold hover:text-royal-gold disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:text-royal-blue"
+                    >
+                      <ChevronLeft className="h-3 w-3" /> Previous
+                    </button>
+                    <button
+                      type="button"
+                      disabled={!canGoToNextDevotionsPage}
+                      onClick={() => setDevotionsPage((page) => Math.min(devotionsPageCount - 1, page + 1))}
+                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-royal-blue px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white transition-all hover:bg-royal-gold hover:text-royal-blue disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-royal-blue disabled:hover:text-white"
+                    >
+                      Next <ChevronRight className="h-3 w-3" />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Devotions Editor Column */}
@@ -1263,7 +1598,7 @@ export default function AdminDevotions() {
                           </div>
                           <h2 className="text-4xl font-serif font-black text-royal-blue">{formData.title || 'Untitled Devotion'}</h2>
                           <div className="bg-royal-blue/5 p-6 rounded-2xl border-l-4 border-royal-gold">
-                            <p className="text-royal-blue font-serif italic text-lg">{formData.scripture || 'No scripture provided'}</p>
+                            <p className="text-royal-blue font-serif italic text-lg whitespace-pre-line">{formatThemeScripture(formData) || 'No scripture provided'}</p>
                           </div>
                           <div className="markdown-body prose prose-slate">
                             <ReactMarkdown>{formData.content || 'No content provided'}</ReactMarkdown>
@@ -1309,18 +1644,226 @@ export default function AdminDevotions() {
                             </div>
                           </div>
 
-                          <div className="space-y-2">
-                            <label className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400">
-                              <BookOpen className={`w-3 h-3 ${errors.scripture ? 'text-red-500' : ''}`} /> Theme Scripture
-                            </label>
-                            <textarea 
-                              rows={2}
-                              value={formData.scripture}
-                              onChange={(e) => setFormData({ ...formData, scripture: e.target.value })}
-                              className={`w-full px-5 py-4 rounded-xl border focus:ring-2 outline-none font-serif italic transition-all ${errors.scripture ? 'border-red-500 focus:ring-red-200' : 'border-slate-200 focus:ring-royal-gold'}`}
-                              placeholder="Jeremiah 29:11 - For I know the plans..."
-                            />
-                            {errors.scripture && <p className="text-red-500 text-[10px] font-bold">{errors.scripture}</p>}
+                          <div className="space-y-5 rounded-3xl border border-slate-100 bg-slate-50/60 p-5 md:p-6">
+                            <div>
+                              <label className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400">
+                                <BookOpen className={`w-3 h-3 ${errors.scriptureBook || errors.scriptureChapter || errors.scriptureVerses || errors.scriptureText ? 'text-red-500' : ''}`} /> Theme Scripture Reference
+                              </label>
+                              <p className="mt-1 text-xs text-slate-400">
+                                Choose how you want to add the theme scripture.
+                              </p>
+                            </div>
+                            <div className="grid grid-cols-2 rounded-xl bg-slate-200/70 p-1">
+                              <button
+                                type="button"
+                                aria-pressed={scriptureEntryMode === 'bible'}
+                                onClick={() => setScriptureEntryMode('bible')}
+                                className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-3 py-2 text-xs font-black transition-all ${
+                                  scriptureEntryMode === 'bible'
+                                    ? 'bg-white text-royal-blue shadow-sm'
+                                    : 'text-slate-500 hover:text-royal-blue'
+                                }`}
+                              >
+                                <Database className="h-4 w-4" /> Bible Library
+                              </button>
+                              <button
+                                type="button"
+                                aria-pressed={scriptureEntryMode === 'manual'}
+                                onClick={() => setScriptureEntryMode('manual')}
+                                className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-3 py-2 text-xs font-black transition-all ${
+                                  scriptureEntryMode === 'manual'
+                                    ? 'bg-white text-royal-blue shadow-sm'
+                                    : 'text-slate-500 hover:text-royal-blue'
+                                }`}
+                              >
+                                <Type className="h-4 w-4" /> Manual Entry
+                              </button>
+                            </div>
+                            {scriptureEntryMode === 'bible' && (
+                            <div className="space-y-5 rounded-2xl border border-royal-gold/20 bg-white p-5">
+                              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                  <p className="text-xs font-black uppercase tracking-widest text-royal-blue">Bible Browser</p>
+                                  <p className="text-xs text-slate-400">Choose a version, chapter, and one or more verses.</p>
+                                </div>
+                                {isBibleLoading && (
+                                  <span className="inline-flex items-center gap-2 text-xs font-bold text-royal-gold">
+                                    <Loader2 className="h-4 w-4 animate-spin" /> Loading Bible
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="grid gap-4 md:grid-cols-3">
+                                <div className="space-y-2">
+                                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Version</label>
+                                  <select
+                                    value={selectedBibleVersion}
+                                    disabled={isBibleLoading || bibleVersions.length === 0}
+                                    onChange={(event) => {
+                                      const versionId = event.target.value;
+                                      setSelectedBibleVersion(versionId);
+                                      setSelectedBibleBook('');
+                                      setSelectedBibleChapter('');
+                                      void loadBibleBooks(versionId);
+                                    }}
+                                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-royal-blue outline-none transition-all focus:ring-2 focus:ring-royal-gold disabled:opacity-50"
+                                  >
+                                    {bibleVersions.length === 0 && <option value="">No versions loaded</option>}
+                                    {bibleVersions.map((version) => (
+                                      <option key={version.id} value={version.id}>
+                                        {version.label} - {version.language}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Book</label>
+                                  <select
+                                    value={selectedBibleBook}
+                                    disabled={isBibleLoading || bibleBooks.length === 0}
+                                    onChange={(event) => {
+                                      const bookName = event.target.value;
+                                      const book = bibleBooks.find((item) => item.name === bookName);
+                                      const firstChapter = book?.chapters[0];
+                                      setSelectedBibleBook(bookName);
+                                      setSelectedBibleChapter(firstChapter ? String(firstChapter) : '');
+                                      if (firstChapter) {
+                                        void loadBibleVerses(selectedBibleVersion, bookName, firstChapter);
+                                      }
+                                    }}
+                                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-royal-blue outline-none transition-all focus:ring-2 focus:ring-royal-gold disabled:opacity-50"
+                                  >
+                                    {bibleBooks.length === 0 && <option value="">Select a version</option>}
+                                    {bibleBooks.map((book) => (
+                                      <option key={book.name} value={book.name}>{book.name}</option>
+                                    ))}
+                                  </select>
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Chapter</label>
+                                  <select
+                                    value={selectedBibleChapter}
+                                    disabled={isBibleLoading || !selectedBibleBook}
+                                    onChange={(event) => {
+                                      const chapter = Number(event.target.value);
+                                      setSelectedBibleChapter(event.target.value);
+                                      void loadBibleVerses(selectedBibleVersion, selectedBibleBook, chapter);
+                                    }}
+                                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-royal-blue outline-none transition-all focus:ring-2 focus:ring-royal-gold disabled:opacity-50"
+                                  >
+                                    {(bibleBooks.find((book) => book.name === selectedBibleBook)?.chapters || []).map((chapter) => (
+                                      <option key={chapter} value={chapter}>{chapter}</option>
+                                    ))}
+                                  </select>
+                                </div>
+                              </div>
+
+                              {bibleError && (
+                                <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-xs font-bold text-red-600">
+                                  {bibleError}
+                                </div>
+                              )}
+
+                              {bibleVerses.length > 0 && (
+                                <div className="space-y-3">
+                                  <div className="flex items-center justify-between gap-4">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                      {selectedBibleBook} {selectedBibleChapter}
+                                    </p>
+                                    <p className="text-[10px] font-bold text-slate-400">
+                                      {selectedBibleVerseNumbers.length} selected
+                                    </p>
+                                  </div>
+                                  <div className="max-h-72 space-y-2 overflow-y-auto pr-1">
+                                    {bibleVerses.map((verse) => {
+                                      const isSelected = selectedBibleVerseNumbers.includes(verse.verse);
+                                      return (
+                                        <button
+                                          key={verse.verse}
+                                          type="button"
+                                          onClick={() => toggleBibleVerse(verse.verse)}
+                                          className={`flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-all ${
+                                            isSelected
+                                              ? 'border-royal-gold bg-royal-gold/10 text-royal-blue'
+                                              : 'border-slate-100 bg-slate-50 text-slate-600 hover:border-royal-gold/40'
+                                          }`}
+                                        >
+                                          <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-black ${
+                                            isSelected ? 'bg-royal-gold text-royal-blue' : 'bg-white text-slate-400'
+                                          }`}>
+                                            {verse.verse}
+                                          </span>
+                                          <span className="pt-1 text-sm leading-relaxed">{verse.text}</span>
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+
+                              {bibleVersions.find((version) => version.id === selectedBibleVersion)?.copyright && (
+                                <p className="text-[10px] leading-relaxed text-slate-400">
+                                  {bibleVersions.find((version) => version.id === selectedBibleVersion)?.copyright}
+                                </p>
+                              )}
+                            </div>
+                            )}
+                            {scriptureEntryMode === 'manual' && (
+                            <>
+                              <div className="grid md:grid-cols-3 gap-4">
+                              <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Book</label>
+                                <input
+                                  type="text"
+                                  value={formData.themeScripture.reference.book}
+                                  onChange={(e) => updateThemeScripture({ reference: { book: e.target.value } })}
+                                  className={`w-full px-5 py-4 rounded-xl border focus:ring-2 outline-none transition-all ${errors.scriptureBook ? 'border-red-500 focus:ring-red-200' : 'border-slate-200 focus:ring-royal-gold'}`}
+                                  placeholder="Jeremiah"
+                                />
+                                {errors.scriptureBook && <p className="text-red-500 text-[10px] font-bold">{errors.scriptureBook}</p>}
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Chapter</label>
+                                <input
+                                  type="text"
+                                  value={formData.themeScripture.reference.chapter}
+                                  onChange={(e) => updateThemeScripture({ reference: { chapter: e.target.value } })}
+                                  className={`w-full px-5 py-4 rounded-xl border focus:ring-2 outline-none transition-all ${errors.scriptureChapter ? 'border-red-500 focus:ring-red-200' : 'border-slate-200 focus:ring-royal-gold'}`}
+                                  placeholder="29"
+                                />
+                                {errors.scriptureChapter && <p className="text-red-500 text-[10px] font-bold">{errors.scriptureChapter}</p>}
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Verse(s)</label>
+                                <input
+                                  type="text"
+                                  value={formData.themeScripture.reference.verses}
+                                  onChange={(e) => updateThemeScripture({ reference: { verses: e.target.value } })}
+                                  className={`w-full px-5 py-4 rounded-xl border focus:ring-2 outline-none transition-all ${errors.scriptureVerses ? 'border-red-500 focus:ring-red-200' : 'border-slate-200 focus:ring-royal-gold'}`}
+                                  placeholder="3, 5-7"
+                                />
+                                {errors.scriptureVerses && <p className="text-red-500 text-[10px] font-bold">{errors.scriptureVerses}</p>}
+                              </div>
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Scripture Text</label>
+                                <textarea
+                                  rows={4}
+                                  value={formData.themeScripture.text}
+                                  onChange={(e) => updateThemeScripture({ text: e.target.value })}
+                                  className={`w-full px-5 py-4 rounded-xl border focus:ring-2 outline-none font-serif italic transition-all ${errors.scriptureText ? 'border-red-500 focus:ring-red-200' : 'border-slate-200 focus:ring-royal-gold'}`}
+                                  placeholder="For I know the plans I have for you..."
+                                />
+                                {errors.scriptureText && <p className="text-red-500 text-[10px] font-bold">{errors.scriptureText}</p>}
+                              </div>
+                            </>
+                            )}
+                            <div className="hidden rounded-2xl border border-slate-100 bg-white p-4 lg:block">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Combined Theme Scripture</p>
+                              <p className="text-sm font-serif italic text-royal-blue whitespace-pre-line">
+                                {formatThemeScripture(formData) || 'Scripture text and reference will appear here.'}
+                              </p>
+                            </div>
                           </div>
 
                           {/* Body Content */}
@@ -1386,8 +1929,22 @@ export default function AdminDevotions() {
                                 {errors.author && <p className="text-red-500 text-[10px] font-bold mt-1">{errors.author}</p>}
                               </div>
                             </div>
+                            {Object.keys(errors).length > 0 && (
+                              <div className="w-full rounded-2xl border border-red-100 bg-red-50 p-4 text-red-600 md:max-w-sm">
+                                <p className="mb-2 text-[10px] font-black uppercase tracking-widest">Check these fields</p>
+                                <ul className="space-y-1 text-xs font-bold">
+                                  {Object.entries(errors).map(([field, message]) => (
+                                    <li key={field}>{message}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
                             <button 
-                              onClick={handleSave}
+                              type="button"
+                              onClick={(event) => {
+                                event.preventDefault();
+                                void handleSave();
+                              }}
                               disabled={isSaving}
                               className="w-full md:w-auto bg-royal-blue text-white px-10 py-4 rounded-full font-black flex items-center justify-center gap-2 hover:bg-royal-gold hover:text-royal-blue transition-all shadow-xl disabled:opacity-50"
                             >
@@ -2013,17 +2570,18 @@ export default function AdminDevotions() {
               <>
                 <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-5">
                   {[
-                    { label: 'Page Views', value: analyticsSummary.totals.pageViews, icon: <Eye className="w-5 h-5" /> },
-                    { label: 'Visitors', value: analyticsSummary.totals.visitors, icon: <Users className="w-5 h-5" /> },
-                    { label: 'Today', value: analyticsSummary.totals.today, icon: <Clock className="w-5 h-5" /> },
-                    { label: 'Last 7 Days', value: analyticsSummary.totals.last7Days, icon: <TrendingUp className="w-5 h-5" /> },
+                    { label: 'Today', value: analyticsSummary.totals.today, detail: `${dailyStats[dailyStats.length - 1]?.visitors ?? 0} visitors`, icon: <Clock className="w-5 h-5" /> },
+                    { label: 'This Week', value: analyticsSummary.totals.last7Days, detail: `${weeklyStats[weeklyStats.length - 1]?.visitors ?? 0} visitors`, icon: <TrendingUp className="w-5 h-5" /> },
+                    { label: 'Last 30 Days', value: analyticsSummary.totals.last30Days ?? analyticsSummary.totals.pageViews, detail: `${analyticsSummary.totals.visitors} visitors`, icon: <Eye className="w-5 h-5" /> },
+                    { label: 'This Year', value: annualStats.pageViews, detail: `${annualStats.visitors} visitors`, icon: <Users className="w-5 h-5" /> },
                   ].map((item) => (
                     <div key={item.label} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
                       <div className="w-11 h-11 rounded-xl bg-royal-gold/10 text-royal-gold flex items-center justify-center mb-5">
                         {item.icon}
                       </div>
                       <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">{item.label}</p>
-                      <p className="text-4xl font-black text-royal-blue mt-2">{item.value}</p>
+                      <p className="text-4xl font-black text-royal-blue mt-2">{formatStatNumber(item.value)}</p>
+                      <p className="text-xs font-bold text-slate-400 mt-1">{item.detail}</p>
                     </div>
                   ))}
                 </div>
@@ -2037,9 +2595,9 @@ export default function AdminDevotions() {
                     <BarChart3 className="w-5 h-5 text-royal-gold" />
                   </div>
                   <div className="flex items-end gap-1 h-44 border-b border-slate-100">
-                    {analyticsSummary.daily.map((day) => {
-                      const maxViews = Math.max(...analyticsSummary.daily.map((item) => item.views), 1);
-                      const height = Math.max((day.views / maxViews) * 100, day.views > 0 ? 8 : 2);
+                    {dailyStats.map((day) => {
+                      const maxViews = Math.max(...dailyStats.map((item) => item.pageViews), 1);
+                      const height = Math.max((day.pageViews / maxViews) * 100, day.pageViews > 0 ? 8 : 2);
                       return (
                         <div key={day.day} className="flex-1 h-full flex items-end group relative">
                           <div
@@ -2047,11 +2605,78 @@ export default function AdminDevotions() {
                             style={{ height: `${height}%` }}
                           />
                           <div className="hidden group-hover:block absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 rounded bg-royal-blue text-white text-[10px] font-bold whitespace-nowrap">
-                            {day.day}: {day.views}
+                            {day.label}: {day.pageViews} views, {day.visitors} visitors
                           </div>
                         </div>
                       );
                     })}
+                  </div>
+                </div>
+
+                <div className="grid xl:grid-cols-3 gap-8">
+                  <div className="xl:col-span-2 bg-white rounded-[2rem] border border-slate-100 shadow-xl p-6 md:p-8">
+                    <div className="flex items-center justify-between mb-6">
+                      <div>
+                        <h3 className="text-xl font-serif font-black text-royal-blue">Weekly Traffic</h3>
+                        <p className="text-sm text-slate-400">Page views and unique visitors by week.</p>
+                      </div>
+                      <TrendingUp className="w-5 h-5 text-royal-gold" />
+                    </div>
+                    <div className="space-y-4">
+                      {weeklyStats.length > 0 ? weeklyStats.map((week) => {
+                        const maxWeeklyViews = Math.max(...weeklyStats.map((item) => item.pageViews), 1);
+                        const width = Math.max((week.pageViews / maxWeeklyViews) * 100, week.pageViews > 0 ? 8 : 2);
+                        return (
+                          <div key={week.weekStart}>
+                            <div className="flex items-center justify-between gap-4 mb-2">
+                              <span className="text-xs font-black uppercase tracking-widest text-slate-500">{week.label}</span>
+                              <span className="text-xs font-bold text-slate-400">{formatStatNumber(week.pageViews)} views / {formatStatNumber(week.visitors)} visitors</span>
+                            </div>
+                            <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                              <div className="h-full rounded-full bg-royal-blue" style={{ width: `${width}%` }} />
+                            </div>
+                          </div>
+                        );
+                      }) : (
+                        <p className="text-sm text-slate-400">No weekly traffic recorded yet.</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="bg-royal-blue rounded-[2rem] shadow-xl p-6 md:p-8 text-white">
+                    <p className="text-[10px] font-black uppercase tracking-[0.25em] text-royal-gold">Annual Section</p>
+                    <h3 className="text-3xl font-serif font-black mt-3">{annualStats.label}</h3>
+                    <div className="mt-8 space-y-5">
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-widest text-white/50">Page Views</p>
+                        <p className="text-4xl font-black">{formatStatNumber(annualStats.pageViews)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-widest text-white/50">Visitors</p>
+                        <p className="text-4xl font-black">{formatStatNumber(annualStats.visitors)}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl p-6 md:p-8">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h3 className="text-xl font-serif font-black text-royal-blue">Monthly Traffic</h3>
+                      <p className="text-sm text-slate-400">A 12-month view for longer-term growth.</p>
+                    </div>
+                    <Calendar className="w-5 h-5 text-royal-gold" />
+                  </div>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {monthlyStats.length > 0 ? monthlyStats.map((month) => (
+                      <div key={month.month} className="rounded-2xl bg-slate-50 p-5">
+                        <p className="text-xs font-black uppercase tracking-widest text-slate-400">{month.label}</p>
+                        <p className="text-2xl font-black text-royal-blue mt-3">{formatStatNumber(month.pageViews)}</p>
+                        <p className="text-xs font-bold text-slate-400">{formatStatNumber(month.visitors)} visitors</p>
+                      </div>
+                    )) : (
+                      <p className="text-sm text-slate-400">No monthly traffic recorded yet.</p>
+                    )}
                   </div>
                 </div>
 

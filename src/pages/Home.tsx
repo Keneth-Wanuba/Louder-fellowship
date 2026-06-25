@@ -8,6 +8,7 @@ import { getTodayReminder } from '../constants';
 import { Testimony } from './Testimonies';
 import { Devotion } from './Devotions';
 import ShareMenu from '../components/ShareMenu';
+import { buildScriptureReference } from '../utils/devotionScripture';
 
 export default function Home() {
   const [isSharing, setIsSharing] = useState(false);
@@ -95,6 +96,10 @@ export default function Home() {
   }, [approvedTestimonies.length]);
 
   const latestDevotion = devotions[0];
+  const latestThemeText = latestDevotion?.themeScripture?.text || latestDevotion?.scripture?.split('-')[0]?.trim() || '';
+  const latestThemeReference = latestDevotion?.themeScripture
+    ? buildScriptureReference(latestDevotion.themeScripture.reference)
+    : latestDevotion?.scripture?.split('-')[1]?.trim() || '';
   const papaImage = "/journey/image.png";
   const bookCover = "https://i.ibb.co/C3KXCrft/book-discount.jpg";
 
@@ -260,10 +265,10 @@ export default function Home() {
                     </div>
                     <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">The Theme</h4>
                     <p className="text-royal-blue font-serif italic text-lg leading-relaxed">
-                      "{latestDevotion.scripture.split('-')[0].trim()}"
+                      "{latestThemeText}"
                     </p>
                     <div className="mt-4 pt-4 border-t border-slate-200">
-                      <span className="text-slate-400 text-xs font-bold">{latestDevotion.scripture.split('-')[1]?.trim() || ''}</span>
+                      <span className="text-slate-400 text-xs font-bold">{latestThemeReference}</span>
                     </div>
                     
                     {latestDevotion.nuggets && latestDevotion.nuggets.length > 0 && (

@@ -8,6 +8,8 @@
     "seed:programs": "tsx seed-programs.ts",
     "seed:projects": "tsx seed-projects.ts",
     "seed:all": "npm run seed:programs && npm run seed:projects",
+    "audit:bible-books": "node scripts/normalize-bible-book-names.mjs",
+    "fix:bible-books": "node scripts/normalize-bible-book-names.mjs --apply",
     "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
     "start": "node dist/server.cjs",
     "clean": "rm -rf dist",

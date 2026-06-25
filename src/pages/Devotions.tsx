@@ -6,11 +6,13 @@ import { motion } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 import { getTodayReminder } from '../constants';
 import ShareMenu from '../components/ShareMenu';
+import { ThemeScripture, formatThemeScripture } from '../utils/devotionScripture';
 
 export interface Devotion {
   id: string;
   title: string;
   scripture: string;
+  themeScripture?: ThemeScripture;
   content: string;
   nuggets?: string[];
   date: string;
@@ -375,8 +377,8 @@ export default function Devotions() {
                   </h2>
                   
                   <div className="max-w-full bg-royal-blue/5 p-5 sm:p-8 rounded-2xl sm:rounded-3xl border-l-4 sm:border-l-[6px] border-royal-gold mb-10 overflow-hidden">
-                    <p className="max-w-full text-royal-blue font-serif italic text-base sm:text-xl leading-relaxed break-words">
-                      {activeDevotion.scripture}
+                    <p className="max-w-full text-royal-blue font-serif italic text-base sm:text-xl leading-relaxed break-words whitespace-pre-line">
+                      {formatThemeScripture(activeDevotion)}
                     </p>
                   </div>
                   

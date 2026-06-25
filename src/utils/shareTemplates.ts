@@ -1,7 +1,10 @@
+import { ThemeScripture, formatThemeScripture } from './devotionScripture';
+
 export interface DevotionLike {
   id: string;
   title: string;
   scripture?: string;
+  themeScripture?: ThemeScripture;
   content?: string;
   author?: string;
 }
@@ -23,11 +26,12 @@ export function generateDevotionShare(devotion: DevotionLike, origin = typeof wi
   const url = `${origin}/devotions`;
   const title = `Theme: ${devotion.title}`;
   const author = devotion.author ? `Author: ${devotion.author}` : '';
-  const scripture = devotion.scripture ? `Scripture: ${devotion.scripture}` : '';
+  const formattedScripture = formatThemeScripture(devotion);
+  const scripture = formattedScripture ? `Scripture: ${formattedScripture}` : '';
   const preview = devotion.content ? truncate(devotion.content, 400) : '';
 
   const full = `${title}\n${scripture ? scripture + '\n' : ''}${author ? author + '\n\n' : '\n'}${preview}\n\nRead more: ${url}`;
-  const short = `${title} — ${devotion.scripture || ''} Read more: ${url}`;
+  const short = `${title} — ${formattedScripture} Read more: ${url}`;
 
   return {
     whatsapp: `https://wa.me/?text=${encodeURIComponent(full)}`,
